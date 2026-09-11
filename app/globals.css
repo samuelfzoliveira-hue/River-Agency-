@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f4f8ff;
+  color: #0b1f3a;
+}
+
+@media print {
+  body {
+    background: #ffffff;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-page {
+    break-inside: avoid;
+  }
+}
+
+.score-ring {
+  transform: rotate(-90deg);
+}
+
+.bar-track {
+  background: #e6edfb;
+}
+
+::selection {
+  background: #cfe0ff;
+}
