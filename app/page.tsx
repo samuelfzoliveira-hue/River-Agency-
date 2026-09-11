@@ -73,7 +73,7 @@ export default function Home() {
         <Logo />
         {phase === "result" && report && (
           <div className="flex items-center gap-5">
-            <PdfExportButton targetId="report-root" filename={`diagnostico-${report.profile.username}.pdf`} />
+            <PdfExportButton report={report} filename={`diagnostico-${report.profile.username}.pdf`} />
             <button onClick={reset} className="text-[13px] font-medium text-river-ink3 hover:text-river-ink transition">
               Nova análise
             </button>
