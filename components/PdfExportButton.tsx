@@ -16,12 +16,7 @@ export function PdfExportButton({ targetId, filename }: { targetId: string; file
       const el = document.getElementById(targetId);
       if (!el) return;
 
-      const canvas = await html2canvas(el, {
-        scale: 2,
-        backgroundColor: "#F4F8FF",
-        useCORS: true,
-      });
-
+      const canvas = await html2canvas(el, { scale: 2, backgroundColor: "#FFFFFF", useCORS: true });
       const imgData = canvas.toDataURL("image/png");
       const pdf = new jsPDF({ unit: "pt", format: "a4" });
       const pageWidth = pdf.internal.pageSize.getWidth();
@@ -52,7 +47,7 @@ export function PdfExportButton({ targetId, filename }: { targetId: string; file
     <button
       onClick={handleExport}
       disabled={loading}
-      className="no-print inline-flex items-center gap-2 rounded-lg bg-white border border-river-primary text-river-primary text-sm font-semibold px-4 py-2.5 hover:bg-river-sky transition disabled:opacity-60"
+      className="no-print text-[13px] font-semibold text-river-accent hover:text-river-accentDeep transition disabled:opacity-50"
     >
       {loading ? "Gerando PDF..." : "Baixar PDF"}
     </button>

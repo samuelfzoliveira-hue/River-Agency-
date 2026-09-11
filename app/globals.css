@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -11,8 +13,8 @@ html {
 }
 
 body {
-  background: #f4f8ff;
-  color: #0b1f3a;
+  background: #ffffff;
+  color: #12182b;
 }
 
 @media print {
@@ -27,14 +29,6 @@ body {
   }
 }
 
-.score-ring {
-  transform: rotate(-90deg);
-}
-
-.bar-track {
-  background: #e6edfb;
-}
-
 ::selection {
-  background: #cfe0ff;
+  background: #dbe6fe;
 }

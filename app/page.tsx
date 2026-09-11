@@ -5,7 +5,6 @@ import { Logo } from "@/components/Logo";
 import { ReportView } from "@/components/ReportView";
 import { ManualDataForm } from "@/components/ManualDataForm";
 import { PdfExportButton } from "@/components/PdfExportButton";
-import { IconInstagram } from "@/components/icons";
 import { DiagnosticReport, InstagramProfileData } from "@/lib/types";
 
 type Phase = "input" | "manual" | "result";
@@ -66,95 +65,72 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen">
-      <header className="no-print border-b border-river-sky bg-white/80 backdrop-blur sticky top-0 z-10">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Logo />
-          {phase === "result" && report && (
-            <div className="flex items-center gap-2">
-              <PdfExportButton
-                targetId="report-root"
-                filename={`diagnostico-${report.profile.username}.pdf`}
-              />
-              <button
-                onClick={reset}
-                className="text-sm font-semibold text-river-navy/60 hover:text-river-navy px-3 py-2"
-              >
-                Nova análise
-              </button>
-            </div>
-          )}
-        </div>
+    <main className="min-h-screen px-5 sm:px-6">
+      <header className="no-print max-w-report mx-auto flex items-center justify-between py-6">
+        <Logo />
+        {phase === "result" && report && (
+          <div className="flex items-center gap-5">
+            <PdfExportButton targetId="report-root" filename={`diagnostico-${report.profile.username}.pdf`} />
+            <button onClick={reset} className="text-[13px] font-medium text-river-ink3 hover:text-river-ink transition">
+              Nova análise
+            </button>
+          </div>
+        )}
       </header>
 
-      <div className="px-4 sm:px-6 py-10">
+      <div className="py-6">
         {phase !== "result" && (
-          <div className="max-w-xl mx-auto text-center mb-10">
-            <h1 className="font-display text-3xl sm:text-4xl font-bold text-river-navy leading-tight">
-              Diagnóstico de Perfil <span className="text-river-primary">Instagram</span>
+          <div className="max-w-report mx-auto mb-12">
+            <h1 className="text-[28px] sm:text-[34px] font-bold text-river-ink leading-tight tracking-tight">
+              Diagnóstico de perfil <span className="text-river-accent">Instagram</span>
             </h1>
-            <p className="text-river-navy/60 mt-3 text-sm sm:text-base">
-              Cole o link (ou @usuário) de um perfil do Instagram e receba, em minutos, um
-              diagnóstico completo de posicionamento, conteúdo, engajamento, arquétipo de marca e
-              estratégia — feito pela River Agency.
+            <p className="text-river-ink2 mt-3 text-[14px] leading-relaxed max-w-md">
+              Cole o link de um perfil do Instagram e receba um diagnóstico completo de posicionamento, conteúdo,
+              engajamento e estratégia.
             </p>
           </div>
         )}
 
         {phase === "input" && (
-          <>
-            <form
-              onSubmit={handleSubmit}
-              className="max-w-xl mx-auto bg-white rounded-xl2 shadow-card border border-river-sky p-3 flex items-center gap-2"
-            >
-              <span className="pl-3 text-river-primary">
-                <IconInstagram />
-              </span>
+          <div className="max-w-report mx-auto">
+            <form onSubmit={handleSubmit} className="flex items-end gap-4 border-b border-river-line pb-3">
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="instagram.com/seuusuario ou @seuusuario"
-                className="flex-1 py-3 text-sm outline-none bg-transparent text-river-navy placeholder:text-river-navy/35"
+                className="flex-1 text-[15px] outline-none bg-transparent text-river-ink placeholder:text-river-ink3 py-2"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !url.trim()}
-                className="rounded-lg bg-river-primary text-white font-semibold text-sm px-5 py-3 hover:bg-river-blue transition disabled:opacity-50 shrink-0"
+                className="text-[13.5px] font-semibold text-river-accent hover:text-river-accentDeep transition disabled:opacity-40 shrink-0 pb-2"
               >
-                {loading ? "Analisando..." : "Analisar perfil"}
+                {loading ? "Analisando..." : "Analisar →"}
               </button>
             </form>
 
             {loading && (
-              <div className="max-w-xl mx-auto mt-6 text-center text-sm text-river-navy/50">
-                Coletando dados públicos e gerando o diagnóstico estratégico completo...
+              <div className="mt-6 text-[13.5px] text-river-ink3">
+                Coletando dados públicos e gerando o diagnóstico completo...
               </div>
             )}
 
-            {error && (
-              <div className="max-w-xl mx-auto mt-6 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl p-4 text-center">
-                {error}
-              </div>
-            )}
-          </>
+            {error && <div className="mt-6 text-[13.5px] text-river-danger">{error}</div>}
+          </div>
         )}
 
         {phase === "manual" && (
-          <div className="max-w-xl mx-auto mt-2">
+          <div>
             <ManualDataForm username={username} loading={loading} onSubmit={(data) => runAnalysis(data)} />
-            {error && (
-              <div className="mt-4 bg-rose-50 border border-rose-200 text-rose-700 text-sm rounded-xl p-4 text-center">
-                {error}
-              </div>
-            )}
+            {error && <div className="max-w-report mx-auto mt-4 text-[13.5px] text-river-danger">{error}</div>}
           </div>
         )}
 
         {phase === "result" && report && <ReportView report={report} id="report-root" />}
       </div>
 
-      <footer className="no-print text-center text-xs text-river-navy/35 pb-8">
+      <footer className="no-print max-w-report mx-auto text-center text-[11px] text-river-ink3 py-10">
         River Agency · Ferramenta de Diagnóstico de Perfil
       </footer>
     </main>

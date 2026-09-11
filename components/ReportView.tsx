@@ -3,418 +3,296 @@ import { Section } from "./Section";
 import { ScoreRing } from "./ScoreRing";
 import { ProgressBar } from "./ProgressBar";
 import { SwotGrid } from "./SwotGrid";
-import { Logo } from "./Logo";
-import {
-  IconTarget,
-  IconTrendUp,
-  IconUser,
-  IconGrid,
-  IconCompass,
-  IconMask,
-  IconSparkle,
-  IconClock,
-  IconBolt,
-  IconLayers,
-  IconScale,
-} from "./icons";
 
 function formatFollowers(n: number) {
   if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
   return `${n}`;
 }
 
+function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div>
+      <div className={`text-xl font-bold tabular-nums ${accent ? "text-river-accent" : "text-river-ink"}`}>
+        {value}
+      </div>
+      <div className="text-[11px] text-river-ink3 mt-0.5">{label}</div>
+    </div>
+  );
+}
+
+function Plain({ items }: { items: string[] }) {
+  return (
+    <ul className="space-y-2.5">
+      {items.map((item, i) => (
+        <li key={i} className="text-[13.5px] leading-relaxed text-river-ink flex gap-2.5">
+          <span className="mt-[7px] w-1 h-1 rounded-full bg-river-ink3 shrink-0" />
+          {item}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Label({ children }: { children: React.ReactNode }) {
+  return <div className="text-[11px] font-semibold tracking-[0.08em] uppercase text-river-ink3 mb-2.5">{children}</div>;
+}
+
 export function ReportView({ report, id }: { report: DiagnosticReport; id?: string }) {
   const { profile } = report;
 
   return (
-    <div id={id} className="max-w-3xl mx-auto space-y-6 pb-24">
-      {/* Header / Profile card */}
-      <div className="print-page bg-river-navy rounded-xl2 shadow-pop p-6 sm:p-8 text-white relative overflow-hidden">
-        <div
-          className="absolute inset-0 opacity-[0.15]"
-          style={{
-            backgroundImage:
-              "radial-gradient(circle at 20% 20%, #4C8DFF 0%, transparent 45%), radial-gradient(circle at 85% 85%, #1D63E8 0%, transparent 40%)",
-          }}
-        />
-        <div className="relative flex items-center justify-between mb-8">
-          <Logo variant="light" />
-          <span className="text-[11px] font-semibold tracking-wider uppercase text-white/60">
-            Relatório de Análise
-          </span>
+    <div id={id} className="max-w-report mx-auto pb-24">
+      {/* Profile header */}
+      <div className="pb-10">
+        <div className="text-[11px] font-semibold tracking-[0.14em] uppercase text-river-ink3 mb-4">
+          Relatório de Análise
         </div>
-        <div className="relative flex items-center gap-4">
+        <div className="flex items-center gap-4">
           {profile.profilePicUrl ? (
-            <img
-              src={profile.profilePicUrl}
-              alt={profile.username}
-              className="w-16 h-16 rounded-full object-cover border-2 border-white/30"
-            />
+            <img src={profile.profilePicUrl} alt={profile.username} className="w-12 h-12 rounded-full object-cover" />
           ) : (
-            <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-white/30 flex items-center justify-center font-display text-2xl font-bold">
+            <div className="w-12 h-12 rounded-full border border-river-line flex items-center justify-center font-bold text-river-ink2">
               {profile.username.slice(0, 1).toUpperCase()}
             </div>
           )}
-          <div className="flex-1">
-            <div className="font-display text-xl font-bold">@{profile.username}</div>
-            <div className="text-white/70 text-sm">{profile.fullName}</div>
+          <div>
+            <div className="text-xl font-bold text-river-ink">@{profile.username}</div>
+            <div className="text-[13px] text-river-ink2">{profile.fullName}</div>
           </div>
-          <div className="text-right">
-            <div className="font-display text-xl font-bold">
-              {formatFollowers(profile.followers)}
-            </div>
-            <div className="text-white/60 text-xs">seguidores</div>
-          </div>
-          <div className="text-right">
-            <div className="font-display text-xl font-bold text-river-light">
-              {profile.engagementRate?.toFixed(2)}%
-            </div>
-            <div className="text-white/60 text-xs">engajamento</div>
-          </div>
+        </div>
+        <div className="flex gap-10 mt-7">
+          <Stat label="seguidores" value={formatFollowers(profile.followers)} />
+          <Stat label="engajamento" value={`${profile.engagementRate?.toFixed(2)}%`} accent />
         </div>
       </div>
 
       {report.dataSource === "demo" && (
-        <div className="no-print bg-amber-50 border border-amber-200 text-amber-800 text-sm rounded-xl p-4">
-          Este é um relatório de <strong>demonstração</strong>. Configure a variável de ambiente{" "}
-          <code className="bg-amber-100 px-1 rounded">ANTHROPIC_API_KEY</code> para gerar
-          diagnósticos reais a partir de qualquer perfil do Instagram.
+        <div className="no-print text-[13px] text-river-ink2 border border-river-line rounded-lg p-4 mb-10">
+          Este é um relatório de <strong className="text-river-ink">demonstração</strong>. Configure a variável de
+          ambiente <code className="text-river-accent">ANTHROPIC_API_KEY</code> para gerar diagnósticos reais a
+          partir de qualquer perfil.
         </div>
       )}
 
-      {/* Score Geral */}
-      <Section title="Score Geral do Perfil" icon={<IconTarget />}>
-        <div className="flex flex-col sm:flex-row gap-8 items-center sm:items-start">
-          <ScoreRing score={report.overallScore} />
-          <div className="flex-1 w-full">
-            {report.scoreBreakdown.map((s) => (
-              <ProgressBar key={s.label} label={s.label} score={s.score} compact />
+      <div className="space-y-10">
+        {/* Score */}
+        <Section title="Score Geral do Perfil">
+          <div className="flex flex-col sm:flex-row gap-8 items-start">
+            <ScoreRing score={report.overallScore} />
+            <div className="flex-1 w-full">
+              {report.scoreBreakdown.map((s) => (
+                <ProgressBar key={s.label} label={s.label} score={s.score} compact />
+              ))}
+            </div>
+          </div>
+          <p className="mt-6 text-[13.5px] leading-relaxed text-river-ink2">{report.overallSummary}</p>
+        </Section>
+
+        {/* Evolution */}
+        <Section title="Projeção de Evolução do Perfil">
+          <ProgressBar label="Atual" score={report.evolution.current} />
+          <div className="mt-2 space-y-6">
+            {report.evolution.phases.map((phase, i) => (
+              <div key={phase.name} className="flex gap-4">
+                <span className="text-[12px] font-semibold text-river-accent tabular-nums pt-0.5 w-4 shrink-0">
+                  {i + 1}
+                </span>
+                <div className="flex-1">
+                  <div className="flex items-baseline justify-between mb-1">
+                    <h3 className="text-[13.5px] font-semibold text-river-ink">{phase.name}</h3>
+                    <span className="text-[12px] text-river-ink3 tabular-nums">{Math.round(phase.score)}</span>
+                  </div>
+                  <p className="text-[13.5px] leading-relaxed text-river-ink2">{phase.description}</p>
+                </div>
+              </div>
             ))}
           </div>
-        </div>
-        <p className="mt-4 text-sm leading-relaxed text-river-navy/80 bg-river-mist rounded-lg p-4 border border-river-sky">
-          {report.overallSummary}
-        </p>
-      </Section>
+        </Section>
 
-      {/* Evolução do perfil */}
-      <Section title="Projeção de Evolução do Perfil" icon={<IconTrendUp />}>
-        <ProgressBar label="Atual" score={report.evolution.current} />
-        {report.evolution.phases.map((phase, i) => (
-          <div key={phase.name} className="mb-4">
-            <ProgressBar label={`Fase ${i + 1} · ${phase.name}`} score={phase.score} compact />
-            <p className="text-sm text-river-navy/75 leading-relaxed pl-0.5">{phase.description}</p>
+        {/* Bio */}
+        <Section title="Diagnóstico de Bio e Perfil">
+          <ProgressBar label="Score de alinhamento" score={report.bioDiagnosis.alignmentScore} />
+          <div className="border-l-2 border-river-line pl-4 my-5">
+            <p className="text-[13.5px] italic text-river-ink2">&ldquo;{report.bioDiagnosis.currentBio}&rdquo;</p>
           </div>
-        ))}
-      </Section>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-6">{report.bioDiagnosis.analysis}</p>
 
-      {/* Bio Diagnosis */}
-      <Section title="Diagnóstico de Bio e Perfil" icon={<IconUser />}>
-        <ProgressBar label="Score de alinhamento" score={report.bioDiagnosis.alignmentScore} />
-        <div className="bg-river-mist border border-river-sky rounded-lg p-4 mb-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-river-blue/70 mb-1">
-            Bio atual
-          </p>
-          <p className="text-sm italic text-river-navy/85">&ldquo;{report.bioDiagnosis.currentBio}&rdquo;</p>
-        </div>
-        <p className="text-sm leading-relaxed text-river-navy/85 mb-4">
-          {report.bioDiagnosis.analysis}
-        </p>
-        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4 mb-5">
-          <p className="text-xs font-bold uppercase tracking-wide text-rose-700 mb-2">
-            Problemas identificados
-          </p>
-          <ul className="space-y-1.5">
-            {report.bioDiagnosis.problems.map((p, i) => (
-              <li key={i} className="flex gap-2 text-sm text-rose-900/90">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
-                {p}
-              </li>
+          <Label>Problemas identificados</Label>
+          <Plain items={report.bioDiagnosis.problems} />
+
+          <div className="border-t border-river-line mt-6 pt-6">
+            <Label>Estrutura da bio ideal</Label>
+            <div className="space-y-2 text-[13.5px]">
+              <p><span className="text-river-ink3">Promessa — </span>{report.bioDiagnosis.idealBio.promise}</p>
+              <p><span className="text-river-ink3">Autoridade — </span>{report.bioDiagnosis.idealBio.authority}</p>
+              <p><span className="text-river-ink3">CTA — </span>{report.bioDiagnosis.idealBio.cta}</p>
+            </div>
+          </div>
+        </Section>
+
+        {/* Engagement */}
+        <Section title="Análise de Engajamento">
+          <div className="flex gap-10 mb-6">
+            <Stat label="sua taxa" value={`${report.engagement.rate.toFixed(2)}%`} accent />
+            <Stat label="média de mercado" value={`${report.engagement.marketAverage.toFixed(1)}%`} />
+            <Stat label="curtidas/post" value={String(report.engagement.avgLikes)} />
+            <Stat label="comentários/post" value={String(report.engagement.avgComments)} />
+          </div>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.engagement.analysis}</p>
+        </Section>
+
+        {/* Gaps */}
+        <Section title="Gaps Identificados">
+          <div className="divide-y divide-river-line">
+            {report.gaps.map((g) => (
+              <div key={g.title} className="py-4 first:pt-0">
+                <h3 className="text-[13.5px] font-semibold text-river-ink mb-1">{g.title}</h3>
+                <p className="text-[13.5px] leading-relaxed text-river-ink2">{g.description}</p>
+              </div>
             ))}
-          </ul>
-        </div>
-        <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-emerald-700 mb-3">
-            Estrutura da bio ideal
-          </p>
-          <p className="text-sm mb-1.5">
-            <span className="font-semibold text-emerald-800">Promessa: </span>
-            {report.bioDiagnosis.idealBio.promise}
-          </p>
-          <p className="text-sm mb-1.5">
-            <span className="font-semibold text-emerald-800">Autoridade: </span>
-            {report.bioDiagnosis.idealBio.authority}
-          </p>
-          <p className="text-sm">
-            <span className="font-semibold text-emerald-800">CTA: </span>
-            {report.bioDiagnosis.idealBio.cta}
-          </p>
-        </div>
-      </Section>
-
-      {/* Engagement */}
-      <Section title="Análise de Engajamento" icon={<IconBolt />}>
-        <div className="grid grid-cols-2 gap-4 mb-5">
-          <div className="bg-rose-50 border border-rose-200 rounded-lg p-5 text-center">
-            <div className="font-display text-3xl font-bold text-rose-600">
-              {report.engagement.rate.toFixed(2)}%
-            </div>
-            <div className="text-xs text-rose-700/80 mt-1">Sua taxa</div>
           </div>
-          <div className="bg-river-mist border border-river-sky rounded-lg p-5 text-center">
-            <div className="font-display text-3xl font-bold text-river-navy">
-              {report.engagement.marketAverage.toFixed(1)}%
+          {report.identityCrisisNote && (
+            <p className="mt-6 text-[13.5px] leading-relaxed text-river-ink2">{report.identityCrisisNote}</p>
+          )}
+        </Section>
+
+        {/* SWOT */}
+        <Section title="Análise SWOT">
+          <SwotGrid swot={report.swot} />
+        </Section>
+
+        {/* Market positioning */}
+        <Section title="Posicionamento de Mercado">
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-6">{report.marketPositioning.summary}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div>
+              <Label>Vantagens únicas</Label>
+              <Plain items={report.marketPositioning.uniqueAdvantages} />
             </div>
-            <div className="text-xs text-river-navy/60 mt-1">Média de mercado</div>
+            <div>
+              <Label>Gaps a preencher</Label>
+              <Plain items={report.marketPositioning.gapsToFill} />
+            </div>
           </div>
-        </div>
-        <p className="text-sm leading-relaxed text-river-navy/85">{report.engagement.analysis}</p>
-        <div className="flex gap-6 mt-4 text-sm text-river-navy/70">
-          <span>
-            <strong className="text-river-navy">{report.engagement.avgLikes}</strong> curtidas/post
-          </span>
-          <span>
-            <strong className="text-river-navy">{report.engagement.avgComments}</strong> comentários/post
-          </span>
-        </div>
-      </Section>
+        </Section>
 
-      {/* Gaps */}
-      <Section title="Gaps Identificados" icon={<IconCompass />}>
-        <div className="space-y-3">
-          {report.gaps.map((g) => (
-            <div key={g.title} className="bg-river-mist border border-river-sky rounded-lg p-4">
-              <p className="font-semibold text-sm text-river-navy mb-1">{g.title}</p>
-              <p className="text-sm text-river-navy/75 leading-relaxed">{g.description}</p>
+        {/* Archetypes */}
+        <Section title="Posicionamento / Arquétipo">
+          <div className="space-y-6">
+            {report.archetypes.map((a) => (
+              <div key={a.name}>
+                <p className="text-[14px] font-bold text-river-ink">
+                  {a.name} <span className="font-normal text-river-ink3">({a.subtitle})</span>
+                </p>
+                <p className="text-[13.5px] text-river-ink2 mt-2 leading-relaxed">
+                  <span className="text-river-ink3">O que é — </span>{a.whatItIs}
+                </p>
+                <p className="text-[13.5px] text-river-ink2 mt-1 leading-relaxed">
+                  <span className="text-river-ink3">No perfil — </span>{a.inProfile}
+                </p>
+                <p className="text-[13.5px] text-river-ink2 mt-1 leading-relaxed">
+                  <span className="text-river-ink3">Pra você — </span>{a.whatItMeansForYou}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* Persona */}
+        <Section title="Análise de Persona / Avatar">
+          <Label>Avatar ideal</Label>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-6">{report.persona.idealAvatar}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6">
+            <div>
+              <Label>Dor</Label>
+              <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.persona.pain}</p>
             </div>
-          ))}
-        </div>
-        {report.identityCrisisNote && (
-          <p className="mt-5 text-sm leading-relaxed text-river-navy/85 border-t border-river-sky pt-4">
-            {report.identityCrisisNote}
-          </p>
-        )}
-      </Section>
+            <div>
+              <Label>Desejo</Label>
+              <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.persona.desire}</p>
+            </div>
+          </div>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-6">{report.persona.contentAlignment}</p>
+          <Label>Recomendações</Label>
+          <Plain items={report.persona.recommendations} />
+        </Section>
 
-      {/* SWOT */}
-      <Section title="Análise SWOT" icon={<IconGrid />}>
-        <SwotGrid swot={report.swot} />
-      </Section>
-
-      {/* Market Positioning */}
-      <Section title="Posicionamento de Mercado" icon={<IconCompass />}>
-        <p className="text-sm leading-relaxed text-river-navy/85 mb-5">
-          {report.marketPositioning.summary}
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-emerald-700 mb-2">
-              Vantagens únicas
-            </p>
-            <ul className="space-y-1.5">
-              {report.marketPositioning.uniqueAdvantages.map((a, i) => (
-                <li key={i} className="text-sm text-emerald-900/90 flex gap-2">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
-                  {a}
-                </li>
+        {/* Success formula */}
+        <Section title="Fórmula do Sucesso">
+          <Label>Melhores formatos</Label>
+          <Plain items={report.successFormula.bestFormats} />
+          <div className="mt-6">
+            <Label>Pilares de conteúdo</Label>
+            <div className="space-y-2 text-[13.5px]">
+              {report.successFormula.contentPillars.map((p) => (
+                <p key={p.name}>
+                  <span className="font-semibold text-river-ink">{p.name} — </span>
+                  <span className="text-river-ink2">{p.description}</span>
+                </p>
               ))}
-            </ul>
-          </div>
-          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-rose-700 mb-2">
-              Gaps a preencher
-            </p>
-            <ul className="space-y-1.5">
-              {report.marketPositioning.gapsToFill.map((a, i) => (
-                <li key={i} className="text-sm text-rose-900/90 flex gap-2">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
-                  {a}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Section>
-
-      {/* Archetypes */}
-      <Section title="Posicionamento / Arquétipo" icon={<IconMask />}>
-        <div className="space-y-5">
-          {report.archetypes.map((a) => (
-            <div key={a.name} className="border-l-4 border-river-primary pl-4">
-              <p className="font-display font-bold text-river-navy">
-                {a.name} <span className="font-sans font-normal text-sm text-river-navy/50">({a.subtitle})</span>
-              </p>
-              <p className="text-sm text-river-navy/80 mt-1.5">
-                <strong>O que é: </strong>
-                {a.whatItIs}
-              </p>
-              <p className="text-sm text-river-navy/80 mt-1">
-                <strong>No perfil: </strong>
-                {a.inProfile}
-              </p>
-              <p className="text-sm text-river-navy/80 mt-1">
-                <strong>O que significa pra você: </strong>
-                {a.whatItMeansForYou}
-              </p>
             </div>
-          ))}
-        </div>
-      </Section>
+          </div>
+          <div className="mt-6">
+            <Label>Frequência recomendada</Label>
+            <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.successFormula.postingFrequency}</p>
+          </div>
+        </Section>
 
-      {/* Persona */}
-      <Section title="Análise de Persona / Avatar" icon={<IconUser />}>
-        <p className="text-xs font-bold uppercase tracking-wide text-river-blue/70 mb-1">
-          Avatar ideal
-        </p>
-        <p className="text-sm text-river-navy/85 mb-4 leading-relaxed">{report.persona.idealAvatar}</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <div className="bg-river-mist border border-river-sky rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-river-navy/60 mb-1">Dor</p>
-            <p className="text-sm text-river-navy/80">{report.persona.pain}</p>
+        {/* Best times */}
+        <Section title="Melhores Horários para Postar">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+            <div>
+              <Label>Dias úteis</Label>
+              <div className="space-y-1.5 text-[13.5px] text-river-ink tabular-nums">
+                {report.bestTimes.weekdays.map((t, i) => <p key={i}>{t}</p>)}
+              </div>
+            </div>
+            <div>
+              <Label>Fins de semana</Label>
+              <div className="space-y-1.5 text-[13.5px] text-river-ink tabular-nums">
+                {report.bestTimes.weekends.map((t, i) => <p key={i}>{t}</p>)}
+              </div>
+            </div>
           </div>
-          <div className="bg-river-mist border border-river-sky rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-river-navy/60 mb-1">Desejo</p>
-            <p className="text-sm text-river-navy/80">{report.persona.desire}</p>
-          </div>
-        </div>
-        <p className="text-sm text-river-navy/85 mb-4 leading-relaxed">
-          {report.persona.contentAlignment}
-        </p>
-        <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-rose-700 mb-2">Recomendações</p>
-          <ul className="space-y-1.5">
-            {report.persona.recommendations.map((r, i) => (
-              <li key={i} className="text-sm text-rose-900/90 flex gap-2">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+        </Section>
+
+        {/* Trends */}
+        <Section title="Tendências de Mercado">
+          <Plain items={report.marketTrends} />
+        </Section>
+
+        {/* Final recommendations */}
+        <Section title="Recomendações Finais">
+          <ol className="space-y-4">
+            {report.finalRecommendations.map((r, i) => (
+              <li key={i} className="flex gap-3 text-[13.5px] leading-relaxed text-river-ink">
+                <span className="font-bold text-river-accent tabular-nums shrink-0">{i + 1}.</span>
                 {r}
               </li>
             ))}
-          </ul>
-        </div>
-      </Section>
+          </ol>
+        </Section>
 
-      {/* Success Formula */}
-      <Section title="Fórmula do Sucesso" icon={<IconSparkle />}>
-        <p className="text-xs font-bold uppercase tracking-wide text-river-blue/70 mb-2">
-          Melhores formatos
-        </p>
-        <div className="space-y-2 mb-5">
-          {report.successFormula.bestFormats.map((f, i) => (
-            <div key={i} className="bg-river-mist border border-river-sky rounded-lg p-3 text-sm text-river-navy/85">
-              {f}
+        {/* Summary */}
+        <Section title="Resumo de Forças e Fraquezas">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 mb-6">
+            <div>
+              <Label>Principal força</Label>
+              <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.summary.mainStrength}</p>
             </div>
-          ))}
-        </div>
-        <p className="text-xs font-bold uppercase tracking-wide text-river-blue/70 mb-2">
-          Pilares de conteúdo
-        </p>
-        <div className="space-y-2 mb-5">
-          {report.successFormula.contentPillars.map((p) => (
-            <div key={p.name} className="text-sm">
-              <span className="font-semibold text-river-navy">{p.name}: </span>
-              <span className="text-river-navy/75">{p.description}</span>
+            <div>
+              <Label>Principal fraqueza</Label>
+              <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.summary.mainWeakness}</p>
             </div>
-          ))}
-        </div>
-        <p className="text-xs font-bold uppercase tracking-wide text-river-blue/70 mb-1">
-          Frequência recomendada
-        </p>
-        <p className="text-sm text-river-navy/85">{report.successFormula.postingFrequency}</p>
-      </Section>
-
-      {/* Best times */}
-      <Section title="Melhores Horários para Postar" icon={<IconClock />}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div className="bg-river-mist border border-river-sky rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-river-navy/60 mb-2">
-              Dias úteis
-            </p>
-            <ul className="space-y-1">
-              {report.bestTimes.weekdays.map((t, i) => (
-                <li key={i} className="text-sm text-river-navy/85">
-                  {t}
-                </li>
-              ))}
-            </ul>
           </div>
-          <div className="bg-river-mist border border-river-sky rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-river-navy/60 mb-2">
-              Fins de semana
-            </p>
-            <ul className="space-y-1">
-              {report.bestTimes.weekends.map((t, i) => (
-                <li key={i} className="text-sm text-river-navy/85">
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </Section>
+          <Label>Oportunidades identificadas</Label>
+          <Plain items={report.summary.opportunities} />
+        </Section>
+      </div>
 
-      {/* Trends */}
-      <Section title="Tendências de Mercado" icon={<IconLayers />}>
-        <div className="space-y-2">
-          {report.marketTrends.map((t, i) => (
-            <div key={i} className="bg-river-mist border border-river-sky rounded-lg p-3 text-sm text-river-navy/85">
-              {t}
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      {/* Final recommendations */}
-      <Section title="Recomendações Finais" icon={<IconSparkle />}>
-        <ul className="space-y-2.5">
-          {report.finalRecommendations.map((r, i) => (
-            <li key={i} className="flex gap-3 text-sm text-river-navy/85 leading-relaxed">
-              <span className="shrink-0 w-6 h-6 rounded-full bg-river-primary text-white text-xs font-bold flex items-center justify-center">
-                {i + 1}
-              </span>
-              {r}
-            </li>
-          ))}
-        </ul>
-      </Section>
-
-      {/* Summary */}
-      <Section title="Resumo de Forças e Fraquezas" icon={<IconScale />}>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-          <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-emerald-700 mb-2">
-              Principal força
-            </p>
-            <p className="text-sm text-emerald-900/90">{report.summary.mainStrength}</p>
-          </div>
-          <div className="bg-rose-50 border border-rose-200 rounded-lg p-4">
-            <p className="text-xs font-bold uppercase tracking-wide text-rose-700 mb-2">
-              Principal fraqueza
-            </p>
-            <p className="text-sm text-rose-900/90">{report.summary.mainWeakness}</p>
-          </div>
-        </div>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-xs font-bold uppercase tracking-wide text-river-blue mb-2">
-            Oportunidades identificadas
-          </p>
-          <ul className="space-y-1.5">
-            {report.summary.opportunities.map((o, i) => (
-              <li key={i} className="text-sm text-river-navy/85 flex gap-2">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-river-primary shrink-0" />
-                {o}
-              </li>
-            ))}
-          </ul>
-        </div>
-      </Section>
-
-      <div className="text-center text-xs text-river-navy/40 pt-4">
+      <div className="text-center text-[11px] text-river-ink3 pt-14">
         Gerado por River Agency ·{" "}
-        {new Date(report.generatedAt).toLocaleDateString("pt-BR", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-        })}
+        {new Date(report.generatedAt).toLocaleDateString("pt-BR", { day: "2-digit", month: "long", year: "numeric" })}
       </div>
     </div>
   );

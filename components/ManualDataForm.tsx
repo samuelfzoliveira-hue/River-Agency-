@@ -30,103 +30,74 @@ export function ManualDataForm({
       posts: Number(posts) || 0,
       avgLikes: Number(avgLikes) || undefined,
       avgComments: Number(avgComments) || undefined,
-      recentCaptions: captions
-        .split("\n")
-        .map((l) => l.trim())
-        .filter(Boolean),
+      recentCaptions: captions.split("\n").map((l) => l.trim()).filter(Boolean),
     });
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white rounded-xl2 shadow-card border border-river-sky p-6 sm:p-8 space-y-4"
-    >
-      <p className="text-sm text-river-navy/70 leading-relaxed">
-        Não conseguimos coletar os dados de <strong>@{username}</strong> automaticamente — o
-        Instagram costuma bloquear acessos automatizados a partir de servidores. Preencha os
-        dados públicos do perfil abaixo (copiando do próprio Instagram) para gerar o diagnóstico
-        completo.
+    <form onSubmit={handleSubmit} className="max-w-report mx-auto">
+      <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-8">
+        Não conseguimos coletar os dados de <strong className="text-river-ink">@{username}</strong>{" "}
+        automaticamente — o Instagram costuma bloquear acessos automatizados a partir de servidores. Preencha os
+        dados públicos do perfil abaixo para gerar o diagnóstico completo.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
         <Field label="Nome de exibição">
-          <input
-            className="input"
-            value={fullName}
-            onChange={(e) => setFullName(e.target.value)}
-            placeholder="Ex: Samuel Ferraz"
-          />
+          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Ex: Ana Souza" />
         </Field>
         <Field label="Seguidores">
-          <input
-            className="input"
-            type="number"
-            value={followers}
-            onChange={(e) => setFollowers(e.target.value)}
-            placeholder="Ex: 2700"
-          />
+          <input type="number" value={followers} onChange={(e) => setFollowers(e.target.value)} placeholder="Ex: 2700" />
         </Field>
         <Field label="Curtidas médias por post">
-          <input
-            className="input"
-            type="number"
-            value={avgLikes}
-            onChange={(e) => setAvgLikes(e.target.value)}
-            placeholder="Ex: 90"
-          />
+          <input type="number" value={avgLikes} onChange={(e) => setAvgLikes(e.target.value)} placeholder="Ex: 90" />
         </Field>
         <Field label="Comentários médios por post">
-          <input
-            className="input"
-            type="number"
-            value={avgComments}
-            onChange={(e) => setAvgComments(e.target.value)}
-            placeholder="Ex: 7"
-          />
+          <input type="number" value={avgComments} onChange={(e) => setAvgComments(e.target.value)} placeholder="Ex: 7" />
         </Field>
       </div>
 
       <Field label="Bio atual (copie exatamente)">
-        <textarea
-          className="input min-h-[70px]"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          placeholder="Cole a bio do perfil aqui..."
-        />
+        <textarea className="min-h-[64px]" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Cole a bio do perfil aqui..." />
       </Field>
 
-      <Field label="Legendas de posts recentes (uma por linha, quanto mais melhor)">
+      <Field label="Legendas de posts recentes (uma por linha)">
         <textarea
-          className="input min-h-[110px]"
+          className="min-h-[100px]"
           value={captions}
           onChange={(e) => setCaptions(e.target.value)}
-          placeholder={"Cole aqui algumas legendas recentes, uma por linha..."}
+          placeholder="Cole aqui algumas legendas recentes, uma por linha..."
         />
       </Field>
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full rounded-lg bg-river-primary text-white font-semibold py-3 hover:bg-river-blue transition disabled:opacity-60"
+        className="w-full rounded-lg bg-river-ink text-white text-[13.5px] font-semibold py-3 mt-2 hover:bg-river-accent transition disabled:opacity-50"
       >
         {loading ? "Gerando diagnóstico..." : "Gerar diagnóstico completo"}
       </button>
 
       <style jsx>{`
-        .input {
+        input,
+        textarea {
           width: 100%;
-          border: 1px solid #dce6fb;
-          border-radius: 0.5rem;
-          padding: 0.6rem 0.75rem;
-          font-size: 0.875rem;
-          color: #0b1f3a;
-          background: #fafbff;
+          border: none;
+          border-bottom: 1px solid #e7e9f0;
+          padding: 8px 0;
+          font-size: 13.5px;
+          color: #12182b;
+          background: transparent;
+          resize: vertical;
         }
-        .input:focus {
+        input::placeholder,
+        textarea::placeholder {
+          color: #9aa2b4;
+        }
+        input:focus,
+        textarea:focus {
           outline: none;
-          border-color: #1d63e8;
-          box-shadow: 0 0 0 3px rgba(29, 99, 232, 0.12);
+          border-color: #1554f0;
         }
       `}</style>
     </form>
@@ -135,8 +106,10 @@ export function ManualDataForm({
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <span className="block text-xs font-semibold text-river-navy/70 mb-1.5">{label}</span>
+    <label className="block mb-6">
+      <span className="block text-[11px] font-semibold tracking-[0.06em] uppercase text-river-ink3 mb-2">
+        {label}
+      </span>
       {children}
     </label>
   );
