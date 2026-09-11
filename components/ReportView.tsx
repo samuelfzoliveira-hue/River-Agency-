@@ -78,7 +78,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
             <div className="text-[13px] text-river-ink2">{profile.fullName}</div>
           </div>
         </div>
-        <div className="flex gap-10 mt-7">
+        <div className="flex gap-6 sm:gap-10 mt-7 flex-wrap">
           <Stat label="seguidores" value={formatFollowers(profile.followers)} />
           <Stat label="engajamento" value={`${profile.engagementRate?.toFixed(2)}%`} accent />
         </div>
@@ -151,7 +151,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
 
         {/* Engagement */}
         <Section title="Análise de Engajamento">
-          <div className="flex gap-10 mb-6 flex-wrap">
+          <div className="flex gap-6 sm:gap-10 mb-6 flex-wrap">
             <Stat label="sua taxa" value={`${report.engagement.rate.toFixed(2)}%`} accent />
             <Stat label="média de mercado" value={`${report.engagement.marketAverage.toFixed(1)}%`} />
             <Stat label="curtidas/post" value={String(report.engagement.avgLikes)} />

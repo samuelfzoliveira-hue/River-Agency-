@@ -69,7 +69,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen px-5 sm:px-6">
-      <header className="no-print max-w-report mx-auto flex items-center justify-between py-6">
+      <header className="no-print max-w-report mx-auto flex items-center justify-between flex-wrap gap-2 py-6">
         <Logo />
         {phase === "result" && report && (
           <div className="flex items-center gap-5">

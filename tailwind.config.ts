@@ -11,7 +11,7 @@ const config: Config = {
         river: {
           ink: "#12182B",
           ink2: "#5B6478",
-          ink3: "#9AA2B4",
+          ink3: "#767F93",
           paper: "#FFFFFF",
           canvas: "#EBEFF7",
           line: "#E7EAF3",
