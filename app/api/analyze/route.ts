@@ -25,7 +25,10 @@ export async function POST(req: NextRequest) {
 
   let profile: InstagramProfileData | null = null;
 
-  if (body.manualData && Object.keys(body.manualData).length > 0) {
+  if (body.manualData && (body.manualData.bio || body.manualData.recentCaptions?.length)) {
+    // The client already tried an automatic fetch and is now sending the
+    // fields that couldn't be collected automatically (bio/captions),
+    // possibly merged with prefill data we handed back earlier.
     profile = {
       username,
       fullName: body.manualData.fullName || username,
@@ -40,19 +43,27 @@ export async function POST(req: NextRequest) {
       source: "manual",
     };
   } else {
-    profile = await fetchInstagramProfile(username);
-  }
+    const result = await fetchInstagramProfile(username);
 
-  if (!profile) {
-    return NextResponse.json(
-      {
-        needsManualData: true,
-        username,
-        error:
-          "Não conseguimos coletar os dados automaticamente (o Instagram costuma bloquear acessos automatizados). Informe alguns dados do perfil manualmente para gerar o diagnóstico.",
-      },
-      { status: 200 }
-    );
+    if (result.status === "full") {
+      profile = result.profile;
+    } else {
+      // Nothing usable, or only partial (name/followers/counts, no bio/captions
+      // — Instagram usually withholds those from unauthenticated requests).
+      // Ask the client for just what's missing, pre-filled with whatever we did get.
+      return NextResponse.json(
+        {
+          needsManualData: true,
+          username,
+          prefill: result.status === "partial" ? result.partial : { username },
+          error:
+            result.status === "partial"
+              ? "Conseguimos os números do perfil automaticamente, mas o Instagram não libera a bio e as legendas sem login. Complete só isso abaixo."
+              : "Não conseguimos coletar os dados automaticamente agora (o Instagram costuma bloquear acessos automatizados, principalmente de servidores). Informe os dados do perfil manualmente para gerar o diagnóstico.",
+        },
+        { status: 200 }
+      );
+    }
   }
 
   if (!process.env.ANTHROPIC_API_KEY) {
@@ -75,12 +86,7 @@ export async function POST(req: NextRequest) {
     const followers = profile.followers || 1;
     const engagementRate =
       profile.avgLikes && profile.avgComments
-        ? Number(
-            (
-              ((profile.avgLikes + profile.avgComments) / followers) *
-              100
-            ).toFixed(2)
-          )
+        ? Number((((profile.avgLikes + profile.avgComments) / followers) * 100).toFixed(2))
         : diagnostic.engagement?.rate ?? 0;
 
     return NextResponse.json({
@@ -96,9 +102,6 @@ export async function POST(req: NextRequest) {
       dataSource: profile.source,
     });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: err?.message || "Falha ao gerar o diagnóstico." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: err?.message || "Falha ao gerar o diagnóstico." }, { status: 500 });
   }
 }

@@ -3,22 +3,28 @@
 import { useState } from "react";
 import { InstagramProfileData } from "@/lib/types";
 
+type Prefill = Partial<Pick<InstagramProfileData, "fullName" | "followers" | "following" | "posts">>;
+
 export function ManualDataForm({
   username,
+  prefill,
   onSubmit,
   loading,
 }: {
   username: string;
+  prefill?: Prefill;
   onSubmit: (data: Partial<InstagramProfileData>) => void;
   loading: boolean;
 }) {
-  const [fullName, setFullName] = useState("");
+  const [fullName, setFullName] = useState(prefill?.fullName || "");
   const [bio, setBio] = useState("");
-  const [followers, setFollowers] = useState("");
-  const [posts, setPosts] = useState("");
+  const [followers, setFollowers] = useState(prefill?.followers ? String(prefill.followers) : "");
+  const [posts, setPosts] = useState(prefill?.posts ? String(prefill.posts) : "");
   const [avgLikes, setAvgLikes] = useState("");
   const [avgComments, setAvgComments] = useState("");
   const [captions, setCaptions] = useState("");
+
+  const gotSomethingAutomatically = Boolean(prefill?.followers || prefill?.fullName);
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -35,30 +41,25 @@ export function ManualDataForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-report mx-auto">
-      <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-8">
-        Não conseguimos coletar os dados de <strong className="text-river-ink">@{username}</strong>{" "}
-        automaticamente — o Instagram costuma bloquear acessos automatizados a partir de servidores. Preencha os
-        dados públicos do perfil abaixo para gerar o diagnóstico completo.
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
-        <Field label="Nome de exibição">
-          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Ex: Ana Souza" />
-        </Field>
-        <Field label="Seguidores">
-          <input type="number" value={followers} onChange={(e) => setFollowers(e.target.value)} placeholder="Ex: 2700" />
-        </Field>
-        <Field label="Curtidas médias por post">
-          <input type="number" value={avgLikes} onChange={(e) => setAvgLikes(e.target.value)} placeholder="Ex: 90" />
-        </Field>
-        <Field label="Comentários médios por post">
-          <input type="number" value={avgComments} onChange={(e) => setAvgComments(e.target.value)} placeholder="Ex: 7" />
-        </Field>
-      </div>
+    <form
+      onSubmit={handleSubmit}
+      className="max-w-report mx-auto bg-white border border-river-line rounded-2xl shadow-[0_1px_2px_rgba(18,24,43,.04),0_12px_28px_-14px_rgba(18,24,43,.14)] p-6 sm:p-7"
+    >
+      {gotSomethingAutomatically ? (
+        <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-8">
+          Coletamos os números de <strong className="text-river-ink">@{username}</strong> automaticamente. O
+          Instagram não libera a bio nem as legendas sem login — é só completar essas duas coisas abaixo.
+        </p>
+      ) : (
+        <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-8">
+          Não conseguimos coletar os dados de <strong className="text-river-ink">@{username}</strong>{" "}
+          automaticamente agora — o Instagram costuma bloquear acessos automatizados a partir de servidores.
+          Preencha os dados públicos do perfil abaixo para gerar o diagnóstico completo.
+        </p>
+      )}
 
       <Field label="Bio atual (copie exatamente)">
-        <textarea className="min-h-[64px]" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Cole a bio do perfil aqui..." />
+        <textarea className="min-h-[64px]" value={bio} onChange={(e) => setBio(e.target.value)} placeholder="Cole a bio do perfil aqui..." autoFocus />
       </Field>
 
       <Field label="Legendas de posts recentes (uma por linha)">
@@ -69,6 +70,21 @@ export function ManualDataForm({
           placeholder="Cole aqui algumas legendas recentes, uma por linha..."
         />
       </Field>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6">
+        <Field label={`Nome de exibição${prefill?.fullName ? " (coletado)" : ""}`}>
+          <input value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Ex: Ana Souza" />
+        </Field>
+        <Field label={`Seguidores${prefill?.followers ? " (coletado)" : ""}`}>
+          <input type="number" value={followers} onChange={(e) => setFollowers(e.target.value)} placeholder="Ex: 2700" />
+        </Field>
+        <Field label="Curtidas médias por post">
+          <input type="number" value={avgLikes} onChange={(e) => setAvgLikes(e.target.value)} placeholder="Ex: 90" />
+        </Field>
+        <Field label="Comentários médios por post">
+          <input type="number" value={avgComments} onChange={(e) => setAvgComments(e.target.value)} placeholder="Ex: 7" />
+        </Field>
+      </div>
 
       <button
         type="submit"

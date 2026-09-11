@@ -14,6 +14,7 @@ export default function Home() {
   const [phase, setPhase] = useState<Phase>("input");
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState("");
+  const [prefill, setPrefill] = useState<Partial<InstagramProfileData> | undefined>(undefined);
   const [error, setError] = useState("");
   const [report, setReport] = useState<DiagnosticReport | null>(null);
 
@@ -36,6 +37,7 @@ export default function Home() {
 
       if (data.needsManualData) {
         setUsername(data.username);
+        setPrefill(data.prefill);
         setPhase("manual");
         setLoading(false);
         return;
@@ -62,6 +64,7 @@ export default function Home() {
     setUrl("");
     setError("");
     setLoading(false);
+    setPrefill(undefined);
   }
 
   return (
@@ -93,18 +96,21 @@ export default function Home() {
 
         {phase === "input" && (
           <div className="max-w-report mx-auto">
-            <form onSubmit={handleSubmit} className="flex items-end gap-4 border-b border-river-line pb-3">
+            <form
+              onSubmit={handleSubmit}
+              className="flex items-center gap-4 bg-white border border-river-line rounded-xl px-5 py-1.5 shadow-[0_1px_2px_rgba(18,24,43,.04),0_10px_24px_-14px_rgba(18,24,43,.14)]"
+            >
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="instagram.com/seuusuario ou @seuusuario"
-                className="flex-1 text-[15px] outline-none bg-transparent text-river-ink placeholder:text-river-ink3 py-2"
+                className="flex-1 text-[15px] outline-none bg-transparent text-river-ink placeholder:text-river-ink3 py-3"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !url.trim()}
-                className="text-[13.5px] font-semibold text-river-accent hover:text-river-accentDeep transition disabled:opacity-40 shrink-0 pb-2"
+                className="text-[13.5px] font-semibold text-river-accent hover:text-river-accentDeep transition disabled:opacity-40 shrink-0"
               >
                 {loading ? "Analisando..." : "Analisar →"}
               </button>
@@ -122,7 +128,7 @@ export default function Home() {
 
         {phase === "manual" && (
           <div>
-            <ManualDataForm username={username} loading={loading} onSubmit={(data) => runAnalysis(data)} />
+            <ManualDataForm username={username} prefill={prefill} loading={loading} onSubmit={(data) => runAnalysis(data)} />
             {error && <div className="max-w-report mx-auto mt-4 text-[13.5px] text-river-danger">{error}</div>}
           </div>
         )}
