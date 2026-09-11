@@ -97,8 +97,8 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         </p>
       </Section>
 
-      {/* Evolução PMM */}
-      <Section title="Projeção de Evolução PMM" icon={<IconTrendUp />}>
+      {/* Evolução do perfil */}
+      <Section title="Projeção de Evolução do Perfil" icon={<IconTrendUp />}>
         <ProgressBar label="Atual" score={report.evolution.current} />
         {report.evolution.phases.map((phase, i) => (
           <div key={phase.name} className="mb-4">

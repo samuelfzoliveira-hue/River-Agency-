@@ -2,7 +2,7 @@
 
 Ferramenta web para gerar um diagnóstico completo de perfis do Instagram (posicionamento,
 conteúdo, engajamento, arquétipo de marca, persona, SWOT, recomendações etc.), seguindo a
-metodologia PMM da River Agency — inspirada no modelo de relatório usado pela agência.
+metodologia própria de diagnóstico e evolução da River Agency.
 
 Basta colar o link (ou `@usuário`) de um perfil público do Instagram e a ferramenta gera o
 relatório completo, com a identidade visual da River Agency (branco + azul), pronto para
@@ -18,7 +18,7 @@ visualizar na tela ou exportar em PDF.
    possa ser gerado.
 2. **Geração do diagnóstico** (`lib/claude.ts`): os dados do perfil são enviados para a API da
    Anthropic (Claude), com um prompt que replica a mesma profundidade de análise de um relatório
-   de consultoria: score geral, projeção de evolução (PMM), diagnóstico de bio, análise de
+   de consultoria: score geral, projeção de evolução do perfil, diagnóstico de bio, análise de
    engajamento, gaps, SWOT, posicionamento de mercado, arquétipo de marca, persona/avatar,
    fórmula de sucesso, melhores horários, tendências e recomendações finais.
 3. **Relatório visual** (`components/ReportView.tsx`): o diagnóstico é renderizado como um

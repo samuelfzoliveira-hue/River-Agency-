@@ -2,7 +2,7 @@
   "name": "river-agency-diagnostic",
   "version": "1.0.0",
   "private": true,
-  "description": "River Agency - Ferramenta de Diagnóstico de Perfil Instagram (PMM)",
+  "description": "River Agency - Ferramenta de Diagnóstico de Perfil Instagram",
   "scripts": {
     "dev": "next dev",
     "build": "next build",

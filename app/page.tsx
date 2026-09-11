@@ -155,7 +155,7 @@ export default function Home() {
       </div>
 
       <footer className="no-print text-center text-xs text-river-navy/35 pb-8">
-        River Agency · Ferramenta de Diagnóstico de Perfil (metodologia PMM)
+        River Agency · Ferramenta de Diagnóstico de Perfil
       </footer>
     </main>
   );

@@ -40,7 +40,7 @@ export function Logo({ variant = "dark" }: { variant?: "dark" | "light" }) {
             variant === "dark" ? "text-river-blue/60" : "text-white/60"
           }`}
         >
-          Diagnóstico PMM
+          Diagnóstico de Perfil
         </div>
       </div>
     </div>
