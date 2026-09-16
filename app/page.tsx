@@ -1,152 +1,295 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { Logo } from "@/components/Logo";
-import { ReportView } from "@/components/ReportView";
-import { ManualDataForm } from "@/components/ManualDataForm";
-import { PdfExportButton } from "@/components/PdfExportButton";
-import { DiagnosticReport, InstagramProfileData } from "@/lib/types";
+import { useAdminSession } from "@/lib/aprovacao/useAdminSession";
+import type { ContentItem } from "@/lib/aprovacao/types";
+import { StoryTray } from "@/components/aprovacao/StoryTray";
+import { ReelsRow } from "@/components/aprovacao/ReelsRow";
+import { PostCard } from "@/components/aprovacao/PostCard";
+import { PostModal } from "@/components/aprovacao/PostModal";
+import { AddContentModal } from "@/components/aprovacao/AddContentModal";
+import { AdminLoginModal } from "@/components/aprovacao/AdminLoginModal";
+import { EmptyState } from "@/components/aprovacao/EmptyState";
+import { FeedSkeleton } from "@/components/aprovacao/FeedSkeleton";
+import { Toast } from "@/components/aprovacao/Toast";
 
-type Phase = "input" | "manual" | "result";
+function AprovacaoApp() {
+  const searchParams = useSearchParams();
+  const clienteParam = searchParams.get("cliente");
+  const admin = useAdminSession();
 
-export default function Home() {
-  const [url, setUrl] = useState("");
-  const [phase, setPhase] = useState<Phase>("input");
-  const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState("");
-  const [prefill, setPrefill] = useState<Partial<InstagramProfileData> | undefined>(undefined);
-  const [error, setError] = useState("");
-  const [report, setReport] = useState<DiagnosticReport | null>(null);
+  const [items, setItems] = useState<ContentItem[] | null>(null);
+  const [loadError, setLoadError] = useState("");
+  const [selectedCliente, setSelectedCliente] = useState("todos");
+  const [showLogin, setShowLogin] = useState(false);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [openPostId, setOpenPostId] = useState<string | null>(null);
+  const [toast, setToast] = useState<string | null>(null);
 
-  async function runAnalysis(manualData?: Partial<InstagramProfileData>) {
-    setLoading(true);
-    setError("");
+  const refresh = useCallback(async () => {
+    setLoadError("");
     try {
-      const res = await fetch("/api/analyze", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ instagramUrl: url, manualData }),
-      });
+      const qs = clienteParam ? `?cliente=${encodeURIComponent(clienteParam)}` : "";
+      const res = await fetch(`/api/aprovacao${qs}`, { cache: "no-store" });
+      if (!res.ok) throw new Error("request failed");
       const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Falha ao gerar diagnóstico.");
-        setLoading(false);
-        return;
-      }
-
-      if (data.needsManualData) {
-        setUsername(data.username);
-        setPrefill(data.prefill);
-        setPhase("manual");
-        setLoading(false);
-        return;
-      }
-
-      setReport(data as DiagnosticReport);
-      setPhase("result");
-      setLoading(false);
+      setItems(data.items as ContentItem[]);
     } catch {
-      setError("Erro de conexão. Tente novamente.");
-      setLoading(false);
+      setLoadError("Não foi possível carregar o conteúdo agora.");
+    }
+  }, [clienteParam]);
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  const knownClientes = useMemo(
+    () => Array.from(new Set((items ?? []).map((i) => i.cliente))).sort((a, b) => a.localeCompare(b)),
+    [items]
+  );
+
+  const visibleItems = useMemo(() => {
+    if (!items) return [];
+    if (clienteParam) return items;
+    if (selectedCliente === "todos") return items;
+    return items.filter((i) => i.cliente === selectedCliente);
+  }, [items, clienteParam, selectedCliente]);
+
+  const stories = useMemo(() => visibleItems.filter((i) => i.type === "story"), [visibleItems]);
+  const reels = useMemo(() => visibleItems.filter((i) => i.type === "reels"), [visibleItems]);
+  const feedPosts = useMemo(
+    () => visibleItems.filter((i) => i.type === "feed" || i.type === "carousel"),
+    [visibleItems]
+  );
+
+  const openPost = useMemo(() => items?.find((i) => i.id === openPostId) ?? null, [items, openPostId]);
+
+  async function updateItem(id: string, patch: Partial<Pick<ContentItem, "status" | "clientNote">>) {
+    const prevItems = items;
+    setItems((cur) => (cur ? cur.map((it) => (it.id === id ? { ...it, ...patch } : it)) : cur));
+    try {
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (admin.isAdmin && admin.password) headers["x-admin-password"] = admin.password;
+      const res = await fetch(`/api/aprovacao/${id}`, {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify(patch),
+      });
+      if (!res.ok) throw new Error("request failed");
+      const data = await res.json();
+      setItems((cur) => (cur ? cur.map((it) => (it.id === id ? (data.item as ContentItem) : it)) : cur));
+    } catch {
+      setItems(prevItems ?? null);
+      setToast("Não foi possível salvar. Tente novamente.");
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (!url.trim()) return;
-    runAnalysis();
+  function handleApprove(id: string) {
+    updateItem(id, { status: "aprovado" });
   }
 
-  function reset() {
-    setPhase("input");
-    setReport(null);
-    setUrl("");
-    setError("");
-    setLoading(false);
-    setPrefill(undefined);
+  function handleRequestChanges(id: string, note: string) {
+    updateItem(id, { status: "ajustes", clientNote: note });
   }
+
+  async function handleDelete(id: string) {
+    if (!admin.isAdmin || !admin.password) return;
+    if (typeof window !== "undefined" && !window.confirm("Remover este conteúdo definitivamente?")) return;
+    const prevItems = items;
+    setItems((cur) => (cur ? cur.filter((it) => it.id !== id) : cur));
+    setOpenPostId((cur) => (cur === id ? null : cur));
+    try {
+      const res = await fetch(`/api/aprovacao/${id}`, {
+        method: "DELETE",
+        headers: { "x-admin-password": admin.password },
+      });
+      if (!res.ok) throw new Error("request failed");
+    } catch {
+      setItems(prevItems ?? null);
+      setToast("Não foi possível remover. Tente novamente.");
+    }
+  }
+
+  const hasContent = visibleItems.length > 0;
 
   return (
-    <main className="min-h-screen px-5 sm:px-6">
-      <header className="no-print max-w-report mx-auto flex items-center justify-between flex-wrap gap-2 py-6">
-        <Logo />
-        <div className="flex items-center gap-5">
-          <a
-            href="/aprovacao"
-            className="text-[12.5px] font-medium text-river-ink3 hover:text-river-accent transition"
-          >
-            Central de Aprovação →
-          </a>
-          {phase === "result" && report && (
-            <div className="flex items-center gap-5">
-              <PdfExportButton report={report} filename={`diagnostico-${report.profile.username}.pdf`} />
-              <button onClick={reset} className="text-[13px] font-medium text-river-ink3 hover:text-river-ink transition">
-                Nova análise
+    <main className="min-h-screen px-4 sm:px-6 pb-24">
+      <header className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 py-6">
+        <Logo subtitle="Central de Aprovação" />
+        <div className="flex flex-wrap items-center gap-3">
+          {!clienteParam && knownClientes.length > 0 && (
+            <select
+              value={selectedCliente}
+              onChange={(e) => setSelectedCliente(e.target.value)}
+              className="rounded-lg border border-river-line bg-white px-3 py-2 text-[12.5px] font-medium text-river-ink outline-none transition hover:border-river-ink3 focus:border-river-accent"
+            >
+              <option value="todos">Todos os clientes</option>
+              {knownClientes.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          )}
+          {admin.isAdmin ? (
+            <>
+              <button
+                type="button"
+                onClick={() => setShowAddModal(true)}
+                className="rounded-lg bg-river-accent px-3.5 py-2 text-[12.5px] font-semibold text-white transition-all duration-200 hover:bg-river-accentDeep hover:-translate-y-0.5"
+              >
+                + Adicionar conteúdo
               </button>
-            </div>
+              <button
+                type="button"
+                onClick={admin.logout}
+                className="text-[12px] font-medium text-river-ink3 transition hover:text-river-ink"
+              >
+                Sair do modo agência
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowLogin(true)}
+              className="rounded-lg border border-river-line px-3.5 py-2 text-[12.5px] font-semibold text-river-ink2 transition-all duration-200 hover:border-river-accent hover:text-river-accent"
+            >
+              Modo Agência
+            </button>
+          )}
+          {!clienteParam && (
+            <a
+              href="/diagnostico"
+              className="text-[12px] font-medium text-river-ink3 transition hover:text-river-accent"
+            >
+              Diagnóstico de Perfil →
+            </a>
           )}
         </div>
       </header>
 
-      <div className="py-6">
-        {phase !== "result" && (
-          <div className="max-w-report mx-auto mb-12">
-            <h1 className="text-[28px] sm:text-[34px] font-bold text-river-ink leading-tight tracking-tight">
-              Diagnóstico de perfil <span className="text-river-accent">Instagram</span>
-            </h1>
-            <p className="text-river-ink2 mt-3 text-[14px] leading-relaxed max-w-md">
-              Cole o link de um perfil do Instagram e receba um diagnóstico completo de posicionamento, conteúdo,
-              engajamento e estratégia.
-            </p>
-          </div>
-        )}
-
-        {phase === "input" && (
-          <div className="max-w-report mx-auto">
-            <form
-              onSubmit={handleSubmit}
-              className="flex items-center gap-4 bg-white border border-river-line rounded-xl px-5 py-1.5 shadow-[0_1px_2px_rgba(18,24,43,.04),0_10px_24px_-14px_rgba(18,24,43,.14)]"
-            >
-              <input
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="instagram.com/seuusuario ou @seuusuario"
-                className="flex-1 text-[15px] outline-none bg-transparent text-river-ink placeholder:text-river-ink3 py-3"
-                disabled={loading}
-              />
-              <button
-                type="submit"
-                disabled={loading || !url.trim()}
-                className="text-[13.5px] font-semibold text-river-accent hover:text-river-accentDeep transition disabled:opacity-40 shrink-0"
-              >
-                {loading ? "Analisando..." : "Analisar →"}
-              </button>
-            </form>
-
-            {loading && (
-              <div className="mt-6 text-[13.5px] text-river-ink3">
-                Coletando dados públicos e gerando o diagnóstico completo...
-              </div>
-            )}
-
-            {error && <div className="mt-6 text-[13.5px] text-river-danger">{error}</div>}
-          </div>
-        )}
-
-        {phase === "manual" && (
-          <div>
-            <ManualDataForm username={username} prefill={prefill} loading={loading} onSubmit={(data) => runAnalysis(data)} />
-            {error && <div className="max-w-report mx-auto mt-4 text-[13.5px] text-river-danger">{error}</div>}
-          </div>
-        )}
-
-        {phase === "result" && report && <ReportView report={report} id="report-root" />}
+      <div className="mx-auto max-w-5xl mb-10">
+        <h1 className="text-[26px] sm:text-[32px] font-bold tracking-tight text-river-ink leading-tight">
+          Central de Aprovação de <span className="text-river-accent">Conteúdo</span>
+        </h1>
+        <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-river-ink2">
+          {clienteParam
+            ? `Prévia dos conteúdos preparados para ${clienteParam}. Toque em cada peça para abrir, aprovar ou pedir ajustes.`
+            : "Feed, carrosséis, stories e reels prontos para aprovação — exatamente como aparecerão no Instagram."}
+        </p>
       </div>
 
-      <footer className="no-print max-w-report mx-auto text-center text-[11px] text-river-ink3 py-10">
-        River Agency · Ferramenta de Diagnóstico de Perfil
+      <div className="mx-auto max-w-5xl">
+        {loadError && (
+          <div className="mb-8 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-river-badLine bg-river-badSoft px-4 py-3 text-[13px] text-river-bad">
+            {loadError}
+            <button
+              type="button"
+              onClick={refresh}
+              className="rounded-md bg-white px-3 py-1.5 text-[12px] font-semibold text-river-bad transition hover:bg-river-bad hover:text-white"
+            >
+              Tentar novamente
+            </button>
+          </div>
+        )}
+
+        {items === null && !loadError && <FeedSkeleton />}
+
+        {items !== null && !hasContent && (
+          <EmptyState isAdmin={admin.isAdmin} onAdd={() => setShowAddModal(true)} />
+        )}
+
+        {items !== null && hasContent && (
+          <div className="space-y-12">
+            <StoryTray
+              stories={stories}
+              isAdmin={admin.isAdmin}
+              onApprove={handleApprove}
+              onRequestChanges={handleRequestChanges}
+              onDelete={handleDelete}
+            />
+            <ReelsRow
+              reels={reels}
+              isAdmin={admin.isAdmin}
+              onApprove={handleApprove}
+              onRequestChanges={handleRequestChanges}
+              onDelete={handleDelete}
+            />
+
+            {feedPosts.length > 0 && (
+              <section>
+                <h2 className="mb-3 text-[13px] font-bold uppercase tracking-wide text-river-ink2">
+                  Feed &amp; Carrossel
+                </h2>
+                <div className="mx-auto max-w-[470px] space-y-6">
+                  {feedPosts.map((item, i) => (
+                    <PostCard
+                      key={item.id}
+                      item={item}
+                      isAdmin={admin.isAdmin}
+                      onOpen={() => setOpenPostId(item.id)}
+                      onApprove={() => handleApprove(item.id)}
+                      onRequestChanges={(note) => handleRequestChanges(item.id, note)}
+                      onDelete={() => handleDelete(item.id)}
+                      style={{ animationDelay: `${Math.min(i, 6) * 70}ms` }}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+          </div>
+        )}
+      </div>
+
+      <footer className="mx-auto max-w-5xl text-center text-[11px] text-river-ink3 py-14">
+        River Agency · Central de Aprovação de Conteúdo
       </footer>
+
+      {showLogin && (
+        <AdminLoginModal
+          onClose={() => setShowLogin(false)}
+          onSuccess={(pw) => {
+            admin.login(pw);
+            setShowLogin(false);
+          }}
+        />
+      )}
+
+      {showAddModal && admin.password && (
+        <AddContentModal
+          password={admin.password}
+          defaultCliente={clienteParam ?? undefined}
+          knownClientes={knownClientes}
+          onClose={() => setShowAddModal(false)}
+          onCreated={(item) => {
+            setItems((cur) => (cur ? [item, ...cur] : [item]));
+            setShowAddModal(false);
+          }}
+        />
+      )}
+
+      {openPost && (
+        <PostModal
+          item={openPost}
+          isAdmin={admin.isAdmin}
+          onClose={() => setOpenPostId(null)}
+          onApprove={() => handleApprove(openPost.id)}
+          onRequestChanges={(note) => handleRequestChanges(openPost.id, note)}
+          onDelete={() => handleDelete(openPost.id)}
+        />
+      )}
+
+      {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
     </main>
+  );
+}
+
+export default function HomePage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen px-4 sm:px-6 py-10" />}>
+      <AprovacaoApp />
+    </Suspense>
   );
 }
