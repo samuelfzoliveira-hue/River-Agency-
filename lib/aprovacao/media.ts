@@ -2,8 +2,8 @@ import { promises as fs } from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
 import type { MediaFile } from "./types";
+import { UPLOAD_DIR } from "./storage";
 
-const UPLOAD_DIR = path.join(process.cwd(), "public", "uploads", "aprovacao");
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200MB
 
 function safeExtension(file: File): string {
@@ -29,7 +29,7 @@ export async function saveMediaFile(file: File): Promise<MediaFile> {
   await fs.writeFile(path.join(UPLOAD_DIR, filename), bytes);
 
   return {
-    url: `/uploads/aprovacao/${filename}`,
+    url: `/api/aprovacao/media/${filename}`,
     kind: isVideo ? "video" : "image",
   };
 }

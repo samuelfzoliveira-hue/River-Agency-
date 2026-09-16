@@ -70,7 +70,26 @@ carrossel arrastável, stories em tela cheia com barra de progresso, e reels em 
   conteúdo dele.
 - **Aprovação do cliente**: não exige login — o cliente abre o link, visualiza cada peça (com
   legenda) e clica em "Aprovar" ou "Pedir ajustes" (com campo de observação).
-- **Armazenamento**: os itens ficam em `data/aprovacao.json` e os arquivos de mídia em
-  `public/uploads/aprovacao/` (ambos fora do controle de versão — dados de runtime). Em produção,
-  isso requer um servidor Node com disco persistente entre deploys (não funciona em
-  hospedagens serverless que descartam o filesystem local a cada requisição).
+- **Armazenamento**: os itens ficam em `<APROVACAO_STORAGE_DIR>/data/aprovacao.json` e os
+  arquivos de mídia em `<APROVACAO_STORAGE_DIR>/uploads/aprovacao/` (servidos pela rota
+  `/api/aprovacao/media/[arquivo]`), fora do controle de versão — dados de runtime. Sem
+  `APROVACAO_STORAGE_DIR` definida, usa uma pasta dentro do próprio projeto (bom para uso local).
+  Em produção, isso requer um servidor Node com **disco persistente** entre deploys/reinícios
+  (não funciona em hospedagens serverless, como a Vercel, que descartam o filesystem local a
+  cada requisição).
+
+### Deploy no Render (um clique via Blueprint)
+
+O repositório já inclui um `render.yaml` pronto: cria um Web Service Node com disco persistente
+de 1GB montado em `/var/data` e já aponta `APROVACAO_STORAGE_DIR` para lá.
+
+1. Acesse [render.com](https://render.com) e entre com sua conta do GitHub.
+2. **New** → **Blueprint** → selecione o repositório `River-Agency-`.
+3. O Render detecta o `render.yaml` automaticamente. Defina o valor de
+   `APROVACAO_ADMIN_PASSWORD` quando solicitado (e `ANTHROPIC_API_KEY`, opcional, só se for usar
+   o diagnóstico de perfil).
+4. Clique em **Apply**/**Deploy**. Após o build, a Central de Aprovação fica em
+   `https://<seu-serviço>.onrender.com/aprovacao`.
+
+> O disco persistente exige um plano pago (o free tier do Render não oferece disco), pois sem ele
+> o conteúdo enviado seria perdido a cada reinício do servidor.

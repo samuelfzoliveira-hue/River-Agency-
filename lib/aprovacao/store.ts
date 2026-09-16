@@ -1,9 +1,6 @@
 import { promises as fs } from "fs";
-import path from "path";
 import type { ContentItem } from "./types";
-
-const DATA_DIR = path.join(process.cwd(), "data");
-const DATA_FILE = path.join(DATA_DIR, "aprovacao.json");
+import { DATA_DIR, DATA_FILE } from "./storage";
 
 // Serializa as escritas para evitar corromper o arquivo em requisições concorrentes.
 let writeQueue: Promise<unknown> = Promise.resolve();

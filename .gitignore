@@ -8,4 +8,4 @@ out
 
 # Conteúdo e mídia enviados na Central de Aprovação (dados de runtime, não versionados)
 /data
-/public/uploads
+/uploads
