@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "River Agency | Diagnóstico de Perfil Instagram",
+  title: "River Agency | Central de Aprovação de Conteúdo",
   description:
-    "Cole o link de um perfil do Instagram e receba um diagnóstico completo de posicionamento, conteúdo, engajamento e estratégia — pela River Agency.",
+    "Central de aprovação de conteúdo da River Agency: prévia de posts de feed, carrosséis, stories e reels para aprovação dos clientes.",
 };
 
 export default function RootLayout({
