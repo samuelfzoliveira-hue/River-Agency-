@@ -54,3 +54,23 @@ relatório de exemplo para que a interface possa ser avaliada sem custo de API.
 - Tailwind CSS (tema River Agency: branco + azul)
 - Anthropic SDK (Claude) para geração do diagnóstico
 - html2canvas + jsPDF para exportação em PDF
+
+## Central de Aprovação de Conteúdo (`/aprovacao`)
+
+Página separada para a agência publicar conteúdo (posts de feed, carrosséis, stories e reels)
+e enviar para os clientes aprovarem, com prévia fiel ao formato real do Instagram: feed com
+carrossel arrastável, stories em tela cheia com barra de progresso, e reels em vídeo.
+
+- **Acesso da agência**: clique em "Modo Agência" e informe a senha definida em
+  `APROVACAO_ADMIN_PASSWORD` (padrão `rioadmin` se a variável não estiver configurada — troque
+  em produção). Com a sessão de agência ativa, é possível publicar novo conteúdo, remover itens
+  e enviar links por cliente.
+- **Link por cliente**: acrescente `?cliente=Nome+do+Cliente` à URL (ex.:
+  `/aprovacao?cliente=Loja+Aurora`) para enviar ao cliente uma visão já filtrada apenas com o
+  conteúdo dele.
+- **Aprovação do cliente**: não exige login — o cliente abre o link, visualiza cada peça (com
+  legenda) e clica em "Aprovar" ou "Pedir ajustes" (com campo de observação).
+- **Armazenamento**: os itens ficam em `data/aprovacao.json` e os arquivos de mídia em
+  `public/uploads/aprovacao/` (ambos fora do controle de versão — dados de runtime). Em produção,
+  isso requer um servidor Node com disco persistente entre deploys (não funciona em
+  hospedagens serverless que descartam o filesystem local a cada requisição).

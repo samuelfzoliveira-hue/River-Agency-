@@ -71,14 +71,22 @@ export default function Home() {
     <main className="min-h-screen px-5 sm:px-6">
       <header className="no-print max-w-report mx-auto flex items-center justify-between flex-wrap gap-2 py-6">
         <Logo />
-        {phase === "result" && report && (
-          <div className="flex items-center gap-5">
-            <PdfExportButton report={report} filename={`diagnostico-${report.profile.username}.pdf`} />
-            <button onClick={reset} className="text-[13px] font-medium text-river-ink3 hover:text-river-ink transition">
-              Nova análise
-            </button>
-          </div>
-        )}
+        <div className="flex items-center gap-5">
+          <a
+            href="/aprovacao"
+            className="text-[12.5px] font-medium text-river-ink3 hover:text-river-accent transition"
+          >
+            Central de Aprovação →
+          </a>
+          {phase === "result" && report && (
+            <div className="flex items-center gap-5">
+              <PdfExportButton report={report} filename={`diagnostico-${report.profile.username}.pdf`} />
+              <button onClick={reset} className="text-[13px] font-medium text-river-ink3 hover:text-river-ink transition">
+                Nova análise
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
       <div className="py-6">
