@@ -1,0 +1,1464 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>River Agency — O curso da sua marca</title>
+<meta name="description" content="River Agency: posicionamento estratégico para marcas e perfis que querem crescer, vender e se tornar referência. Desde 2025, Bahia.">
+<meta name="theme-color" content="#0B1B36">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='9' fill='%230B1B36'/%3E%3Cpath d='M16 6c4 5 7 8.5 7 12.5a7 7 0 0 1-14 0C9 14.500 12 11 16 6z' fill='%235B9BFF'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@300;400;500;600;700;800&display=swap">
+<script>
+/* Layout "empilhado" (mobile, telas baixas ou movimento reduzido): decidido antes da primeira pintura. */
+(function(){
+  var mq = matchMedia('(max-width: 820px), (max-height: 560px), (prefers-reduced-motion: reduce)');
+  if (mq.matches) document.documentElement.classList.add('stack');
+})();
+</script>
+<style>
+:root{
+  --navy:#0B1B36; --navy2:#12284D; --royal:#2563EB; --blue:#5B9BFF; --sky:#8DB8FF;
+  --ice:#E6EEFB; --off:#F5F7FB; --white:#FFFFFF;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  --sans:"Manrope",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --gut:clamp(20px,5vw,72px);
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scrollbar-gutter:stable;-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{font-family:var(--sans);font-size:17px;line-height:1.6;color:var(--navy);background:var(--off);overflow-x:clip;position:relative;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+main{position:relative}
+img,svg{display:block;max-width:100%}
+a{color:inherit}
+ul,ol{list-style:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+[hidden]{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+:focus-visible{outline:2px solid var(--blue);outline-offset:4px;border-radius:6px}
+::selection{background:var(--royal);color:#fff}
+
+/* ---------- Tipografia ---------- */
+.h2{font-family:var(--serif);font-weight:400;font-size:clamp(40px,6.2vw,100px);line-height:.98;letter-spacing:-.02em}
+.h2 em,.em{font-style:italic;color:var(--royal)}
+.dark .h2 em,.dark .em{color:var(--sky)}
+.eyebrow{display:inline-flex;align-items:center;gap:12px;font:700 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--royal)}
+.eyebrow::before{content:"";width:28px;height:1.5px;background:currentColor;opacity:.7}
+.dark .eyebrow{color:var(--sky)}
+.lead{font-size:clamp(17px,1.5vw,21px);color:#33466A;max-width:56ch}
+.dark .lead{color:#B9C9E6}
+/* título revelado por máscara */
+.ln{display:block;overflow:hidden;padding:.06em .04em .14em;margin:-.06em -.04em -.14em}
+.ln>span{display:block;will-change:transform}
+
+/* ---------- Estrutura de seção ---------- */
+.sec{position:relative;padding:clamp(96px,13vw,190px) var(--gut)}
+.sec::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--bg,#F5F7FB)}
+.wrap{position:relative;z-index:2;max-width:1320px;margin:0 auto}
+.dark{color:#E6EEFB}
+.cover{z-index:3}              /* seções de tela cheia: o rio passa por baixo */
+
+/* ---------- Grão, cursor, preloader ---------- */
+.grain{position:fixed;inset:0;z-index:9000;pointer-events:none;opacity:.075;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .04 0 0 0 0 .1 0 0 0 0 .21 1.3 0 0 0 -.1'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+#trail{position:fixed;inset:0;z-index:9590;pointer-events:none;display:none}
+#cur{position:fixed;left:0;top:0;z-index:9600;pointer-events:none;display:none;will-change:transform}
+#cur i{display:block;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;border:1.5px solid var(--blue);background:rgba(91,155,255,.14);transition:transform .35s var(--ease),background .3s,border-color .3s}
+#cur.big i{transform:scale(1.9);background:rgba(91,155,255,.22)}
+#cur.down i{transform:scale(.7)}
+.has-cur #trail,.has-cur #cur{display:block}
+.has-cur,.has-cur *{cursor:none!important}
+
+#pre{position:fixed;inset:0;z-index:9500;background:var(--navy);display:grid;place-items:center;overflow:hidden}
+.nogsap #pre{display:none}
+.pre-fill{position:absolute;left:50%;top:50%;width:230vmax;height:230vmax;margin:-115vmax 0 0 -115vmax;border-radius:50%;background:var(--off);transform:scale(0)}
+.pre-svg{position:relative;width:200px;height:200px;overflow:visible}
+
+/* ---------- Navegação ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:5000;display:flex;justify-content:space-between;align-items:center;padding:16px var(--gut);color:var(--navy);pointer-events:none;transition:color .4s}
+.nav>*{pointer-events:auto}
+.nav.on-dark{color:#E6EEFB}
+.brand,.nav-cta{background:rgba(245,247,251,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nav.on-dark .brand,.nav.on-dark .nav-cta{background:rgba(11,27,54,.45)}
+.brand{padding:7px 16px 7px 14px;border-radius:99px;display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:28px;line-height:1;text-decoration:none}
+.brand svg{width:15px;height:20px;color:var(--royal)}
+.nav.on-dark .brand svg{color:var(--sky)}
+.nav-cta{font:700 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;text-decoration:none;padding:12px 18px;border-radius:99px;border:1.5px solid currentColor;transition:background .3s,color .3s}
+.nav-cta:hover{background:currentColor}
+.nav-cta:hover span{color:var(--off);mix-blend-mode:normal}
+
+/* ---------- Ícones ---------- */
+.ico{flex:none;width:54px;height:54px;border-radius:17px;display:grid;place-items:center;color:#fff;background:linear-gradient(140deg,#1D4ED8 0%,var(--royal) 38%,var(--blue) 100%);box-shadow:inset 0 1px 0 rgba(255,255,255,.4),0 14px 28px -12px rgba(37,99,235,.75)}
+.ico svg{width:26px;height:26px}
+.ico-s{width:44px;height:44px;border-radius:14px}
+.ico-s svg{width:22px;height:22px}
+
+/* ---------- 2. HERO ---------- */
+.hero{min-height:100svh;display:grid;place-items:center;padding-top:110px;padding-bottom:120px;overflow:hidden;--bg:#F5F7FB}
+#water{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-in{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(8px,2vw,22px);width:100%}
+.river-h{width:min(94vw,1280px);line-height:0;margin:0 auto}
+.river-svg{width:100%;height:auto;overflow:visible}
+.river-svg text{font-family:var(--serif);font-size:380px;text-anchor:middle;letter-spacing:-6px}
+.river-svg .outline{fill:rgba(11,27,54,.035);stroke:rgba(11,27,54,.28);stroke-width:1.2}
+.wv{animation:wv var(--s,9s) linear infinite}
+.wv.rev{animation-direction:reverse}
+@keyframes wv{to{transform:translateX(-600px)}}
+.hero-sub{max-width:44ch;font-size:clamp(17px,1.65vw,22px);line-height:1.5;color:#27395C;font-weight:500}
+.chips{position:absolute;inset:0;z-index:2;pointer-events:none}
+.chips li{position:absolute;left:var(--x);top:var(--y);animation:drift var(--t,9s) ease-in-out var(--dl,0s) infinite alternate}
+@keyframes drift{from{transform:translate3d(0,0,0)}to{transform:translate3d(var(--dx,14px),var(--dy,-18px),0)}}
+.chip{display:inline-flex;align-items:center;gap:9px;padding:11px 19px;border-radius:99px;background:rgba(255,255,255,.66);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(37,99,235,.2);font:700 12px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--navy2);box-shadow:0 14px 30px -18px rgba(11,27,54,.5)}
+.chip::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--royal);box-shadow:0 0 0 4px rgba(37,99,235,.15)}
+.hero-foot{position:absolute;left:var(--gut);right:var(--gut);bottom:28px;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;font:600 12px/1.4 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:#3A4D72}
+.cue{display:flex;flex-direction:column;align-items:center;gap:10px}
+.cue i{display:block;width:1.5px;height:44px;background:linear-gradient(var(--royal),transparent);transform-origin:top;animation:cue 2.2s var(--ease) infinite}
+@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+/* ---------- Rio principal ---------- */
+#river{position:absolute;left:0;top:0;z-index:1;pointer-events:none;overflow:visible}
+#drop{will-change:transform}
+#drop .halo{transform-box:fill-box;transform-origin:center;animation:halo 2.4s ease-in-out infinite}
+@keyframes halo{0%,100%{transform:scale(.8);opacity:.9}50%{transform:scale(1.5);opacity:.35}}
+
+/* ---------- 3. MANIFESTO ---------- */
+.mani{--bg:#F5F7FB;padding-bottom:clamp(60px,9vw,140px)}
+.mani-t{font-family:var(--serif);font-size:clamp(30px,4.6vw,72px);line-height:1.12;letter-spacing:-.015em;max-width:21em;margin-top:34px}
+.mani-t .w{display:inline-block;opacity:.16}
+.mani-t .w.em{color:var(--royal)}
+.fin{height:100svh;min-height:520px;display:grid;place-items:center;padding:0 var(--gut);background:var(--navy);position:relative}
+.fin::before{display:none}
+.fin-t{font-family:var(--serif);font-size:clamp(38px,7.4vw,126px);line-height:1.02;letter-spacing:-.02em;max-width:15em;color:#fff}
+.fin-t .w{display:inline-block;opacity:.14}
+.fin-t .w.em{font-style:italic;color:var(--sky)}
+
+/* ---------- 4. QUEM SOMOS ---------- */
+.who{--bg:#EEF3FC}
+.grid2{display:grid;grid-template-columns:1.05fr .95fr;gap:clamp(40px,7vw,120px);align-items:center}
+.who .lead{margin-top:30px}
+.who .lead+.lead{margin-top:16px}
+.who-r{position:relative;display:grid;gap:22px;padding:20px 0}
+.fcard{width:min(100%,340px)}
+.fcard:nth-child(2){justify-self:end}
+.fcard:nth-child(3){margin-left:12%}
+.fl{background:#fff;border-radius:26px;padding:28px 30px;box-shadow:0 36px 60px -34px rgba(11,27,54,.45),0 2px 0 rgba(255,255,255,.8) inset;border:1px solid rgba(37,99,235,.08);animation:float var(--ft,7s) ease-in-out var(--fd,0s) infinite alternate}
+@keyframes float{from{transform:translate3d(0,-7px,0)}to{transform:translate3d(0,9px,0)}}
+.fcard .big{display:block;font-family:var(--serif);font-size:clamp(60px,6.4vw,92px);line-height:1;letter-spacing:-.03em;color:var(--navy)}
+.fcard .big small{font-size:.38em;letter-spacing:0;color:var(--royal);font-style:italic;margin-left:6px}
+.fcard p{margin-top:10px;color:#4A5C80;font-size:15px;line-height:1.5}
+
+/* ---------- 5. COMO ATUAMOS ---------- */
+.how{--bg:#E6EEFB}
+.how-h{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:end;margin-bottom:clamp(40px,6vw,80px)}
+.stairs{display:grid;grid-template-columns:repeat(4,1fr);align-items:end;gap:14px;height:min(580px,72vh);min-height:460px}
+.stp{position:relative;height:var(--h)}
+.fill{position:absolute;inset:0;border-radius:22px 22px 6px 6px;background:linear-gradient(180deg,#2F6BEB 0%,var(--royal) 45%,#17409F 100%);transform-origin:50% 100%;box-shadow:0 30px 50px -30px rgba(37,99,235,.8)}
+.crest{position:absolute;left:0;right:0;top:-13px;height:26px;overflow:hidden;border-radius:22px 22px 0 0;pointer-events:none}
+.crest svg{max-width:none;position:absolute;left:0;top:0;width:200%;height:26px;animation:wv2 7s linear infinite;color:var(--blue)}
+@keyframes wv2{to{transform:translateX(-50%)}}
+.stp-c{position:relative;padding:26px 24px;color:#fff}
+.stp-c .num{font:700 12px/1 var(--sans);letter-spacing:.2em;color:var(--sky)}
+.stp-c h3{font-family:var(--serif);font-weight:400;font-size:clamp(28px,2.6vw,40px);line-height:1;margin:12px 0 10px;letter-spacing:-.01em}
+.stp-c p{font-size:14.5px;line-height:1.5;color:#DCE8FF}
+
+/* ---------- 6. SERVIÇOS ---------- */
+.svcs{--bg:linear-gradient(180deg,#0E2145 0%,#12284D 45%,#0F2447 100%);overflow:hidden}
+.blob{position:absolute;border-radius:50%;pointer-events:none;z-index:0;animation:blob 18s ease-in-out infinite alternate}
+.blob.b1{width:60vmax;height:60vmax;left:-20vmax;top:18%;background:radial-gradient(closest-side,rgba(37,99,235,.55),transparent)}
+.blob.b2{width:50vmax;height:50vmax;right:-18vmax;top:44%;background:radial-gradient(closest-side,rgba(91,155,255,.38),transparent);animation-delay:-6s}
+.blob.b3{width:44vmax;height:44vmax;left:20%;bottom:-16vmax;background:radial-gradient(closest-side,rgba(37,99,235,.45),transparent);animation-delay:-11s}
+@keyframes blob{to{transform:translate3d(6vmax,-4vmax,0)}}
+.svc-h{display:flex;justify-content:space-between;align-items:end;gap:40px;margin-bottom:clamp(40px,5vw,72px);flex-wrap:wrap}
+.svc-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+.svc{grid-column:span var(--c);position:relative;min-height:320px;padding:28px;border-radius:28px;overflow:hidden;display:flex;flex-direction:column;background:linear-gradient(150deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(18px) saturate(1.3);-webkit-backdrop-filter:blur(18px) saturate(1.3);box-shadow:0 30px 60px -30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.2);will-change:transform;cursor:pointer;color:#fff;text-align:left}
+.svc .glow{position:absolute;left:0;top:0;width:420px;height:420px;border-radius:50%;background:radial-gradient(closest-side,rgba(141,184,255,.5),transparent);opacity:0;transition:opacity .4s;pointer-events:none}
+.svc:hover .glow{opacity:1}
+.svc-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative}
+.svc-n{font:700 12px/1 var(--sans);letter-spacing:.2em;color:var(--sky)}
+.svc h3{position:relative;font-family:var(--serif);font-weight:400;font-size:clamp(30px,2.9vw,44px);line-height:1;margin:auto 0 12px;padding-top:44px;letter-spacing:-.01em}
+.svc p{position:relative;color:#C5D4F0;font-size:15.5px;line-height:1.5;max-width:34ch}
+.svc-go{position:relative;margin-top:22px;display:inline-flex;align-items:center;gap:10px;font:700 12px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;color:var(--sky)}
+.svc-go svg{width:18px;height:18px;transition:transform .4s var(--ease)}
+.svc:hover .svc-go svg{transform:translateX(6px)}
+
+/* painel em tela cheia */
+#sp{position:fixed;inset:0;z-index:8000;color:#E6EEFB}
+.sp-bg{position:absolute;inset:0;background:radial-gradient(120% 90% at 85% 0%,#1D4ED8 0%,rgba(29,78,216,0) 55%),linear-gradient(160deg,#16356B,#0B1B36 70%);border-radius:18px;transform-origin:0 0}
+.sp-in{position:absolute;inset:0;overflow-y:auto;display:grid;grid-template-columns:.9fr 1.1fr;gap:clamp(30px,6vw,110px);padding:clamp(90px,10vh,120px) var(--gut) 60px;align-content:center;overscroll-behavior:contain}
+.sp-x{position:fixed;top:18px;right:var(--gut);width:52px;height:52px;border-radius:50%;border:1.5px solid rgba(255,255,255,.4);display:grid;place-items:center;z-index:3;transition:background .3s,transform .4s var(--ease)}
+.sp-x:hover{background:rgba(255,255,255,.14);transform:rotate(90deg)}
+.sp-x svg{width:22px;height:22px}
+.sp-ico{width:72px;height:72px;border-radius:22px;transform-origin:0 0}
+.sp-ico svg{width:34px;height:34px}
+.sp-k{margin-top:30px;font:700 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--sky)}
+.sp-t{font-family:var(--serif);font-weight:400;font-size:clamp(44px,6.6vw,108px);line-height:.98;letter-spacing:-.02em;margin:18px 0 20px}
+.sp-sub{font-family:var(--serif);font-style:italic;font-size:clamp(22px,2.2vw,32px);line-height:1.2;color:var(--sky);max-width:20ch}
+.sp-r{display:grid;gap:34px;align-content:center;max-width:720px}
+.sp-r h4{font:700 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--sky);margin-bottom:14px}
+.sp-r p{font-size:clamp(16px,1.35vw,19px);color:#D3DFF5;line-height:1.65}
+.sp-list{display:grid;grid-template-columns:1fr 1fr;gap:12px 28px}
+.sp-list li{display:flex;gap:12px;align-items:center;font-weight:600;font-size:16px;color:#fff}
+.sp-list svg{flex:none;width:22px;height:22px;padding:4px;border-radius:50%;background:var(--royal);color:#fff;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.sp-res{padding:24px 26px;border-radius:22px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)}
+.sp-res p{font-family:var(--serif);font-size:clamp(24px,2.4vw,34px);line-height:1.15;color:#fff}
+
+/* ---------- 7. MÉTODO RIVER ---------- */
+.metodo{height:100svh;padding:0;overflow:hidden;--bg:linear-gradient(160deg,#12284D,#0B1B36)}
+.mt-l1{position:absolute;inset:0;z-index:0;background:linear-gradient(160deg,#3A76EE 0%,#2563EB 45%,#1A49B3 100%);will-change:opacity}
+.mt-vp{position:absolute;inset:0;z-index:2}
+.mt-track{position:absolute;left:0;top:0;height:100%;display:flex;will-change:transform}
+.mt-intro{flex:0 0 auto;position:relative;height:100%;width:min(48vw,640px);padding:0 4vw 0 calc(8vw + 64px)}
+.mt-intro .stg-in{left:calc(8vw + 64px);right:4vw}
+.mt-intro .mi-up{bottom:calc(50% + 44px)}
+.mt-intro .mi-dn{top:calc(50% + 44px)}
+.mt-intro .h2{font-size:clamp(40px,5vw,80px);margin-top:16px}
+.stg{flex:0 0 auto;width:min(38vw,470px);margin-right:7vw;position:relative;height:100%;opacity:.4;transition:opacity .6s}
+.stg.on{opacity:1}
+.stg-in{position:absolute;left:0;right:0}
+.stg.up .stg-in{bottom:calc(50% + 40px)}
+.stg.dn .stg-in{top:calc(50% + 40px)}
+.stg-node{position:absolute;left:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;box-shadow:0 0 0 7px rgba(255,255,255,.2)}
+.stg .k{font:700 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--sky)}
+.stg h3{font-family:var(--serif);font-weight:400;font-size:clamp(40px,5vw,76px);line-height:.95;letter-spacing:-.02em;margin:10px 0 4px}
+.stg .sub{font-family:var(--serif);font-style:italic;font-size:clamp(20px,1.9vw,28px);color:var(--sky)}
+.stg p{margin:12px 0 14px;color:#DCE8FF;font-size:15.5px;line-height:1.55;max-width:38ch}
+.deliv{display:inline-flex;gap:10px;align-items:center;font:700 11px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;padding:10px 14px;border-radius:99px;border:1px solid rgba(255,255,255,.3)}
+.deliv b{color:var(--sky);font-weight:700}
+.mt-end{flex:0 0 14vw}
+.mt-line{position:absolute;left:0;top:0;overflow:visible;pointer-events:none}
+.mt-rail{display:none}
+.mt-gauge{position:absolute;left:var(--gut);right:var(--gut);bottom:4.5vh;z-index:3}
+.mt-gauge .bar{height:2px;background:rgba(255,255,255,.2);position:relative;overflow:hidden}
+.mt-gauge .bar i{position:absolute;inset:0;background:linear-gradient(90deg,var(--sky),#fff);transform-origin:0 50%;transform:scaleX(0)}
+.mt-gauge ol{display:flex;justify-content:space-between;margin-top:12px;font:700 11px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.5)}
+.mt-gauge li.on{color:#fff}
+
+/* ---------- 8. DIAGNÓSTICO ---------- */
+.diag{--bg:#DDE8FA}
+.diag-h{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end;margin-bottom:clamp(36px,5vw,64px)}
+.pts{display:grid;gap:12px;margin-top:6px}
+.pts li{display:flex;gap:14px;align-items:flex-start;font-size:15.5px;color:#33466A}
+.pts li b{display:block;color:var(--navy);font-weight:700}
+.pts li::before{content:"";flex:none;margin-top:8px;width:8px;height:8px;border-radius:50%;background:var(--royal);box-shadow:0 0 0 5px rgba(37,99,235,.16)}
+.dash{position:relative;border-radius:30px;padding:clamp(16px,2.4vw,30px);background:linear-gradient(180deg,#fff,#F5F8FE);border:1px solid rgba(37,99,235,.14);box-shadow:0 60px 90px -50px rgba(11,27,54,.55)}
+.dash-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid rgba(11,27,54,.08);margin-bottom:20px}
+.dash-top .brand-s{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px}
+.dash-top .brand-s svg{width:12px;height:16px;color:var(--royal)}
+.dash-top .hd{margin-left:auto;font-size:13px;color:#52658A;font-weight:600}
+.badge{font:700 10.5px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;padding:8px 12px;border-radius:99px;background:rgba(37,99,235,.1);color:var(--royal);border:1px dashed rgba(37,99,235,.45)}
+.dash-grid{display:grid;grid-template-columns:.8fr 1.3fr 1.2fr;gap:16px}
+.d-card{border-radius:22px;padding:22px;background:#fff;border:1px solid rgba(11,27,54,.07);box-shadow:0 14px 30px -24px rgba(11,27,54,.5)}
+.d-card h4{font:700 11px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:#52658A;margin-bottom:14px}
+.d-score{display:grid;place-items:center;text-align:center}
+.score-wrap{position:relative;width:min(100%,190px);aspect-ratio:1}
+.score-wrap svg{width:100%;height:100%;transform:rotate(-90deg)}
+.score-wrap .num{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--serif);font-size:clamp(54px,5vw,72px);letter-spacing:-.03em}
+.d-score small{display:block;margin-top:12px;font-size:12.5px;color:#52658A}
+.d-radar svg{width:100%;max-width:300px;margin:0 auto;overflow:visible}
+.d-radar text{font:700 9.5px var(--sans);fill:#52658A;letter-spacing:.06em}
+.swot{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sw{border-radius:14px;padding:14px;background:var(--off);border:1px solid rgba(11,27,54,.06)}
+.sw b{display:flex;align-items:center;gap:8px;font:700 11px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--navy2);margin-bottom:12px}
+.sw b i{width:8px;height:8px;border-radius:2px;background:var(--royal)}
+.sw:nth-child(2) b i{background:#8DB8FF}
+.sw:nth-child(3) b i{background:var(--blue)}
+.sw:nth-child(4) b i{background:var(--navy2)}
+.bar{display:block;height:7px;border-radius:4px;background:#D5E0F4;margin-top:8px}
+.mods{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:16px}
+.mod{display:flex;align-items:center;gap:10px;padding:13px 14px;border-radius:14px;background:#fff;border:1px solid rgba(11,27,54,.07);font-weight:600;font-size:13.5px;line-height:1.25}
+.mod span{flex:none;display:grid;place-items:center;width:28px;height:28px;border-radius:9px;background:linear-gradient(140deg,var(--royal),var(--blue));color:#fff;font:700 11px/1 var(--sans)}
+
+/* ---------- 9. RIVER APROVA ---------- */
+.apr{height:100svh;min-height:600px;padding:90px var(--gut) 40px;--bg:linear-gradient(170deg,#12284D,#0E2145);display:flex;align-items:center}
+.apr-g{display:grid;grid-template-columns:1fr auto;gap:clamp(30px,8vw,140px);align-items:center;width:100%}
+.apr .pts li{color:#B9C9E6}
+.apr .pts li b{color:#fff}
+.apr .pts li::before{background:var(--sky);box-shadow:0 0 0 5px rgba(141,184,255,.18)}
+.apr .lead{margin:26px 0 20px}
+.phone-wrap{position:relative;justify-self:center}
+.phone{position:absolute;left:0;top:0;width:290px;height:590px;border-radius:46px;padding:11px;background:linear-gradient(160deg,#2A3F66,#0A1530);box-shadow:0 0 0 1.5px rgba(255,255,255,.18),0 60px 80px -30px rgba(0,0,0,.7),0 0 120px -20px rgba(37,99,235,.55);transform-origin:0 0}
+.screen{position:relative;width:100%;height:100%;border-radius:36px;overflow:hidden;background:#F5F7FB;color:var(--navy)}
+.notch{position:absolute;left:50%;top:9px;width:84px;height:22px;margin-left:-42px;border-radius:99px;background:#0A1530;z-index:5}
+.ph-top{position:absolute;left:0;right:0;top:0;z-index:4;padding:38px 18px 12px;display:flex;align-items:center;gap:8px;background:linear-gradient(#F5F7FB 70%,rgba(245,247,251,0));font:800 13px/1 var(--sans)}
+.ph-top svg{width:11px;height:15px;color:var(--royal)}
+.ph-top span{margin-left:auto;font-weight:600;font-size:11px;color:#6A7B9C}
+.feed{position:absolute;left:0;right:0;top:76px;padding:0 12px;will-change:transform}
+.post{height:318px;position:relative}
+.post-h{display:flex;align-items:center;gap:8px;padding:0 4px 8px;font-size:11px;font-weight:700}
+.post-h i{width:24px;height:24px;border-radius:50%;background:linear-gradient(140deg,var(--royal),var(--sky))}
+.post-h em{margin-left:auto;font-style:normal;font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--royal);padding:4px 8px;border-radius:99px;background:rgba(37,99,235,.1)}
+.art{position:relative;height:238px;border-radius:18px;overflow:hidden;background:var(--navy2)}
+.art svg{position:absolute;inset:0;width:100%;height:100%}
+.post-c{padding:9px 4px 0}
+.post-c .bar{height:6px;margin-top:6px;background:#D5E0F4}
+.stamp{position:absolute;right:8%;top:40%;z-index:3;display:flex;align-items:center;gap:7px;padding:9px 14px 9px 11px;border-radius:10px;border:3px solid var(--royal);color:var(--royal);background:rgba(255,255,255,.9);font:800 15px/1 var(--sans);letter-spacing:.16em;text-transform:uppercase;transform:rotate(-12deg);opacity:0;box-shadow:0 10px 24px -10px rgba(37,99,235,.7)}
+.stamp svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.burst{position:absolute;right:calc(8% + 40px);top:calc(40% + 18px);z-index:2;pointer-events:none}
+.burst i{position:absolute;left:0;top:0;width:6px;height:6px;border-radius:50%;background:var(--blue);opacity:0}
+.burst b{position:absolute;left:-30px;top:-30px;width:60px;height:60px;border-radius:50%;border:2px solid var(--royal);opacity:0}
+
+/* ---------- 10. MARCAS ---------- */
+.marcas{--bg:#0B1B36;padding-left:0;padding-right:0;overflow:hidden}
+.marcas .head{padding:0 var(--gut);margin:0 auto 60px;max-width:none;display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap;position:relative;z-index:2}
+.mq{overflow:hidden;position:relative;z-index:2;padding:14px 0}
+.mq-t{display:flex;width:max-content;will-change:transform}
+.mq-t>*{flex:none}
+.logo{display:inline-flex;align-items:center;gap:clamp(30px,5vw,70px);padding-right:clamp(30px,5vw,70px);color:#E6EEFB;white-space:nowrap}
+.logo::after{content:"";width:9px;height:13px;background:var(--blue);clip-path:path("M4.5 0C7 3.5 9 6 9 8.7A4.5 4.5 0 0 1 0 8.7C0 6 2 3.5 4.5 0z");opacity:.8}
+.lg{font-size:clamp(34px,5vw,72px);line-height:1}
+.lg1{font-family:var(--serif);font-style:italic}
+.lg2{font:600 .62em/1 var(--sans);letter-spacing:.34em;text-transform:uppercase}
+.lg3{font-family:var(--serif);font-weight:400;letter-spacing:-.02em}
+.lg4{font:800 1em/1 var(--sans);letter-spacing:-.05em;text-transform:lowercase}
+.lg5{font:500 .55em/1 var(--serif);letter-spacing:.22em;text-transform:uppercase}
+.lg6{font-family:var(--serif);letter-spacing:.01em}
+.lg7{font:500 .9em/1 var(--sans);letter-spacing:-.03em}
+.lg7 b{font-weight:800}
+.mq.r2 .lg{color:transparent;-webkit-text-stroke:1px rgba(230,238,251,.55)}
+.mq.r2 .logo{color:transparent}
+.mq.r2 .lg{font-size:clamp(28px,3.6vw,52px)}
+.note{font-size:13px;color:#7F94BA;letter-spacing:.04em}
+
+/* ---------- 11. JORNADA ---------- */
+.jor{--bg:#D3E2FA}
+.jor-h{text-align:center;max-width:900px;margin:0 auto clamp(56px,7vw,100px)}
+.jor-h .h2{margin-top:20px}
+.tl{position:relative;display:grid;gap:clamp(28px,5vw,64px);max-width:1100px;margin:0 auto}
+.tl-base,.tl-lit{position:absolute;left:50%;top:6px;bottom:6px;width:2px;margin-left:-1px;border-radius:2px}
+.tl-base{background:rgba(11,27,54,.14)}
+.tl-lit{background:linear-gradient(var(--royal),var(--blue));transform-origin:50% 0;transform:scaleY(0);box-shadow:0 0 14px rgba(37,99,235,.7)}
+.tl-i{display:grid;grid-template-columns:1fr 1fr;position:relative}
+.tl-c{opacity:.4;transition:opacity .6s;max-width:420px}
+.tl-i.on .tl-c{opacity:1}
+.tl-i:nth-of-type(odd) .tl-c{grid-column:1;justify-self:end;text-align:right;padding-right:56px}
+.tl-i:nth-of-type(even) .tl-c{grid-column:2;padding-left:56px}
+.tl-node{position:absolute;left:50%;top:4px;width:22px;height:22px;margin-left:-11px;border-radius:50%;background:#E6EEFB;border:2px solid #8FAAD8;transition:border-color .4s,box-shadow .5s}
+.tl-node i{position:absolute;inset:3px;border-radius:50%;background:var(--royal);transform:scale(0);transition:transform .5s var(--ease)}
+.tl-i.on .tl-node{border-color:var(--royal);box-shadow:0 0 0 7px rgba(37,99,235,.18)}
+.tl-i.on .tl-node i{transform:scale(1)}
+.tl-k{font:700 12px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--royal)}
+.tl-c h3{font-family:var(--serif);font-weight:400;font-size:clamp(30px,3.4vw,48px);line-height:1;margin:12px 0 8px;letter-spacing:-.01em}
+.tl-c p{color:#33466A;font-size:16px}
+.pills{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:clamp(48px,6vw,90px)}
+.pill{padding:12px 18px;border-radius:99px;background:#fff;border:1px solid rgba(37,99,235,.18);font-weight:700;font-size:13.5px;color:var(--navy2);display:inline-flex;gap:9px;align-items:center}
+.pill svg{width:16px;height:16px;color:var(--royal)}
+
+/* ---------- 12. FORMATOS ---------- */
+.fmts{--bg:#C4D8F8}
+.fmt-h{margin-bottom:clamp(44px,6vw,84px);display:flex;justify-content:space-between;align-items:end;gap:30px;flex-wrap:wrap}
+.fmt-g{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:clamp(16px,2vw,28px);align-items:center}
+.fmt{position:relative;border-radius:30px;padding:2px;overflow:hidden;background:rgba(255,255,255,.4);box-shadow:0 40px 70px -40px rgba(11,27,54,.5)}
+.fmt::before{content:"";position:absolute;left:50%;top:50%;width:230%;aspect-ratio:1;margin:0;background:conic-gradient(from 0deg,transparent 0 55%,var(--sky) 72%,var(--royal) 88%,transparent 100%);animation:spin 9s linear infinite;will-change:transform}
+.fmt.feat::before{background:conic-gradient(from 0deg,transparent 0 40%,var(--sky) 60%,#fff 76%,var(--royal) 90%,transparent 100%);animation-duration:6s}
+@keyframes spin{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+.fmt-in{position:relative;border-radius:28px;background:#fff;padding:clamp(26px,2.6vw,38px);display:flex;flex-direction:column;gap:16px;min-height:480px}
+.fmt.feat .fmt-in{background:linear-gradient(165deg,#12284D,#0B1B36);color:#E6EEFB;min-height:560px}
+.tag{align-self:flex-start;font:700 10.5px/1 var(--sans);letter-spacing:.18em;text-transform:uppercase;padding:8px 12px;border-radius:99px;background:var(--royal);color:#fff}
+.fmt h3{font-family:var(--serif);font-weight:400;font-size:clamp(34px,3.2vw,50px);line-height:1;letter-spacing:-.01em}
+.fmt .fd{color:#4A5C80;font-size:15.5px}
+.fmt.feat .fd{color:#B9C9E6}
+.fmt h4{font:700 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--royal);margin-top:6px}
+.fmt.feat h4{color:var(--sky)}
+.fmt ul{display:grid;gap:11px}
+.fmt li{display:flex;gap:11px;align-items:flex-start;font-weight:600;font-size:15px;line-height:1.35}
+.fmt li svg{flex:none;width:20px;height:20px;padding:4px;border-radius:50%;background:rgba(37,99,235,.12);color:var(--royal);fill:none;stroke:currentColor;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round;margin-top:1px}
+.fmt.feat li svg{background:rgba(141,184,255,.2);color:var(--sky)}
+.fmt .fn{margin-top:auto;padding-top:14px;border-top:1px solid rgba(11,27,54,.1);font-family:var(--serif);font-style:italic;font-size:21px;color:var(--navy2)}
+.fmt.feat .fn{border-color:rgba(255,255,255,.16);color:var(--sky)}
+
+/* ---------- 13. FOZ ---------- */
+.foz{--bg:linear-gradient(180deg,#0B1B36 0%,#0B1B36 30%,#0E2248 100%);min-height:100svh;padding-top:calc(max(30vh,220px) + 120px);padding-bottom:70px;display:flex;flex-direction:column;justify-content:center;overflow:hidden}
+.sea{position:absolute;left:0;right:0;top:max(30vh,220px);bottom:0;pointer-events:none;z-index:0}
+.sl{position:absolute;left:0;right:0;top:var(--o,0)}
+.sl svg{max-width:none;width:200%;height:90px;animation:wv2 var(--s,14s) linear infinite;animation-direction:var(--d,normal)}
+.sl .body{height:100vh;background:var(--c)}
+.mouth{position:absolute;z-index:1;width:0;height:0;pointer-events:none}
+.mouth i{position:absolute;left:-90px;top:-22px;width:180px;height:44px;border-radius:50%;border:1.5px solid var(--sky);opacity:0;animation:ring 3.6s ease-out infinite}
+.mouth i:nth-child(2){animation-delay:1.2s}.mouth i:nth-child(3){animation-delay:2.4s}
+@keyframes ring{0%{transform:scale(.15);opacity:.9}100%{transform:scale(1.9);opacity:0}}
+.foz-in{text-align:center;display:flex;flex-direction:column;align-items:center;gap:clamp(22px,3vw,36px)}
+.foz .h2{font-size:clamp(46px,8.4vw,138px);max-width:11em}
+.ctas{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:10px}
+.btn{position:relative;display:inline-flex;text-decoration:none;border-radius:99px;font:700 14px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;will-change:transform}
+.btn .mag-in{display:inline-flex;align-items:center;gap:12px;padding:22px 34px;will-change:transform}
+.btn svg{width:20px;height:20px}
+.btn-p{background:#fff;color:var(--navy);box-shadow:0 20px 50px -18px rgba(141,184,255,.7)}
+.btn-s{border:1.5px solid rgba(230,238,251,.5);color:#E6EEFB;backdrop-filter:blur(8px)}
+.btn-p:hover{background:var(--sky)}
+.btn-s:hover{background:rgba(255,255,255,.12)}
+.foz-meta{margin-top:clamp(30px,5vw,70px);display:flex;gap:10px 40px;justify-content:center;flex-wrap:wrap;font:600 12px/1.5 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:#8FA7D2}
+
+/* ---------- Layout empilhado (mobile / telas baixas / movimento reduzido) ---------- */
+.stack .metodo{height:auto;overflow:visible;padding:clamp(90px,16vw,140px) var(--gut)}
+.stack .mt-vp{position:relative;inset:auto}
+.stack .mt-track{position:relative;display:block;height:auto;padding-left:46px}
+.stack .mt-intro{width:auto;height:auto;padding:0 0 50px;margin-left:-46px}
+.stack .mt-intro .stg-in{position:static}
+.stack .mt-intro .mi-dn{margin-top:18px}
+.stack .stg{width:auto;margin:0 0 44px;height:auto;opacity:1}
+.stack .stg-in{position:static}
+.stack .stg-node{left:-46px;top:6px;margin:0 0 0 -9px;left:-37px}
+.stack .mt-end,.stack .mt-line,.stack .mt-gauge{display:none}
+.stack .mt-rail{display:block;position:absolute;left:9px;top:0;bottom:0;width:2px;background:rgba(255,255,255,.2)}
+.stack .mt-rail i{position:absolute;inset:0;background:linear-gradient(var(--sky),#fff);transform-origin:50% 0;transform:scaleY(0);box-shadow:0 0 12px rgba(141,184,255,.8)}
+.stack .stg-node{background:rgba(255,255,255,.35);transition:background .4s,transform .4s}
+.stack .stg.lit .stg-node{background:#fff;transform:scale(1.15)}
+
+@media (max-width:1100px){
+  .svc{grid-column:span 6!important}
+  .dash-grid{grid-template-columns:1fr 1fr}
+  .d-swot{grid-column:1/-1}
+  .mods{grid-template-columns:repeat(4,1fr)}
+  .fmt-g{grid-template-columns:1fr}
+  .fmt-in,.fmt.feat .fmt-in{min-height:0}
+  .fmt.feat{order:-1}
+}
+@media (max-width:820px){
+  body{font-size:16px}
+  .hero{padding-top:96px;padding-bottom:150px}
+  .chips{position:static;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px;max-width:420px}
+  .chips li{position:static;animation-duration:7s}
+  .hero-foot{bottom:18px;font-size:10.5px}
+  .hero-foot span:last-child{display:none}
+  .hero-foot{justify-content:center}
+  .nav-cta{padding:10px 14px;font-size:11px}
+  .grid2,.how-h,.diag-h,.apr-g,.sp-in{grid-template-columns:1fr}
+  .fcard,.fcard:nth-child(2){justify-self:stretch;margin-left:0;width:100%}
+  .fcard:nth-child(2){width:88%;justify-self:end}
+  .stairs{grid-template-columns:1fr;height:auto;min-height:0;gap:14px}
+  .stp{height:auto;min-height:150px;width:calc(66% + 11% * var(--k,0));margin-left:auto}
+  .stp:nth-child(1){--k:0}.stp:nth-child(2){--k:1}.stp:nth-child(3){--k:2}.stp:nth-child(4){--k:3}
+  .svc{grid-column:span 12!important;min-height:260px}
+  .sp-in{align-content:start;padding-top:96px}
+  .sp-list{grid-template-columns:1fr}
+  .dash-grid{grid-template-columns:1fr}
+  .mods{grid-template-columns:repeat(2,1fr)}
+  .swot{grid-template-columns:1fr 1fr}
+  .tl-base,.tl-lit{left:11px;margin-left:0}
+  .tl-i{grid-template-columns:1fr}
+  .tl-node{left:0;margin-left:0}
+  .tl-i:nth-of-type(n) .tl-c{grid-column:1;justify-self:start;text-align:left;padding:0 0 0 46px}
+  .apr{padding-top:84px;padding-bottom:20px;align-items:flex-start}
+  .apr .lead,.apr .pts{display:none}
+  .apr .h2{font-size:clamp(34px,9vw,46px)}
+  .apr-g{gap:16px}
+  .foz{padding-top:calc(max(30vh,220px) + 110px)}
+  .foz .h2{font-size:clamp(36px,10.2vw,64px)}
+  .river-h{width:132vw;max-width:none;margin:0 -16vw}
+  .btn{width:100%;justify-content:center}
+  .btn .mag-in{padding:20px 24px}
+  .ctas{width:100%;flex-direction:column}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .mani-t .w,.fin-t .w{opacity:1}
+}
+.nogsap .mani-t .w,.nogsap .fin-t .w{opacity:1}
+.rm .apr{height:auto;padding-top:110px;padding-bottom:80px}
+.rm .screen{overflow-y:auto}
+.rm .feed{position:relative;top:76px;padding-bottom:90px}
+</style>
+</head>
+<body>
+
+<!-- 1. PRELOADER -->
+<div id="pre" aria-hidden="true">
+  <div class="pre-fill"></div>
+  <svg class="pre-svg" viewBox="0 0 200 200">
+    <g fill="none" stroke="#8DB8FF" stroke-width="1.5">
+      <circle class="rg" cx="100" cy="100" r="4" vector-effect="non-scaling-stroke"/>
+      <circle class="rg" cx="100" cy="100" r="4" vector-effect="non-scaling-stroke"/>
+      <circle class="rg" cx="100" cy="100" r="4" vector-effect="non-scaling-stroke"/>
+    </g>
+    <path class="pdrop" d="M100 82c5 6.500 9 11.500 9 16a9 9 0 0 1-18 0c0-4.500 4-9.500 9-16z" fill="#5B9BFF"/>
+  </svg>
+</div>
+<div class="grain" aria-hidden="true"></div>
+<canvas id="trail" aria-hidden="true"></canvas>
+<div id="cur" aria-hidden="true"><i></i></div>
+
+<!-- Ícones: traço fino, 24×24 -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 2.500c3.800 4.600 6.500 7.800 6.500 11.200a6.500 6.500 0 0 1-13 0C5.500 10.300 8.200 7.100 12 2.500z" fill="currentColor" stroke="none"/></symbol>
+    <symbol id="i-pos" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.500"/><circle cx="12" cy="12" r="4"/><path d="M12 1.500v4M12 18.500v4M1.500 12h4M18.500 12h4"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></g></symbol>
+    <symbol id="i-brand" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.500c3.800 4.600 6.500 7.800 6.500 11.200a6.500 6.500 0 0 1-13 0C5.500 10.300 8.200 7.100 12 2.500z"/><path d="M8.800 14.200c.5 1.800 1.900 2.900 3.700 3"/></g></symbol>
+    <symbol id="i-cont" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7.500" height="7.500" rx="2"/><rect x="13.500" y="3" width="7.500" height="7.500" rx="2"/><rect x="3" y="13.500" width="7.500" height="7.500" rx="2"/><path d="M13.500 18c1.700-2 3.300 2 5 0s1.500-1.500 2.500-1.500"/></g></symbol>
+    <symbol id="i-aud" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="2.500" y="5" width="19" height="14" rx="3.500"/><path d="M10 9.200v5.600l4.800-2.800z"/></g></symbol>
+    <symbol id="i-perf" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20.500h18"/><path d="M4.500 16.500l4.500-4.500 3.500 3L20 6.500"/><path d="M15 6.500h5v5"/></g></symbol>
+    <symbol id="i-land" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3.500" width="18" height="17" rx="3"/><path d="M3 8.500h18"/><path d="M7 12.500h6M7 15h4"/><rect x="13.500" y="14.500" width="4.500" height="3" rx="1.500"/></g></symbol>
+    <symbol id="i-proj" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8.500V4h4.500M15.500 4H20v4.500M20 15.500V20h-4.500M8.500 20H4v-4.500"/><path d="M12 8.500c1.800 2.200 3 3.500 3 5a3 3 0 0 1-6 0c0-1.500 1.200-2.800 3-5z"/></g></symbol>
+    <symbol id="i-loop" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 12c-2-3-3.500-4.500-5.500-4.500C4.500 7.500 3 9.500 3 12s1.500 4.500 3.500 4.500c2 0 3.500-1.500 5.500-4.500z"/><path d="M12 12c2 3 3.500 4.500 5.500 4.500 2 0 3.500-2 3.500-4.500s-1.500-4.500-3.500-4.500c-2 0-3.500 1.500-5.500 4.500z"/></g></symbol>
+    <symbol id="i-ment" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="17.500" r="2.800"/><circle cx="18" cy="6.500" r="2.800"/><path d="M8.300 15.800C13 13.500 9.500 9 15.600 8.300"/></g></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></symbol>
+    <symbol id="i-wa" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l1.300-4.200A8.500 8.500 0 1 1 8.400 18.800z"/><path d="M9.200 8.800c0 3 2.200 5.500 5.800 6.200l1-1.400-1.800-1-.9.700c-.9-.4-1.800-1.300-2.200-2.200l.7-.9-1-1.800z"/></g></symbol>
+    <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3.500" y="3.500" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.200" cy="6.800" r=".5" fill="currentColor"/></g></symbol>
+  </defs>
+</svg>
+
+<header class="nav" id="nav">
+  <a class="brand" href="#hero" aria-label="River Agency, início"><svg aria-hidden="true"><use href="#i-drop"/></svg>River</a>
+  <a class="nav-cta" href="#foz"><span>Falar com a River</span></a>
+</header>
+
+<main id="main">
+  <!-- Rio principal: uma única linha, do topo à foz -->
+  <svg id="river" aria-hidden="true" focusable="false">
+    <defs>
+      <linearGradient id="rg-grad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="1000"></linearGradient>
+      <radialGradient id="rg-drop"><stop offset="0" stop-color="#fff"/><stop offset=".35" stop-color="#8DB8FF"/><stop offset="1" stop-color="#2563EB" stop-opacity="0"/></radialGradient>
+    </defs>
+    <path id="river-glow" fill="none" stroke="url(#rg-grad)" stroke-width="14" stroke-linecap="round" opacity=".16"/>
+    <path id="river-path" fill="none" stroke="url(#rg-grad)" stroke-width="2.600" stroke-linecap="round"/>
+    <g id="drop" opacity="0">
+      <circle class="halo" r="16" fill="url(#rg-drop)"/>
+      <circle r="4.500" fill="#fff"/>
+    </g>
+  </svg>
+
+  <!-- 2. HERO — a nascente -->
+  <section class="sec hero" id="hero" aria-label="River Agency">
+    <canvas id="water" aria-hidden="true"></canvas>
+    <div class="hero-in wrap">
+      <p class="eyebrow">River Agency · Marcas e perfis</p>
+      <h1 class="river-h">
+        <span class="sr">River</span>
+        <svg class="river-svg" viewBox="0 0 1200 380" aria-hidden="true">
+          <defs>
+            <clipPath id="rc"><text x="600" y="330">River</text></clipPath>
+            <linearGradient id="wg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1B3F7A"/><stop offset="1" stop-color="#0B1B36"/></linearGradient>
+          </defs>
+          <text class="outline" x="600" y="330">River</text>
+          <g clip-path="url(#rc)">
+            <g class="lvl">
+              <g class="wv" style="--s:9s" data-wave="sky"></g>
+              <g class="wv rev" style="--s:6.500s" data-wave="royal"></g>
+              <g class="wv" style="--s:11s" data-wave="navy"></g>
+            </g>
+          </g>
+        </svg>
+      </h1>
+      <p class="hero-sub">Posicionamento estratégico para marcas e perfis que querem crescer, vender e se tornar referência.</p>
+    </div>
+    <ul class="chips" aria-label="Frentes de atuação">
+      <li style="--x:9%;--y:19%;--t:9s;--dx:16px;--dy:-14px"><span class="chip">Posicionamento</span></li>
+      <li style="--x:76%;--y:16%;--t:11s;--dl:-3s;--dx:-14px;--dy:16px"><span class="chip">Branding</span></li>
+      <li style="--x:3%;--y:70%;--t:10s;--dl:-5s;--dx:18px;--dy:12px"><span class="chip">Conteúdo</span></li>
+      <li style="--x:82%;--y:64%;--t:8.500s;--dl:-2s;--dx:-18px;--dy:-12px"><span class="chip">Audiovisual</span></li>
+      <li style="--x:66%;--y:82%;--t:12s;--dl:-7s;--dx:12px;--dy:-16px"><span class="chip">Performance</span></li>
+    </ul>
+    <div class="hero-foot">
+      <span>Desde 2025 · Bahia</span>
+      <span class="cue" aria-hidden="true"><span>Desça o curso</span><i></i></span>
+      <span>Apresentação institucional</span>
+    </div>
+  </section>
+
+  <!-- 3. MANIFESTO -->
+  <section class="sec mani" id="manifesto" aria-labelledby="mani-l">
+    <div class="wrap">
+      <p class="eyebrow" id="mani-l" data-rv>Manifesto River</p>
+      <p class="mani-t" id="maniT">Toda marca começa como uma nascente: pequena, cheia de potência e ainda sem um curso definido. Muitas se dispersam tentando estar em todos os lugares ao mesmo tempo. Fazem barulho, mas não chegam a lugar nenhum. A River nasceu para dar curso às marcas: encontrar o seu lugar, aprofundar a sua essência e sustentar a sua presença com constância.</p>
+    </div>
+  </section>
+  <section class="fin cover dark" id="finale" aria-label="O que acreditamos">
+    <p class="fin-t" id="finT">Um rio não grita. Ele avança. E, com o tempo, redesenha a paisagem.</p>
+  </section>
+
+  <!-- 4. QUEM SOMOS -->
+  <section class="sec who" id="quem" aria-labelledby="who-t">
+    <div class="wrap grid2">
+      <div>
+        <p class="eyebrow" data-rv>Quem somos</p>
+        <h2 class="h2 t" id="who-t" style="margin-top:22px">
+          <span class="ln"><span>Posicionamos marcas</span></span>
+          <span class="ln"><span>e perfis para <em>crescer,</em></span></span>
+          <span class="ln"><span><em>vender</em> e liderar.</span></span>
+        </h2>
+        <p class="lead" data-rv>Somos uma agência especializada em posicionamento de marcas e perfis. Levamos cada profissional e cada empresa para o centro do seu nicho e construímos, com estratégia, o caminho para crescer, vender e ser reconhecido como autoridade.</p>
+        <p class="lead" data-rv>Todo trabalho começa com análise e diagnóstico. Só depois de entender a real necessidade do negócio definimos o que fazer, sem pacotes genéricos.</p>
+      </div>
+      <div class="who-r">
+        <div class="fcard"><div class="fl" style="--ft:7s"><span class="big"><span data-count="2025">2025</span></span><p>No mercado desde 2025, com foco em posicionamento.</p></div></div>
+        <div class="fcard"><div class="fl" style="--ft:8.500s;--fd:-3s"><span class="big">Bahia</span><p>Base de atuação e origem da River.</p></div></div>
+        <div class="fcard"><div class="fl" style="--ft:6.500s;--fd:-5s"><span class="big"><span data-count="7">7</span><small>marcas</small></span><p>No portfólio atual, em segmentos diferentes.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. COMO ATUAMOS -->
+  <section class="sec how" id="como" aria-labelledby="how-t">
+    <div class="wrap">
+      <div class="how-h">
+        <div>
+          <p class="eyebrow" data-rv>Como atuamos</p>
+          <h2 class="h2 t" id="how-t" style="margin-top:22px"><span class="ln"><span>Do diagnóstico</span></span><span class="ln"><span>à <em>autoridade.</em></span></span></h2>
+        </div>
+        <p class="lead" data-rv>Analisamos, posicionamos e construímos cada degrau até a marca ocupar o lugar que merece. Como o nível da água, cada etapa sustenta a próxima.</p>
+      </div>
+      <ol class="stairs">
+        <li class="stp" style="--h:46%"><i class="fill"></i><span class="crest" aria-hidden="true"><svg class="cr" viewBox="0 0 200 26" preserveAspectRatio="none"></svg></span><div class="stp-c"><span class="num">01</span><h3>Posicionamento</h3><p>Levamos a marca para o centro do seu nicho, com uma narrativa que a diferencia.</p></div></li>
+        <li class="stp" style="--h:64%"><i class="fill"></i><span class="crest" aria-hidden="true"><svg class="cr" viewBox="0 0 200 26" preserveAspectRatio="none"></svg></span><div class="stp-c"><span class="num">02</span><h3>Crescimento</h3><p>Audiência qualificada, formada pelas pessoas certas para o negócio.</p></div></li>
+        <li class="stp" style="--h:82%"><i class="fill"></i><span class="crest" aria-hidden="true"><svg class="cr" viewBox="0 0 200 26" preserveAspectRatio="none"></svg></span><div class="stp-c"><span class="num">03</span><h3>Vendas</h3><p>Conteúdo e mídia conectados a uma oferta clara, gerando demanda.</p></div></li>
+        <li class="stp" style="--h:100%"><i class="fill"></i><span class="crest" aria-hidden="true"><svg class="cr" viewBox="0 0 200 26" preserveAspectRatio="none"></svg></span><div class="stp-c"><span class="num">04</span><h3>Autoridade</h3><p>Presença consistente que torna a marca referência no mercado.</p></div></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 6. SERVIÇOS -->
+  <section class="sec svcs dark" id="servicos" aria-labelledby="svc-t">
+    <i class="blob b1"></i><i class="blob b2"></i><i class="blob b3"></i>
+    <div class="wrap">
+      <div class="svc-h">
+        <div>
+          <p class="eyebrow" data-rv>O que fazemos</p>
+          <h2 class="h2 t" id="svc-t" style="margin-top:22px"><span class="ln"><span>Da estratégia</span></span><span class="ln"><span>à <em>presença.</em></span></span></h2>
+        </div>
+        <p class="lead" data-rv>Seis frentes integradas para posicionar, construir e ativar marcas, sempre a partir de um diagnóstico.</p>
+      </div>
+      <div class="svc-grid" id="svcGrid"></div>
+    </div>
+  </section>
+
+  <!-- 7. MÉTODO RIVER -->
+  <section class="sec metodo cover dark" id="metodo" aria-labelledby="met-t">
+    <i class="mt-l1"></i>
+    <div class="mt-vp">
+      <div class="mt-track" id="mtTrack">
+        <i class="mt-rail"><i></i></i>
+        <svg class="mt-line" id="mtLine" aria-hidden="true" focusable="false">
+          <defs><linearGradient id="mt-g" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#8DB8FF"/></linearGradient></defs>
+          <path id="mtGlow" fill="none" stroke="#fff" stroke-width="14" opacity=".14" stroke-linecap="round"/>
+          <path id="mtPath" fill="none" stroke="url(#mt-g)" stroke-width="2.600" stroke-linecap="round"/>
+          <g id="mtDrop"><circle r="15" fill="#fff" opacity=".25"/><circle r="5" fill="#fff"/></g>
+        </svg>
+        <div class="mt-intro">
+          <div class="stg-in mi-up"><p class="eyebrow">Método River</p>
+          <h2 class="h2" id="met-t">Da nascente <em>à foz,</em> com método.</h2></div>
+          <div class="stg-in mi-dn"><p class="lead">Cinco etapas que seguem o curso natural de um rio: cada uma aprofunda a anterior.</p></div>
+        </div>
+        <article class="stg up"><i class="stg-node"></i><div class="stg-in"><span class="k">01 · Diagnóstico</span><h3>Nascente</h3><p>Imersão no negócio: perfil, público, concorrência e momento da marca.</p><span class="deliv">Entrega <b>Diagnóstico River</b></span></div></article>
+        <article class="stg dn"><i class="stg-node"></i><div class="stg-in"><span class="k">02 · Estratégia</span><h3>Leito</h3><p>Definimos o lugar da marca: arquétipo, persona, proposta de valor e narrativa.</p><span class="deliv">Entrega <b>Mapa de posicionamento</b></span></div></article>
+        <article class="stg up"><i class="stg-node"></i><div class="stg-in"><span class="k">03 · Planejamento</span><h3>Curso</h3><p>A estratégia vira plano: linha editorial, calendário, metas e canais.</p><span class="deliv">Entrega <b>Plano estratégico</b></span></div></article>
+        <article class="stg dn"><i class="stg-node"></i><div class="stg-in"><span class="k">04 · Execução</span><h3>Correnteza</h3><p>Produção e ativação: conteúdo, design, vídeo, landing pages e tráfego.</p><span class="deliv">Entrega <b>Entregas mensais</b></span></div></article>
+        <article class="stg up"><i class="stg-node"></i><div class="stg-in"><span class="k">05 · Análise</span><h3>Foz</h3><p>Medimos, aprendemos e ajustamos. Cada ciclo começa mais forte.</p><span class="deliv">Entrega <b>Relatório e ajustes</b></span></div></article>
+        <div class="mt-end"></div>
+      </div>
+    </div>
+    <div class="mt-gauge" aria-hidden="true"><div class="bar"><i></i></div><ol><li>Nascente</li><li>Leito</li><li>Curso</li><li>Correnteza</li><li>Foz</li></ol></div>
+  </section>
+
+  <!-- 8. DIAGNÓSTICO DE PERFIL RIVER -->
+  <section class="sec diag" id="diagnostico" aria-labelledby="diag-t">
+    <div class="wrap">
+      <div class="diag-h">
+        <div>
+          <p class="eyebrow" data-rv>Tecnologia própria</p>
+          <h2 class="h2 t" id="diag-t" style="margin-top:22px"><span class="ln"><span>Diagnóstico de</span></span><span class="ln"><span>Perfil <em>River</em></span></span></h2>
+          <p class="lead" data-rv style="margin-top:26px">Ferramenta criada pela River que transforma a análise de um perfil em um relatório estratégico. É o ponto de partida de cada projeto: mostra onde a marca está, o que trava o crescimento e qual caminho seguir.</p>
+        </div>
+        <ul class="pts" data-rv>
+          <li><span><b>Clareza imediata</b>A leitura completa do perfil em um só documento.</span></li>
+          <li><span><b>Decisão com base em análise</b>Engajamento, conteúdo, bio e mercado avaliados juntos.</span></li>
+          <li><span><b>Caminho priorizado</b>Plano de ação com os próximos passos em ordem.</span></li>
+        </ul>
+      </div>
+      <div class="dash" id="dash">
+        <div class="dash-top">
+          <span class="brand-s"><svg aria-hidden="true"><use href="#i-drop"/></svg>Diagnóstico de Perfil River</span>
+          <span class="hd">@seu.perfil</span>
+          <span class="badge">visualização ilustrativa</span>
+        </div>
+        <div class="dash-grid">
+          <div class="d-card d-score">
+            <div><h4>Score geral do perfil</h4>
+              <div class="score-wrap">
+                <svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="#E1EAF8" stroke-width="9"/><circle class="sc-arc" cx="60" cy="60" r="52" fill="none" stroke="url(#sc-g)" stroke-width="9" stroke-linecap="round" pathLength="100" stroke-dasharray="100" stroke-dashoffset="28"/><defs><linearGradient id="sc-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#8DB8FF"/></linearGradient></defs></svg>
+                <div class="num" id="scNum">72</div>
+              </div>
+              <small>Exemplo de leitura, sem dados reais</small></div>
+          </div>
+          <div class="d-card d-radar"><h4>Radar do perfil</h4><svg id="radar" viewBox="-30 -14 300 268" aria-hidden="true"></svg></div>
+          <div class="d-card d-swot"><h4>Análise SWOT</h4>
+            <div class="swot">
+              <div class="sw"><b><i></i>Forças</b><span class="bar" style="width:92%"></span><span class="bar" style="width:70%"></span></div>
+              <div class="sw"><b><i></i>Fraquezas</b><span class="bar" style="width:84%"></span><span class="bar" style="width:55%"></span></div>
+              <div class="sw"><b><i></i>Oportunidades</b><span class="bar" style="width:76%"></span><span class="bar" style="width:90%"></span></div>
+              <div class="sw"><b><i></i>Ameaças</b><span class="bar" style="width:66%"></span><span class="bar" style="width:80%"></span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mods" id="mods"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 9. RIVER APROVA -->
+  <section class="sec apr cover dark" id="aprova" aria-labelledby="apr-t">
+    <div class="wrap apr-g">
+      <div>
+        <p class="eyebrow">Tecnologia própria</p>
+        <h2 class="h2" id="apr-t" style="margin-top:22px">River <em>Aprova</em></h2>
+        <p class="lead">Portal exclusivo de aprovação. Cada cliente tem o seu link, visualiza as peças como vão aparecer no Instagram e aprova ou pede ajuste em cada uma.</p>
+        <ul class="pts">
+          <li><span><b>Visualização real</b>Feed, carrossel, stories e reels como serão publicados.</span></li>
+          <li><span><b>Agilidade</b>Aprovação por peça, sem idas e vindas no WhatsApp.</span></li>
+          <li><span><b>Organização</b>Todo o conteúdo do mês reunido em um só lugar.</span></li>
+        </ul>
+      </div>
+      <div class="phone-wrap" id="phoneWrap">
+        <div class="phone" id="phone"><div class="screen">
+          <i class="notch"></i>
+          <div class="ph-top"><svg aria-hidden="true"><use href="#i-drop"/></svg>River Aprova<span>[mês]</span></div>
+          <div class="feed" id="feed"></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10. MARCAS -->
+  <section class="sec marcas dark" id="marcas" aria-labelledby="mar-t">
+    <div class="head">
+      <div><p class="eyebrow">Quem caminha com a River</p>
+        <h2 class="h2 t" id="mar-t" style="margin-top:22px"><span class="ln"><span>Marcas que <em>confiam</em></span></span><span class="ln"><span>no nosso trabalho.</span></span></h2></div>
+      <p class="note">Marcas em texto · [placeholder] logotipos oficiais</p>
+    </div>
+    <div class="mq" data-dir="1"><div class="mq-t"><div class="logo-set" style="display:flex">
+      <span class="logo"><span class="lg lg1">Divino Fogão</span></span>
+      <span class="logo"><span class="lg lg2">Noberto Joias</span></span>
+      <span class="logo"><span class="lg lg3">Varal Chic</span></span>
+      <span class="logo"><span class="lg lg4">Lajo</span></span>
+      <span class="logo"><span class="lg lg5">Replique Mesa Posta</span></span>
+      <span class="logo"><span class="lg lg6">Ivy Barros</span></span>
+      <span class="logo"><span class="lg lg7"><b>i</b>Phon</span></span>
+    </div></div></div>
+    <div class="mq r2" data-dir="-1" aria-hidden="true"><div class="mq-t"><div class="logo-set" style="display:flex">
+      <span class="logo"><span class="lg lg6">Ivy Barros</span></span>
+      <span class="logo"><span class="lg lg1">Divino Fogão</span></span>
+      <span class="logo"><span class="lg lg4">Lajo</span></span>
+      <span class="logo"><span class="lg lg2">Noberto Joias</span></span>
+      <span class="logo"><span class="lg lg7"><b>i</b>Phon</span></span>
+      <span class="logo"><span class="lg lg3">Varal Chic</span></span>
+      <span class="logo"><span class="lg lg5">Replique Mesa Posta</span></span>
+    </div></div></div>
+  </section>
+
+  <!-- 11. JORNADA -->
+  <section class="sec jor" id="jornada" aria-labelledby="jor-t">
+    <div class="wrap">
+      <div class="jor-h">
+        <p class="eyebrow" data-rv>Como trabalhamos juntos</p>
+        <h2 class="h2 t" id="jor-t"><span class="ln"><span>A jornada de cada</span></span><span class="ln"><span><em>parceria.</em></span></span></h2>
+      </div>
+      <div class="tl" id="tl">
+        <i class="tl-base"></i><i class="tl-lit"></i>
+        <article class="tl-i"><span class="tl-node"><i></i></span><div class="tl-c"><span class="tl-k">Etapa 01</span><h3>Conversa inicial</h3><p>Entendemos o momento do negócio, os objetivos e as dores.</p></div></article>
+        <article class="tl-i"><span class="tl-node"><i></i></span><div class="tl-c"><span class="tl-k">Etapa 02</span><h3>Diagnóstico</h3><p>Aplicamos o Diagnóstico River e apresentamos a leitura estratégica.</p></div></article>
+        <article class="tl-i"><span class="tl-node"><i></i></span><div class="tl-c"><span class="tl-k">Etapa 03</span><h3>Proposta sob medida</h3><p>Escopo, entregas e investimento desenhados para a real necessidade.</p></div></article>
+        <article class="tl-i"><span class="tl-node"><i></i></span><div class="tl-c"><span class="tl-k">Etapa 04</span><h3>Onboarding</h3><p>Alinhamento de marca, acessos, cronograma e canais de contato.</p></div></article>
+        <article class="tl-i"><span class="tl-node"><i></i></span><div class="tl-c"><span class="tl-k">Etapa 05</span><h3>Execução mensal</h3><p>Produção, aprovação no River Aprova e publicação.</p></div></article>
+        <article class="tl-i"><span class="tl-node"><i></i></span><div class="tl-c"><span class="tl-k">Etapa 06</span><h3>Acompanhamento</h3><p>Relatórios, reuniões de alinhamento e ajustes contínuos.</p></div></article>
+      </div>
+      <div class="pills" data-rv>
+        <span class="pill"><svg aria-hidden="true"><use href="#i-wa"/></svg>Grupo dedicado no WhatsApp</span>
+        <span class="pill"><svg aria-hidden="true"><use href="#i-drop"/></svg>Aprovação no River Aprova</span>
+        <span class="pill"><svg aria-hidden="true"><use href="#i-perf"/></svg>Relatórios de resultado</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12. FORMATOS -->
+  <section class="sec fmts" id="formatos" aria-labelledby="fmt-t">
+    <div class="wrap">
+      <div class="fmt-h">
+        <div><p class="eyebrow" data-rv>Formatos de parceria</p>
+          <h2 class="h2 t" id="fmt-t" style="margin-top:22px"><span class="ln"><span>Três formas de</span></span><span class="ln"><span>caminhar com a <em>River.</em></span></span></h2></div>
+      </div>
+      <div class="fmt-g">
+        <article class="fmt" data-rv><div class="fmt-in">
+          <span class="ico"><svg aria-hidden="true"><use href="#i-proj"/></svg></span>
+          <h3>Projeto de Marca</h3><p class="fd">Para marcas que precisam definir posicionamento e identidade.</p>
+          <h4>O que inclui</h4>
+          <ul><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Diagnóstico River</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Arquétipo, persona e valor</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Identidade visual e manual</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Landing page (opcional)</li></ul>
+          <p class="fn">Projeto com início, meio e fim.</p>
+        </div></article>
+        <article class="fmt feat" data-rv data-d=".1"><div class="fmt-in">
+          <span class="tag">Formato principal</span>
+          <span class="ico"><svg aria-hidden="true"><use href="#i-loop"/></svg></span>
+          <h3>Gestão Contínua</h3><p class="fd">Para empresas que querem crescer e vender com constância.</p>
+          <h4>O que inclui</h4>
+          <ul><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Conteúdo mensal planejado</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Design, fotos e vídeos</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Tráfego pago com relatórios</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Aprovação no River Aprova</li></ul>
+          <p class="fn">Pacote mensal fechado.</p>
+        </div></article>
+        <article class="fmt" data-rv data-d=".2"><div class="fmt-in">
+          <span class="ico"><svg aria-hidden="true"><use href="#i-ment"/></svg></span>
+          <h3>Mentoria Estratégica</h3><p class="fd">Para quem busca clareza sobre marca e negócio.</p>
+          <h4>O que inclui</h4>
+          <ul><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Diagnóstico de clareza</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Sessões com Samuel</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Plano de posicionamento</li><li><svg viewBox="0 0 24 24"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Acompanhamento da execução</li></ul>
+          <p class="fn">Encontros periódicos.</p>
+        </div></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13. FOZ / CTA -->
+  <section class="sec foz dark" id="foz" aria-labelledby="foz-t">
+    <div class="sea" aria-hidden="true">
+      <div class="sl" style="--o:0px;--c:#16356A;--s:16s;--d:reverse;opacity:.7"><svg viewBox="0 0 1200 90" preserveAspectRatio="none" data-sea="0"></svg><div class="body"></div></div>
+      <div class="sl" style="--o:16px;--c:#12295A;--s:11s"><svg viewBox="0 0 1200 90" preserveAspectRatio="none" data-sea="1"></svg><div class="body"></div></div>
+      <div class="sl" style="--o:34px;--c:#0E2248;--s:19s;--d:reverse"><svg viewBox="0 0 1200 90" preserveAspectRatio="none" data-sea="2"></svg><div class="body"></div></div>
+    </div>
+    <div class="foz-in wrap">
+      <p class="eyebrow">Próximo passo</p>
+      <h2 class="h2 t" id="foz-t"><span class="ln"><span>Vamos traçar o curso</span></span><span class="ln"><span>da sua <em>marca.</em></span></span></h2>
+      <p class="lead">Agende o seu diagnóstico.</p>
+      <div class="ctas">
+        <a class="btn btn-p mag" href="https://wa.me/5577988516180" target="_blank" rel="noopener"><span class="mag-in"><svg aria-hidden="true"><use href="#i-wa"/></svg>Falar no WhatsApp</span></a>
+        <a class="btn btn-s mag" href="https://www.instagram.com/riiver.agency/" target="_blank" rel="noopener"><span class="mag-in"><svg aria-hidden="true"><use href="#i-ig"/></svg>@riiver.agency</span></a>
+      </div>
+      <p class="foz-meta"><span>River Agency</span><span>Bahia · desde 2025</span><span>(77) 98851-6180</span></p>
+    </div>
+  </section>
+  <span class="mouth" id="mouth" aria-hidden="true"><i></i><i></i><i></i></span>
+</main>
+
+<!-- Painel de serviço (elemento compartilhado) -->
+<div id="sp" role="dialog" aria-modal="true" aria-labelledby="sp-name" hidden>
+  <div class="sp-bg"></div>
+  <button class="sp-x" id="spX" aria-label="Fechar"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+  <div class="sp-in">
+    <div class="sp-l">
+      <span class="ico sp-ico"><svg aria-hidden="true"><use id="spUse" href="#i-pos"/></svg></span>
+      <p class="sp-k sp-fade" id="spK"></p>
+      <h2 class="sp-t" id="sp-name"><span class="ln"><span id="spName"></span></span></h2>
+      <p class="sp-sub sp-fade" id="spSub"></p>
+    </div>
+    <div class="sp-r">
+      <section class="sp-fade"><h4>O que é</h4><p id="spWhat"></p></section>
+      <section><h4 class="sp-fade">O que entregamos</h4><ul class="sp-list" id="spList"></ul></section>
+      <section class="sp-res sp-fade"><h4>Resultado esperado</h4><p id="spRes"></p></section>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+'use strict';
+const $ = (s, c = document) => c.querySelector(s);
+const $$ = (s, c = document) => Array.from(c.querySelectorAll(s));
+const html = document.documentElement;
+
+/* Sem GSAP (CDN bloqueada): o conteúdo continua legível, só sem coreografia. */
+if (!window.gsap || !window.ScrollTrigger) { html.classList.add('nogsap', 'stack'); return; }
+gsap.registerPlugin(ScrollTrigger);
+ScrollTrigger.config({ ignoreMobileResize: true });
+
+const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const STACK = html.classList.contains('stack');
+const FINE = matchMedia('(hover:hover) and (pointer:fine)').matches;
+if (RM) html.classList.add('rm');
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+
+let reloadT;
+matchMedia('(max-width: 820px), (max-height: 560px), (prefers-reduced-motion: reduce)').addEventListener('change', e => {
+  if (e.matches !== STACK) { clearTimeout(reloadT); reloadT = setTimeout(() => location.reload(), 300); }
+});
+
+/* ---------- Dados ---------- */
+const SV = [
+  { k: 'pos', n: 'Posicionamento', c: 5, s: 'Diagnóstico, arquétipo, persona e estratégia de nicho.', sub: 'O lugar certo para a sua marca no mercado.',
+    what: 'É a base de todo o trabalho. Analisamos o negócio, o público e a concorrência para definir onde a marca deve estar, como deve ser percebida e o que precisa comunicar para ocupar espaço no seu nicho.',
+    list: ['Diagnóstico de perfil', 'Análise de concorrência', 'Arquétipo de marca', 'Persona e público-alvo', 'Proposta de valor', 'Estratégia de nicho'],
+    res: 'Uma marca que sabe quem é, para quem fala e por que deve ser escolhida.' },
+  { k: 'brand', n: 'Branding & Design', c: 4, s: 'Identidade visual e sistema de marca completo.', sub: 'Identidade que comunica antes da primeira palavra.',
+    what: 'Traduzimos o posicionamento em uma identidade visual coerente e reconhecível, e criamos o sistema que garante consistência em todos os pontos de contato da marca.',
+    list: ['Logotipo e variações', 'Paleta e tipografia', 'Manual de marca', 'Tom de voz', 'Papelaria e aplicações', 'Templates para redes'],
+    res: 'Percepção de valor elevada e uma marca reconhecida em qualquer canal.' },
+  { k: 'cont', n: 'Conteúdo & Social', c: 3, s: 'Planejamento editorial, roteiros, design e produção.', sub: 'Presença estratégica, todos os dias.',
+    what: 'Planejamos e produzimos o conteúdo das redes com intenção: cada publicação tem um papel na construção de autoridade, no relacionamento com o público e na venda.',
+    list: ['Planejamento editorial', 'Calendário de publicações', 'Roteiros para vídeos', 'Design de feed e stories', 'Produção de fotos', 'Legendas e copy'],
+    res: 'Um perfil que atrai o público certo e conduz a audiência até a compra.' },
+  { k: 'aud', n: 'Audiovisual', c: 3, s: 'Captação e edição de vídeo com linguagem de marca.', sub: 'Vídeos que prendem a atenção e transmitem valor.',
+    what: 'Captamos e editamos vídeos com linguagem de marca. Roteiro, direção e edição pensados para reter a atenção e gerar percepção de valor em cada segundo.',
+    list: ['Roteiro e direção', 'Captação em campo', 'Reels e vídeo vertical', 'Vídeos institucionais', 'Cobertura de eventos', 'Edição e finalização'],
+    res: 'Conteúdo em vídeo que gera alcance, conexão e autoridade.' },
+  { k: 'perf', n: 'Performance', c: 4, s: 'Tráfego pago focado em demanda e conversão.', sub: 'Investimento em mídia com direção e controle.',
+    what: 'Gerimos campanhas de tráfego pago em plataformas como o Meta Ads para levar a mensagem certa ao público certo, gerando demanda, contatos e vendas com acompanhamento constante.',
+    list: ['Estratégia de campanhas', 'Segmentação de públicos', 'Criativos para anúncios', 'Otimização contínua', 'Funis de venda', 'Relatórios de resultado'],
+    res: 'Cada real investido acompanhado, medido e direcionado para a conversão.' },
+  { k: 'land', n: 'Landing Page', c: 5, s: 'Páginas de alta conversão para campanhas e ofertas.', sub: 'Páginas feitas para converter.',
+    what: 'Desenvolvemos páginas de alta conversão para campanhas, lançamentos e ofertas, com copy persuasiva, design alinhado à marca e estrutura pensada para levar à ação.',
+    list: ['Estrutura e copy', 'Design responsivo', 'Integração com WhatsApp', 'Formulários de captura', 'Pixel e rastreamento', 'Ajustes por desempenho'],
+    res: 'Mais contatos e vendas a partir do mesmo investimento em tráfego.' }
+];
+const MODS = ['Score geral do perfil', 'Projeção de crescimento', 'Diagnóstico de bio', 'Análise de engajamento', 'Gaps e oportunidades', 'Análise SWOT', 'Arquétipo de marca', 'Persona e avatar', 'Fórmula de sucesso', 'Melhores horários', 'Tendências do nicho', 'Resumo estratégico'];
+
+/* ---------- Helpers ---------- */
+/* Onda senoidal fechada embaixo; o comprimento de onda divide o deslocamento do loop CSS, então o ciclo é contínuo. */
+function wp(x0, x1, base, amp, wl, ph, bottom) {
+  let d = `M${x0} ${bottom} L${x0} ${(base + amp * Math.sin(ph)).toFixed(1)}`;
+  for (let x = x0 + 10; x <= x1; x += 10) d += ` L${x} ${(base + amp * Math.sin((x - x0) / wl * Math.PI * 2 + ph)).toFixed(1)}`;
+  return d + ` L${x1} ${bottom}Z`;
+}
+function splitWords(el, emSet) {
+  const txt = el.textContent.trim();
+  el.setAttribute('aria-label', txt);
+  el.innerHTML = txt.split(/\s+/).map(w => `<span class="w${emSet.has(w.replace(/[.,:]/g, '').toLowerCase()) ? ' em' : ''}" aria-hidden="true">${w}</span>`).join(' ');
+  return $$('.w', el);
+}
+
+/* ---------- Ondas estáticas (hero, degraus, foz) ---------- */
+const HW = { sky: [14, 600, 0, 0, '#8DB8FF'], royal: [12, 300, 1.7, 14, '#2563EB'], navy: [10, 600, 3.1, 28, 'url(#wg3)'] };
+$$('[data-wave]').forEach(g => {
+  const [a, wl, ph, y, f] = HW[g.dataset.wave];
+  g.innerHTML = `<path transform="translate(0 ${y})" d="${wp(-600, 1800, 0, a, wl, ph, 520)}" fill="${f}"/>`;
+});
+$$('.cr').forEach(s => { s.innerHTML = `<path d="${wp(0, 200, 12, 5, 50, 0, 26)}" fill="currentColor"/>`; });
+$$('[data-sea]').forEach((s, i) => { s.innerHTML = `<path style="fill:var(--c)" d="${wp(0, 1200, 26, 10 + i * 2, [300, 200, 600][i], i * 1.3, 90)}"/>`; });
+const LV = 140; /* nível da água no "River" */
+
+/* ---------- Cursor líquido ---------- */
+function cursor() {
+  if (!FINE || RM) return;
+  html.classList.add('has-cur');
+  const cur = $('#cur'), tc = $('#trail'), tx = tc.getContext('2d');
+  let W, H;
+  const rs = () => { W = tc.width = innerWidth; H = tc.height = innerHeight; };
+  rs(); addEventListener('resize', rs);
+  let mx = innerWidth / 2, my = innerHeight / 2, cx = mx, cy = my, dirty = false;
+  const pts = [];
+  addEventListener('pointermove', e => {
+    mx = e.clientX; my = e.clientY;
+    pts.push({ x: mx, y: my, t: performance.now() });
+    if (pts.length > 70) pts.shift();
+    cur.classList.toggle('big', !!(e.target.closest && e.target.closest('a,button,[role=button],.mag')));
+    dirty = true;
+  }, { passive: true });
+  addEventListener('pointerdown', () => cur.classList.add('down'));
+  addEventListener('pointerup', () => cur.classList.remove('down'));
+  gsap.ticker.add(() => {
+    cx = lerp(cx, mx, .22); cy = lerp(cy, my, .22);
+    cur.style.transform = `translate3d(${cx}px,${cy}px,0)`;
+    const now = performance.now();
+    while (pts.length && now - pts[0].t > 520) pts.shift();
+    if (pts.length > 1 || dirty) {
+      dirty = pts.length > 1;
+      tx.clearRect(0, 0, W, H);
+      tx.lineCap = 'round';
+      for (let i = 1; i < pts.length; i++) {
+        const a = 1 - (now - pts[i].t) / 520;
+        tx.strokeStyle = `rgba(91,155,255,${(a * .5).toFixed(3)})`;
+        tx.lineWidth = 2 + a * 16;
+        tx.beginPath(); tx.moveTo(pts[i - 1].x, pts[i - 1].y); tx.lineTo(pts[i].x, pts[i].y); tx.stroke();
+      }
+    }
+  });
+}
+
+/* ---------- Hero: superfície de água reativa ---------- */
+function water() {
+  const c = $('#water'), ctx = c.getContext('2d', { alpha: false }), hero = $('#hero');
+  const S = innerWidth < 820 ? 9 : 6;
+  let w, h, a, b, img, data, vis = true, run = false, last = 0, lastDrop = 0, t = 0;
+  const size = () => {
+    const r = hero.getBoundingClientRect();
+    w = Math.max(10, Math.ceil(r.width / S)); h = Math.max(10, Math.ceil(r.height / S));
+    c.width = w; c.height = h; a = new Float32Array(w * h); b = new Float32Array(w * h);
+    img = ctx.createImageData(w, h); data = img.data;
+  };
+  const disturb = (gx, gy, s) => {
+    for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+      const x = gx + dx, y = gy + dy;
+      if (x > 0 && y > 0 && x < w - 1 && y < h - 1) a[y * w + x] += s * (1 - (dx * dx + dy * dy) / 9);
+    }
+  };
+  const step = () => {
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+      const i = y * w + x;
+      b[i] = ((a[i - 1] + a[i + 1] + a[i - w] + a[i + w]) * .5 - b[i]) * .985;
+    }
+    const tmp = a; a = b; b = tmp;
+  };
+  const render = () => {
+    for (let y = 0; y < h; y++) {
+      const k = y / h, br = lerp(246, 204, k), bg = lerp(248, 222, k), bb = lerp(252, 250, k);
+      for (let x = 0; x < w; x++) {
+        const i = y * w + x, p = i << 2;
+        let s = 0;
+        if (x > 0 && x < w - 1 && y > 0 && y < h - 1) s = a[i - 1] - a[i + 1] + a[i - w] - a[i + w];
+        s += (Math.sin(x * .11 + t * .9) + Math.sin(y * .17 - t * 1.2 + x * .05)) * 1.6;
+        let m;
+        if (s > 0) { m = Math.min(s / 40, 1) * .85; data[p] = br + (255 - br) * m; data[p + 1] = bg + (255 - bg) * m; data[p + 2] = bb + (255 - bb) * m; }
+        else { m = Math.min(-s / 40, 1) * .6; data[p] = br + (91 - br) * m; data[p + 1] = bg + (155 - bg) * m; data[p + 2] = bb + (255 - bb) * m; }
+        data[p + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  };
+  size();
+  if (RM) { disturb(w >> 1, h >> 1, 90); for (let i = 0; i < 24; i++) step(); render(); addEventListener('resize', () => { size(); render(); }); return; }
+  const loop = ts => {
+    if (!vis || document.hidden) { run = false; return; }
+    requestAnimationFrame(loop);
+    if (ts - last < 14) return;
+    last = ts; t = ts / 1000;
+    if (ts - lastDrop > 2400) { lastDrop = ts; disturb(2 + Math.random() * (w - 4) | 0, 2 + Math.random() * (h - 4) | 0, 70); }
+    step(); render();
+  };
+  const start = () => { if (!run && vis) { run = true; requestAnimationFrame(loop); } };
+  new IntersectionObserver(([e]) => { vis = e.isIntersecting; start(); }).observe(hero);
+  document.addEventListener('visibilitychange', start);
+  let px = null, py = null;
+  addEventListener('pointermove', e => {
+    const r = c.getBoundingClientRect();
+    if (e.clientY < r.top || e.clientY > r.bottom) { px = null; return; }
+    const gx = (e.clientX - r.left) / r.width * w, gy = (e.clientY - r.top) / r.height * h;
+    if (px !== null) {
+      const dist = Math.hypot(gx - px, gy - py), n = Math.max(1, Math.ceil(dist / 2)), str = clamp(dist * 5, 30, 150);
+      for (let i = 1; i <= n; i++) disturb((px + (gx - px) * i / n) | 0, (py + (gy - py) * i / n) | 0, str / n * 1.4);
+    }
+    px = gx; py = gy;
+  }, { passive: true });
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(size, 200); });
+  start();
+}
+
+/* ---------- Rio principal (uma linha, do topo à foz) ---------- */
+const river = { L: 0, tbl: [], top: 0, drawn: 0, last: -1 };
+function buildRiver() {
+  const svg = $('#river'), path = $('#river-path'), glow = $('#river-glow'), main = $('#main');
+  const W = html.clientWidth, H = main.offsetHeight, top = main.getBoundingClientRect().top + scrollY;
+  svg.setAttribute('width', W); svg.setAttribute('height', H); svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  const narrow = W < 820, A = [];
+  const wrapOf = el => el.closest('.pin-spacer') || el;
+  const add = (sel, fx, fy) => {
+    const el = $(sel); if (!el) return;
+    const r = wrapOf(el).getBoundingClientRect();
+    A.push({ x: W * (.5 + (fx - .5) * (narrow ? .86 : 1)), y: r.top + scrollY - top + r.height * fy });
+  };
+  add('#hero', .5, .965); add('#manifesto', .93, .55); add('#finale', .5, .5); add('#quem', .05, .5);
+  add('#como', .95, .5); add('#servicos', .5, .5); add('#metodo', .08, .01); add('#metodo', .92, .99);
+  add('#diagnostico', .04, .5); add('#aprova', .5, .5); add('#marcas', .93, .5); add('#jornada', .04, .5);
+  add('#formatos', .96, .5); { const fz = $('#foz'), sea = $('.sea', fz); add('#foz', .5, sea.offsetTop / fz.offsetHeight); }
+  for (let i = 1; i < A.length; i++) if (A[i].y < A[i - 1].y + 40) A[i].y = A[i - 1].y + 40;
+  /* Curvas de Bézier amostradas em JS (polilinha): tabelas exatas sem consultar o DOM, que é lento em caminhos longos. */
+  const P = [[A[0].x, A[0].y]];
+  for (let i = 1; i < A.length; i++) {
+    const p = A[i - 1], q = A[i], dy = q.y - p.y, c1y = p.y + dy * .5, c2y = q.y - dy * .5;
+    const n = Math.max(12, Math.ceil((dy + Math.abs(q.x - p.x)) / 8));
+    for (let k = 1; k <= n; k++) {
+      const t = k / n, m = 1 - t;
+      P.push([m * m * m * p.x + 3 * m * m * t * p.x + 3 * m * t * t * q.x + t * t * t * q.x,
+              m * m * m * p.y + 3 * m * m * t * c1y + 3 * m * t * t * c2y + t * t * t * q.y]);
+    }
+  }
+  const tbl = []; let L = 0;
+  P.forEach((pt, i) => { if (i) L += Math.hypot(pt[0] - P[i - 1][0], pt[1] - P[i - 1][1]); tbl.push(L, pt[0], pt[1]); });
+  const d = 'M' + P.map(pt => pt[0].toFixed(1) + ' ' + pt[1].toFixed(1)).join('L');
+  path.setAttribute('d', d); glow.setAttribute('d', d);
+  river.L = L; river.top = top; river.last = -1; river.tbl = tbl;
+  [path, glow].forEach(p => { p.style.strokeDasharray = `${L} ${L}`; });
+  /* gradiente: azul royal sobre seções claras, céu sobre as escuras */
+  const g = $('#rg-grad'); g.setAttribute('y2', H);
+  let stops = '';
+  $$('main section.sec, main section.fin').forEach(sec => {
+    const r = wrapOf(sec).getBoundingClientRect(), y0 = r.top + scrollY - top, y1 = y0 + r.height;
+    const col = sec.classList.contains('dark') ? '#8DB8FF' : '#2563EB';
+    stops += `<stop offset="${clamp((y0 + (y1 - y0) * .25) / H, 0, 1).toFixed(4)}" stop-color="${col}"/><stop offset="${clamp((y0 + (y1 - y0) * .75) / H, 0, 1).toFixed(4)}" stop-color="${col}"/>`;
+  });
+  g.innerHTML = stops;
+  const end = A[A.length - 1], m = $('#mouth');
+  m.style.left = end.x + 'px'; m.style.top = end.y + 'px';
+  riverTick(true);
+}
+function lenAtY(y) {
+  const t = river.tbl, n = t.length / 3;
+  if (y <= t[2]) return 0;
+  if (y >= t[(n - 1) * 3 + 2]) return river.L;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (t[mid * 3 + 2] < y) lo = mid + 1; else hi = mid; }
+  const i = Math.max(1, lo), y0 = t[(i - 1) * 3 + 2], y1 = t[i * 3 + 2];
+  return lerp(t[(i - 1) * 3], t[i * 3], y1 === y0 ? 0 : (y - y0) / (y1 - y0));
+}
+function pointAt(t, l) {
+  const n = t.length / 3;
+  let lo = 0, hi = n - 1;
+  while (lo < hi) { const mid = (lo + hi) >> 1; if (t[mid * 3] < l) lo = mid + 1; else hi = mid; }
+  const i = Math.max(1, lo), a = t[(i - 1) * 3], b = t[i * 3], k = b === a ? 0 : clamp((l - a) / (b - a), 0, 1);
+  return { x: lerp(t[(i - 1) * 3 + 1], t[i * 3 + 1], k), y: lerp(t[(i - 1) * 3 + 2], t[i * 3 + 2], k) };
+}
+function riverTick(force) {
+  if (!river.L) return;
+  const path = $('#river-path'), glow = $('#river-glow'), drop = $('#drop');
+  const target = RM ? river.L : lenAtY(scrollY + innerHeight * .58 - river.top);
+  river.drawn = force || RM ? target : lerp(river.drawn, target, .13);
+  if (Math.abs(river.drawn - target) < .4) river.drawn = target;
+  if (river.drawn === river.last) return;
+  river.last = river.drawn;
+  const off = river.L - river.drawn;
+  path.style.strokeDashoffset = off; glow.style.strokeDashoffset = off;
+  if (RM) return;
+  const p = pointAt(river.tbl, river.drawn);
+  drop.style.transform = `translate(${p.x}px,${p.y}px)`;
+  drop.setAttribute('opacity', river.drawn > 30 && river.drawn < river.L - 6 ? 1 : 0);
+}
+
+/* ---------- Preloader e abertura ---------- */
+function preloader(done) {
+  const pre = $('#pre');
+  if (RM) { gsap.to(pre, { opacity: 0, duration: .35, onComplete: () => { pre.remove(); done(); } }); return; }
+  gsap.set('.rg', { opacity: 0 });
+  const tl = gsap.timeline({ onComplete: () => pre.remove() });
+  tl.fromTo('.pdrop', { y: -innerHeight * .5 - 40, transformOrigin: '50% 50%' }, { y: 0, duration: .5, ease: 'power2.in' })
+    .to('.pdrop', { scale: 0, duration: .12, transformOrigin: '50% 100%' })
+    .fromTo('.rg', { scale: 1, opacity: .9, svgOrigin: '100 100' }, { scale: 55, opacity: 0, duration: .75, ease: 'power2.out', stagger: .09, immediateRender: false }, '<')
+    .to('.pre-fill', { scale: 1, duration: .6, ease: 'power3.inOut' }, '-=.6')
+    .add(done, '-=.25');
+}
+function heroIntro() {
+  const lvl = $('.lvl');
+  if (RM) { gsap.set(lvl, { y: LV }); return; }
+  gsap.set(lvl, { y: 430 });
+  const tl = gsap.timeline();
+  tl.from('.nav', { opacity: 0, y: -14, duration: .8, ease: 'power3.out' }, 0)
+    .fromTo('#water', { opacity: 0 }, { opacity: 1, duration: 1.2 }, 0)
+    .from('.hero .eyebrow', { opacity: 0, y: 14, duration: .8 }, .1)
+    .to(lvl, { y: LV, duration: 2.2, ease: 'power3.out' }, 0)
+    .from('.chip', { opacity: 0, scale: .8, y: 16, duration: .9, stagger: .1, ease: 'back.out(1.6)' }, .5)
+    .from('.hero-sub', { opacity: 0, y: 20, duration: 1, ease: 'power3.out' }, .7)
+    .from('.hero-foot > *', { opacity: 0, duration: 1 }, 1.1)
+    .add(() => gsap.to(lvl, { y: LV + 9, duration: 3.4, yoyo: true, repeat: -1, ease: 'sine.inOut' }), 2.2);
+  gsap.to('.hero-in', { yPercent: -10, opacity: .15, ease: 'none', scrollTrigger: { trigger: '#hero', start: 'top top', end: 'bottom top', scrub: true } });
+}
+
+/* ---------- Revelações genéricas ---------- */
+function reveals() {
+  const Y = RM ? 0 : 30;
+  $$('.t').forEach(t => {
+    gsap.from($$('.ln>span', t), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1, duration: RM ? .4 : 1.1, ease: 'power4.out', stagger: .09, scrollTrigger: { trigger: t, start: 'top 88%', once: true } });
+  });
+  $$('[data-rv]').forEach(el => {
+    gsap.from(el, { y: Y, opacity: 0, duration: RM ? .4 : .9, ease: 'power3.out', delay: +el.dataset.d || 0, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
+  });
+  $$('[data-count]').forEach(el => {
+    const to = +el.dataset.count;
+    if (RM) { el.textContent = to; return; }
+    const o = { v: 0 }; el.textContent = '0';
+    ScrollTrigger.create({ trigger: el, start: 'top 88%', once: true, onEnter: () => gsap.to(o, { v: to, duration: 2, ease: 'power3.out', onUpdate: () => { el.textContent = Math.round(o.v); } }) });
+  });
+}
+
+/* ---------- Manifesto ---------- */
+function manifesto() {
+  const mt = $('#maniT'), ft = $('#finT');
+  const mw = splitWords(mt, new Set(['nascente', 'curso', 'constância', 'rio']));
+  const fw = splitWords(ft, new Set(['ele', 'avança']));
+  if (RM) { gsap.set([...mw, ...fw], { opacity: 1 }); return; }
+  gsap.fromTo(mw, { opacity: .16 }, { opacity: 1, ease: 'none', stagger: .5, duration: 1, scrollTrigger: { trigger: mt, start: 'top 74%', end: 'bottom 58%', scrub: true } });
+  gsap.timeline({ scrollTrigger: { trigger: '#finale', start: 'top top', end: '+=150%', pin: true, scrub: .5, anticipatePin: 1 } })
+    .fromTo(fw, { opacity: .14 }, { opacity: 1, ease: 'none', stagger: .4, duration: 1 })
+    .to({}, { duration: .7 });
+}
+
+/* ---------- Quem somos + degraus ---------- */
+function who() {
+  if (RM) return;
+  gsap.from('.fcard', { y: 70, opacity: 0, duration: 1.1, stagger: .16, ease: 'power3.out', scrollTrigger: { trigger: '.who-r', start: 'top 80%', once: true } });
+}
+function stairs() {
+  if (RM) return;
+  const tl = gsap.timeline({ paused: true });
+  tl.from('.fill', { scaleY: 0, duration: 1.3, stagger: .34, ease: 'power3.out' })
+    .from('.crest', { y: (i, el) => el.parentNode.offsetHeight, opacity: 0, duration: 1.3, stagger: .34, ease: 'power3.out' }, 0)
+    .from('.stp-c', { opacity: 0, y: 22, duration: .8, stagger: .34, ease: 'power2.out' }, .55);
+  ScrollTrigger.create({ trigger: '.stairs', start: 'top 72%', once: true, onEnter: () => tl.play() });
+}
+
+/* ---------- Serviços ---------- */
+const sp = $('#sp'); let spTl = null, spCard = null;
+function services() {
+  const grid = $('#svcGrid');
+  grid.innerHTML = SV.map((d, i) => `
+    <div class="svc" role="button" tabindex="0" data-i="${i}" style="--c:${d.c}" aria-label="${d.n}: ver detalhes">
+      <span class="glow"></span>
+      <div class="svc-top"><span class="ico"><svg aria-hidden="true"><use href="#i-${d.k}"/></svg></span><span class="svc-n">0${i + 1} / 06</span></div>
+      <h3>${d.n}</h3><p>${d.s}</p>
+      <span class="svc-go">Ver detalhes <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+    </div>`).join('');
+  const cards = $$('.svc', grid);
+  if (!RM) gsap.from(cards, { y: 60, opacity: 0, duration: 1, stagger: .09, ease: 'power3.out', scrollTrigger: { trigger: grid, start: 'top 82%', once: true } });
+  cards.forEach(c => {
+    const open = () => openSvc(c);
+    c.addEventListener('click', open);
+    c.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    if (!FINE || RM) return;
+    const glow = $('.glow', c);
+    gsap.set(c, { transformPerspective: 900 });
+    gsap.set(glow, { xPercent: -50, yPercent: -50 });
+    const rx = gsap.quickTo(c, 'rotationX', { duration: .5, ease: 'power3' }), ry = gsap.quickTo(c, 'rotationY', { duration: .5, ease: 'power3' });
+    const gx = gsap.quickTo(glow, 'x', { duration: .25, ease: 'power3' }), gy = gsap.quickTo(glow, 'y', { duration: .25, ease: 'power3' });
+    c.addEventListener('pointermove', e => {
+      const r = c.getBoundingClientRect(), px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+      ry((px - .5) * 14); rx(-(py - .5) * 14); gx(e.clientX - r.left); gy(e.clientY - r.top);
+    });
+    c.addEventListener('pointerleave', () => { rx(0); ry(0); });
+  });
+  $('#spX').addEventListener('click', closeSvc);
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeSvc(); });
+}
+function openSvc(card) {
+  if (spTl) return;
+  const i = +card.dataset.i, d = SV[i]; spCard = card;
+  $('#spK').textContent = `Serviço 0${i + 1} / 06`;
+  $('#spName').textContent = d.n; $('#spSub').textContent = d.sub;
+  $('#spWhat').textContent = d.what; $('#spRes').textContent = d.res;
+  $('#spUse').setAttribute('href', '#i-' + d.k);
+  $('#spList').innerHTML = d.list.map(t => `<li><svg viewBox="0 0 24 24" aria-hidden="true"><path pathLength="1" stroke-dasharray="1" d="M5 12.500l4.500 4.500L19 7.500"/></svg>${t}</li>`).join('');
+  const r = card.getBoundingClientRect(), vw = innerWidth, vh = innerHeight;
+  const ci = $('.ico', card).getBoundingClientRect();
+  sp.hidden = false; $('.sp-in', sp).scrollTop = 0;
+  html.style.overflow = 'hidden'; $('#main').inert = true; $('#nav').inert = true;
+  const pi = $('.sp-ico', sp).getBoundingClientRect();
+  gsap.set(card, { visibility: 'hidden' });
+  gsap.set('.sp-bg', { transformOrigin: '0 0' });
+  if (RM) { spTl = gsap.timeline({ onReverseComplete: closeDone }).fromTo(sp, { opacity: 0 }, { opacity: 1, duration: .3 }); $('#spX').focus({ preventScroll: true }); return; }
+  spTl = gsap.timeline({ defaults: { ease: 'power4.out' }, onReverseComplete: closeDone });
+  spTl.fromTo('.sp-bg', { x: r.left, y: r.top, scaleX: r.width / vw, scaleY: r.height / vh }, { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: .9, ease: 'expo.inOut' }, 0)
+    .fromTo('.sp-ico', { x: ci.left - pi.left, y: ci.top - pi.top, scale: ci.width / pi.width }, { x: 0, y: 0, scale: 1, duration: .9, ease: 'expo.inOut' }, 0)
+    .from('#spName', { yPercent: 112, duration: 1 }, .5)
+    .from('.sp-fade', { opacity: 0, y: 22, duration: .8, stagger: .08 }, .6)
+    .from('.sp-list li', { opacity: 0, x: -16, duration: .6, stagger: .07 }, .85)
+    .fromTo('.sp-list path', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: .5, stagger: .07, ease: 'power2.out' }, .95)
+    .from('.sp-x', { opacity: 0, scale: .6, duration: .5 }, .8);
+  $('#spX').focus({ preventScroll: true });
+}
+function closeSvc() { if (spTl && !sp.hidden) spTl.timeScale(1.6).reverse(); }
+function closeDone() {
+  sp.hidden = true; html.style.overflow = ''; $('#main').inert = false; $('#nav').inert = false;
+  gsap.set(spCard, { clearProps: 'visibility' });
+  gsap.set(['.sp-bg', '.sp-ico', '#spName', '.sp-fade', '.sp-list li', '.sp-x', sp], { clearProps: 'all' });
+  spCard.focus({ preventScroll: true });
+  spTl.kill(); spTl = null;
+}
+
+/* ---------- Método River (scroll horizontal fixado) ---------- */
+function metodo() {
+  const sec = $('#metodo'), track = $('#mtTrack'), stages = $$('.stg', track), l1 = $('.mt-l1');
+  if (STACK) {
+    gsap.to(l1, { opacity: 0, ease: 'none', scrollTrigger: { trigger: sec, start: 'top 60%', end: 'bottom 85%', scrub: true } });
+    if (RM) { gsap.set('.mt-rail i', { scaleY: 1 }); stages.forEach(s => s.classList.add('lit')); return; }
+    gsap.to('.mt-rail i', { scaleY: 1, ease: 'none', scrollTrigger: { trigger: track, start: 'top 62%', end: 'bottom 72%', scrub: true } });
+    stages.forEach(s => {
+      ScrollTrigger.create({ trigger: s, start: 'top 64%', onEnter: () => s.classList.add('lit'), onLeaveBack: () => s.classList.remove('lit') });
+      gsap.from($$('.stg-in > *', s), { opacity: 0, y: 20, stagger: .08, duration: .7, scrollTrigger: { trigger: s, start: 'top 82%', once: true } });
+    });
+    return;
+  }
+  const svg = $('#mtLine'), path = $('#mtPath'), glow = $('#mtGlow'), dropEl = $('#mtDrop'), bar = $('.mt-gauge .bar i'), labels = $$('.mt-gauge li');
+  let L = 1, tb = [], H = 0, active = -1;
+  const layout = () => {
+    const vw = innerWidth; H = innerHeight;
+    const W = track.scrollWidth, x0 = vw * .08, x1 = W - vw * .08;
+    const yAt = x => H * .5 + 13 * Math.sin(x / 260) + 8 * Math.sin(x / 97 + 1);
+    svg.setAttribute('width', W); svg.setAttribute('height', H);
+    const P = [[x0, -8], [x0, H * .5 - 70]];
+    const quad = (ax, ay, cx, cy, bx, by) => { for (let k = 1; k <= 16; k++) { const t = k / 16, m = 1 - t; P.push([m * m * ax + 2 * m * t * cx + t * t * bx, m * m * ay + 2 * m * t * cy + t * t * by]); } };
+    quad(x0, H * .5 - 70, x0, yAt(x0 + 90), x0 + 90, yAt(x0 + 90));
+    for (let x = x0 + 102; x < x1 - 90; x += 12) P.push([x, yAt(x)]);
+    quad(x1 - 90, yAt(x1 - 90), x1, yAt(x1 - 90), x1, yAt(x1 - 90) + 90);
+    P.push([x1, H + 8]);
+    tb = []; L = 0;
+    P.forEach((pt, i) => { if (i) L += Math.hypot(pt[0] - P[i - 1][0], pt[1] - P[i - 1][1]); tb.push(L, pt[0], pt[1]); });
+    const d = 'M' + P.map(pt => pt[0].toFixed(1) + ' ' + pt[1].toFixed(1)).join('L');
+    path.setAttribute('d', d); glow.setAttribute('d', d);
+    [path, glow].forEach(p => { p.style.strokeDasharray = `${L} ${L}`; });
+    stages.forEach(s => { $('.stg-node', s).style.top = yAt(s.offsetLeft) + 'px'; });
+  };
+  const lenAtX = x => {
+    let lo = 0, hi = tb.length / 3 - 1;
+    while (lo < hi) { const mid = (lo + hi) >> 1; if (tb[mid * 3 + 1] < x) lo = mid + 1; else hi = mid; }
+    return tb[lo * 3];
+  };
+  const dist = () => track.scrollWidth - innerWidth;
+  const apply = () => {
+    if (!tb.length) return;
+    const tx = gsap.getProperty(track, 'x'), p = clamp(-tx / dist(), 0, 1);
+    const drawn = lenAtX(-tx + innerWidth * .82);
+    const off = L - drawn; path.style.strokeDashoffset = off; glow.style.strokeDashoffset = off;
+    const pt = pointAt(tb, drawn); dropEl.style.transform = `translate(${pt.x}px,${pt.y}px)`;
+    l1.style.opacity = 1 - p; bar.style.transform = `scaleX(${p})`;
+    let best = 0, bd = 1e9;
+    stages.forEach((s, i) => { const dd = Math.abs(s.offsetLeft + s.offsetWidth / 2 + tx - innerWidth * .5); if (dd < bd) { bd = dd; best = i; } });
+    if (best !== active) { active = best; stages.forEach((s, i) => s.classList.toggle('on', i === best)); labels.forEach((li, i) => li.classList.toggle('on', i <= best)); }
+  };
+  gsap.to(track, { x: () => -dist(), ease: 'none', onUpdate: apply,
+    scrollTrigger: { trigger: sec, start: 'top top', end: () => '+=' + dist(), pin: true, scrub: .6, anticipatePin: 1, invalidateOnRefresh: true, onRefresh: () => { layout(); apply(); } } });
+  layout(); apply();
+}
+
+/* ---------- Diagnóstico ---------- */
+function diagnostico() {
+  $('#mods').innerHTML = MODS.map((m, i) => `<div class="mod"><span>${String(i + 1).padStart(2, '0')}</span>${m}</div>`).join('');
+  const ax = ['Bio', 'Conteúdo', 'Engajamento', 'Identidade', 'Autoridade', 'Conversão'], val = [.78, .62, .7, .55, .66, .5], cx = 120, cy = 120, R = 92;
+  const pt = (i, r) => { const a = -Math.PI / 2 + i * Math.PI / 3; return [cx + Math.cos(a) * R * r, cy + Math.sin(a) * R * r]; };
+  let s = '';
+  [.33, .66, 1].forEach(k => { s += `<polygon points="${ax.map((_, i) => pt(i, k).map(n => n.toFixed(1)).join(',')).join(' ')}" fill="none" stroke="#D5E0F4"/>`; });
+  ax.forEach((n, i) => {
+    const [x, y] = pt(i, 1), [lx, ly] = pt(i, 1.2);
+    s += `<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#E1EAF8"/><text x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="middle">${n}</text>`;
+  });
+  const dp = val.map((v, i) => pt(i, v)), d = 'M' + dp.map(p => p.map(n => n.toFixed(1)).join(' ')).join(' L') + 'Z';
+  s += `<path class="rd-fill" d="${d}" fill="rgba(37,99,235,.16)"/><path class="rd-line" d="${d}" pathLength="1" fill="none" stroke="#2563EB" stroke-width="2.2" stroke-linejoin="round" stroke-dasharray="1" stroke-dashoffset="0"/>`;
+  s += dp.map(p => `<circle class="rd-dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="#fff" stroke="#2563EB" stroke-width="2"/>`).join('');
+  $('#radar').innerHTML = s;
+  if (RM) return;
+  const num = $('#scNum'), cnt = { v: 0 };
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out' } });
+  tl.from('.dash', { opacity: 0, y: 40, duration: .8 })
+    .from('.dash-top > *', { opacity: 0, y: 10, stagger: .08, duration: .5 }, .3)
+    .from('.d-card', { opacity: 0, y: 30, stagger: .12, duration: .7 }, .5)
+    .fromTo('.sc-arc', { strokeDashoffset: 100 }, { strokeDashoffset: 28, duration: 1.6, ease: 'power2.out' }, .7)
+    .to(cnt, { v: 72, duration: 1.6, ease: 'power2.out', onUpdate: () => { num.textContent = Math.round(cnt.v); } }, .7)
+    .fromTo('.rd-line', { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: 1.4, ease: 'power2.inOut' }, .9)
+    .from('.rd-fill', { opacity: 0, duration: .9 }, 1.8)
+    .from('.rd-dot', { scale: 0, transformOrigin: 'center', stagger: .08, duration: .4, ease: 'back.out(2)' }, 1.5)
+    .from('.sw', { opacity: 0, scale: .94, stagger: .14, duration: .6 }, 1.2)
+    .from('.sw .bar', { scaleX: 0, transformOrigin: '0 50%', stagger: .05, duration: .6 }, 1.5)
+    .from('.mod', { opacity: 0, y: 18, stagger: .07, duration: .5 }, 1.6);
+  num.textContent = '0';
+  ScrollTrigger.create({ trigger: '#dash', start: 'top 72%', once: true, onEnter: () => tl.play() });
+}
+
+/* ---------- River Aprova ---------- */
+const ARTS = [
+  `<defs><linearGradient id="a0" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#12284D"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs><rect width="270" height="238" fill="url(#a0)"/><g fill="none" stroke="#8DB8FF" stroke-width="1.2"><circle cx="135" cy="125" r="30"/><circle cx="135" cy="125" r="58" opacity=".7"/><circle cx="135" cy="125" r="88" opacity=".45"/><circle cx="135" cy="125" r="122" opacity=".25"/></g><path d="M135 100c7 8 12 14 12 20a12 12 0 0 1-24 0c0-6 5-12 12-20z" fill="#fff"/>`,
+  `<rect width="270" height="238" fill="#E6EEFB"/><path d="M0 120c40-24 70 24 135 0s95-20 135 4v114H0z" fill="#8DB8FF"/><path d="M0 150c45-22 75 20 135 0s100-14 135 6v82H0z" fill="#2563EB"/><path d="M0 184c50-18 80 14 135 0s95-8 135 4v50H0z" fill="#0B1B36"/><circle cx="196" cy="62" r="22" fill="#fff"/><g fill="#2563EB"><circle cx="118" cy="214" r="2.500"/></g>`,
+  `<rect width="270" height="238" fill="#F5F7FB"/><circle cx="68" cy="170" r="104" fill="#2563EB"/><circle cx="68" cy="170" r="66" fill="#5B9BFF"/><circle cx="68" cy="170" r="30" fill="#E6EEFB"/><rect x="170" y="36" width="64" height="8" rx="4" fill="#12284D"/><rect x="170" y="54" width="44" height="8" rx="4" fill="#8DB8FF"/>`,
+  `<defs><linearGradient id="a3" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#2563EB"/><stop offset="1" stop-color="#8DB8FF"/></linearGradient></defs><rect width="270" height="238" fill="url(#a3)"/><circle cx="135" cy="119" r="40" fill="rgba(255,255,255,.22)"/><path d="M123 98v42l36-21z" fill="#fff"/><path d="M0 214c40-12 70 8 135-2s95-10 135 0v26H0z" fill="rgba(11,27,54,.55)"/>`
+];
+const POSTS = ['Feed', 'Carrossel', 'Stories', 'Reels'];
+function aprova() {
+  const sec = $('#aprova'), wrap = $('#phoneWrap'), phone = $('#phone'), feed = $('#feed');
+  feed.innerHTML = POSTS.map((f, i) => `
+    <div class="post">
+      <div class="post-h"><i></i>@marca.exemplo<em>${f}</em></div>
+      <div class="art"><svg viewBox="0 0 270 238" preserveAspectRatio="xMidYMid slice" aria-hidden="true">${ARTS[i]}</svg></div>
+      <div class="burst" aria-hidden="true"><b></b>${'<i></i>'.repeat(8)}</div>
+      <div class="stamp"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12.500l4.500 4.500L19 7.500"/></svg>Aprovado</div>
+      <div class="post-c"><span class="bar" style="width:86%"></span><span class="bar" style="width:52%"></span></div>
+    </div>`).join('');
+  const fit = () => {
+    const s = clamp((innerHeight - (innerWidth < 820 ? 250 : 170)) / 590, .5, 1.12);
+    wrap.style.width = 290 * s + 'px'; wrap.style.height = 590 * s + 'px'; phone.style.transform = `scale(${s})`;
+  };
+  fit(); ScrollTrigger.addEventListener('refreshInit', fit);
+  const posts = $$('.post', feed);
+  if (RM) { gsap.set($$('.stamp', feed), { opacity: 1 }); return; }
+  const stamps = posts.map(p => {
+    const st = $('.stamp', p), bu = $('.burst', p), art = $('.art', p);
+    return gsap.timeline({ paused: true })
+      .fromTo(st, { opacity: 0, scale: 2.8, rotation: -26 }, { opacity: 1, scale: 1, rotation: -12, duration: .28, ease: 'power4.in' })
+      .fromTo(art, { scale: 1 }, { scale: .965, duration: .07, yoyo: true, repeat: 1, ease: 'power2.out' }, .28)
+      .fromTo($('.screen'), { x: 0 }, { x: 3, duration: .04, yoyo: true, repeat: 3, ease: 'none' }, .28)
+      .fromTo($('b', bu), { scale: .3, opacity: .85 }, { scale: 2.8, opacity: 0, duration: .6, ease: 'power2.out' }, .28)
+      .fromTo($$('i', bu), { x: 0, y: 0, opacity: 1, scale: 1 }, { x: j => Math.cos(j / 8 * 6.283) * 48, y: j => Math.sin(j / 8 * 6.283) * 48, opacity: 0, scale: .2, duration: .55, ease: 'power3.out' }, .28);
+  });
+  const th = [.12, .36, .6, .84], postH = 318, viewH = 492, total = postH * posts.length;
+  const offs = posts.map((_, i) => clamp((i + .5) * postH - viewH / 2, 0, total - viewH));
+  const state = [false, false, false, false];
+  const tl = gsap.timeline({ scrollTrigger: { trigger: sec, start: 'top top', end: '+=270%', pin: true, scrub: .6, anticipatePin: 1,
+    onUpdate: self => th.forEach((t, i) => { const on = self.progress >= t + .02; if (on !== state[i]) { state[i] = on; on ? stamps[i].play() : stamps[i].reverse(); } }) } });
+  let prev = 0;
+  th.forEach((t, i) => { tl.to(feed, { y: -offs[i], ease: 'none', duration: t - prev }, prev); prev = t; });
+  tl.to(feed, { y: -offs[3], ease: 'none', duration: 1 - prev }, prev);
+}
+
+/* ---------- Marcas: marquee reativo ao scroll ---------- */
+function marquee() {
+  const rows = $$('.mq').map((row, k) => {
+    const t = $('.mq-t', row), set = $('.logo-set', t);
+    for (let i = 0; i < 2; i++) { const c = set.cloneNode(true); c.setAttribute('aria-hidden', 'true'); t.appendChild(c); }
+    const r = { t, set, dir: +row.dataset.dir, x: 0, w: 0, vis: true, k };
+    const m = () => { r.w = set.offsetWidth; r.x = r.dir > 0 ? 0 : -r.w; };
+    m(); addEventListener('resize', m); document.fonts.ready.then(m);
+    new IntersectionObserver(([e]) => { r.vis = e.isIntersecting; }).observe(row);
+    return r;
+  });
+  if (RM) return;
+  let lastY = scrollY, vel = 0;
+  gsap.ticker.add((time, dtMs) => {
+    const dt = Math.min(dtMs, 50) / 1000, dy = scrollY - lastY; lastY = scrollY;
+    vel = lerp(vel, Math.abs(dy) / Math.max(dt, .001), .1);
+    const sp = 55 + Math.min(vel * .45, 1500);
+    rows.forEach(r => {
+      if (!r.vis || !r.w) return;
+      r.x -= r.dir * sp * dt * (r.k ? .7 : 1);
+      if (r.x <= -r.w) r.x += r.w; else if (r.x > 0) r.x -= r.w;
+      r.t.style.transform = `translate3d(${r.x}px,0,0)`;
+    });
+  });
+}
+
+/* ---------- Jornada ---------- */
+function jornada() {
+  const items = $$('.tl-i');
+  if (RM) { gsap.set('.tl-lit', { scaleY: 1 }); items.forEach(i => i.classList.add('on')); return; }
+  gsap.to('.tl-lit', { scaleY: 1, ease: 'none', scrollTrigger: { trigger: '#tl', start: 'top 62%', end: 'bottom 62%', scrub: .4 } });
+  items.forEach(it => ScrollTrigger.create({ trigger: it, start: 'top 62%', onEnter: () => it.classList.add('on'), onLeaveBack: () => it.classList.remove('on') }));
+}
+
+/* ---------- Botões magnéticos ---------- */
+function magnetic() {
+  if (!FINE || RM) return;
+  let vis = false;
+  new IntersectionObserver(([e]) => { vis = e.isIntersecting; }).observe($('#foz'));
+  const btns = $$('.mag').map(b => {
+    const inn = $('.mag-in', b), cfg = { duration: .8, ease: 'elastic.out(1,.45)' };
+    return { b, x: gsap.quickTo(b, 'x', cfg), y: gsap.quickTo(b, 'y', cfg), ix: gsap.quickTo(inn, 'x', cfg), iy: gsap.quickTo(inn, 'y', cfg) };
+  });
+  addEventListener('pointermove', e => {
+    if (!vis) return;
+    btns.forEach(m => {
+      const r = m.b.getBoundingClientRect(), dx = e.clientX - (r.left + r.width / 2), dy = e.clientY - (r.top + r.height / 2);
+      if (Math.hypot(dx, dy) < Math.max(r.width, r.height) * .8) { m.x(dx * .28); m.y(dy * .38); m.ix(dx * .14); m.iy(dy * .2); }
+      else { m.x(0); m.y(0); m.ix(0); m.iy(0); }
+    });
+  }, { passive: true });
+}
+
+/* ---------- Foz ---------- */
+function foz() {
+  if (RM) return;
+  gsap.from('.foz-in > *', { y: 36, opacity: 0, duration: 1, stagger: .1, ease: 'power3.out', scrollTrigger: { trigger: '#foz', start: 'top 40%', once: true } });
+}
+
+/* ---------- Navegação: cor segue a seção sob ela ---------- */
+function navColor() {
+  const nav = $('#nav'), darks = $$('.dark').filter(s => !s.closest('#sp'));
+  let dirty = true;
+  addEventListener('scroll', () => { dirty = true; }, { passive: true });
+  gsap.ticker.add(() => {
+    if (!dirty) return; dirty = false;
+    nav.classList.toggle('on-dark', darks.some(s => { const r = s.getBoundingClientRect(); return r.top <= 36 && r.bottom >= 36; }));
+  });
+}
+
+/* ---------- Início ---------- */
+cursor(); water(); navColor();
+reveals(); manifesto(); who(); stairs(); services(); metodo(); diagnostico(); aprova(); marquee(); jornada(); magnetic(); foz();
+let rbT; ScrollTrigger.addEventListener('refresh', () => { clearTimeout(rbT); rbT = setTimeout(buildRiver, 60); });
+gsap.ticker.add(() => riverTick(false));
+buildRiver();
+preloader(heroIntro);
+const refresh = () => ScrollTrigger.refresh();
+addEventListener('load', refresh);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh);
+})();
+</script>
+</body>
+</html>
