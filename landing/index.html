@@ -82,8 +82,8 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
 .nav{position:fixed;top:0;left:0;right:0;z-index:5000;display:flex;justify-content:space-between;align-items:center;padding:16px var(--gut);color:var(--navy);pointer-events:none;transition:color .4s}
 .nav>*{pointer-events:auto}
 .nav.on-dark{color:#E6EEFB}
-.brand,.nav-cta{background:rgba(245,247,251,.5);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.nav.on-dark .brand,.nav.on-dark .nav-cta{background:rgba(11,27,54,.45)}
+.brand,.nav-cta{background:rgba(245,247,251,.96);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.nav.on-dark .brand,.nav.on-dark .nav-cta{background:rgba(11,27,54,.94)}
 .brand{padding:7px 16px 7px 14px;border-radius:99px;display:flex;align-items:center;gap:9px;font-family:var(--serif);font-size:28px;line-height:1;text-decoration:none}
 .brand svg{width:15px;height:20px;color:var(--royal)}
 .nav.on-dark .brand svg{color:var(--sky)}
@@ -461,7 +461,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   body{font-size:16px}
   .hero{padding-top:96px;padding-bottom:150px}
   .chips{position:static;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px;max-width:420px}
-  .chips li{position:static;animation-duration:7s}
+  .chips li{position:static;animation:none}
   .hero-foot{bottom:18px;font-size:10.5px}
   .hero-foot span:last-child{display:none}
   .hero-foot{justify-content:center}
@@ -469,6 +469,7 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .grid2,.how-h,.diag-h,.apr-g,.sp-in{grid-template-columns:1fr}
   .fcard,.fcard:nth-child(2){justify-self:stretch;margin-left:0;width:100%}
   .fcard:nth-child(2){width:88%;justify-self:end}
+  .fcard:nth-child(3){margin-left:0;width:94%}
   .stairs{grid-template-columns:1fr;height:auto;min-height:0;gap:14px}
   .stp{height:auto;min-height:150px;width:calc(66% + 11% * var(--k,0));margin-left:auto}
   .stp:nth-child(1){--k:0}.stp:nth-child(2){--k:1}.stp:nth-child(3){--k:2}.stp:nth-child(4){--k:3}
@@ -488,7 +489,9 @@ button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
   .apr-g{gap:16px}
   .foz{padding-top:calc(max(30vh,220px) + 110px)}
   .foz .h2{font-size:clamp(36px,10.2vw,64px)}
-  .river-h{width:132vw;max-width:none;margin:0 -16vw}
+  .hero-in{min-width:0}
+  .river-h{width:100%;display:flex;justify-content:center;overflow:visible}
+  .river-svg{flex:none;width:132vw;max-width:none}
   .btn{width:100%;justify-content:center}
   .btn .mag-in{padding:20px 24px}
   .ctas{width:100%;flex-direction:column}
