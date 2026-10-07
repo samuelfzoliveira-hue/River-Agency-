@@ -195,6 +195,16 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
 .brw .val{font-family:var(--serif);font-weight:400;font-size:26px;margin-bottom:6px;font-variant-numeric:tabular-nums}.brw span{margin-top:8px;color:#B9C9E6}
 .disc{margin-top:16px;padding:14px 16px;border-radius:14px;background:rgba(245,158,11,.1);border:1px dashed rgba(245,158,11,.5);font-size:12.5px;color:#FCD9A0;line-height:1.5}
 
+/* motoristas */
+.drvsec{--bg:linear-gradient(180deg,#12284D,#0B1B36)}
+.dgrid{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(20px,3vw,44px);margin-top:clamp(34px,4vw,56px);align-items:start}
+.dside .lead{margin-bottom:22px}
+.dpts{display:grid;gap:12px;margin-top:20px}.dpts li{display:flex;gap:12px;font-weight:600;font-size:15px;line-height:1.4}.dpts li::before{content:"";flex:none;width:9px;height:9px;margin-top:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 5px rgba(52,211,153,.2)}
+.dcalc{border-radius:28px;padding:clamp(20px,2.6vw,32px);background:linear-gradient(150deg,rgba(255,255,255,.1),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.16)}
+.dcalc h3{font:700 11px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;color:var(--sky);margin-bottom:18px}
+.drow{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:6px 0 14px}
+.dbox{border-radius:20px;padding:16px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14)}.dbox small{display:block;font:700 10.5px/1.25 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:#8FA7D2}.dbox strong{display:block;font-family:var(--serif);font-weight:400;font-size:clamp(32px,3.4vw,46px);line-height:1.05;margin-top:6px;font-variant-numeric:tabular-nums}.dbox.hl{background:linear-gradient(150deg,rgba(52,211,153,.28),rgba(37,99,235,.3));border-color:rgba(52,211,153,.5)}.dbox.hl strong{color:var(--ok)}
+.dbig{border-radius:22px;padding:18px 20px;background:rgba(37,99,235,.18);border:1px solid rgba(141,184,255,.4);font-size:15px;color:#C5D4F0;line-height:1.5}.dbig b{color:#fff}
 /* planos */
 .plans{--bg:#F5F7FB}
 .pl{display:grid;grid-template-columns:1fr 1.12fr;gap:clamp(16px,2vw,28px);margin-top:clamp(40px,5vw,70px);align-items:stretch}
@@ -416,6 +426,31 @@ input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;bac
   </div>
 </section>
 
+<!-- MOTORISTAS -->
+<section class="sec drvsec dark" id="motoristas">
+  <div class="wrap">
+    <p class="eyebrow" data-rv>O outro lado do app</p>
+    <h2 class="h2 t" style="margin-top:22px"><span class="ln"><span>Sem motorista, não há app.</span></span><span class="ln"><span>Com a marca certa, <em>eles vêm.</em></span></span></h2>
+    <div class="dgrid">
+      <div class="dside">
+        <p class="lead" data-rv>Quem dirige compara taxas, mas também escolhe em quem confiar. Para tirar motoristas de outras plataformas, o app precisa de <b>uma proposta clara de ganho</b> e de uma marca que passe segurança.</p>
+        <ul class="dpts" data-rv><li>Mostrar ao motorista, com a conta na mão, quanto ele ficaria a mais.</li><li>Pré-cadastro aberto antes do lançamento, para o app já nascer com oferta.</li><li>Vídeos e anúncios dedicados a motoristas, separados da campanha de passageiros.</li><li>Identidade que o motorista gosta de ter no carro: adesivo, kit e grupo próprio.</li></ul>
+        <p class="note" style="margin-top:18px">A página do app que a River monta já traz essa calculadora para o motorista simular o ganho dele. Os números ao lado usam premissas de exemplo.</p>
+      </div>
+      <div class="dcalc" data-rv data-d=".1">
+        <h3>Exemplo: um motorista que migra</h3>
+        <div class="ctl"><label for="d0">Corridas por semana <b id="dv0"></b></label><input id="d0" type="range" min="20" max="150" step="5" value="60"></div>
+        <div class="ctl"><label for="d1">Valor médio por corrida <b id="dv1"></b></label><input id="d1" type="range" min="8" max="30" step="1" value="15"></div>
+        <div class="ctl"><label for="d2">Taxa que ele paga hoje <b id="dv2"></b></label><input id="d2" type="range" min="10" max="40" step="1" value="25"></div>
+        <div class="ctl"><label for="d3">Taxa do app (exemplo) <b id="dv3"></b></label><input id="d3" type="range" min="5" max="25" step="1" value="12"></div>
+        <div class="drow"><div class="dbox"><small>Sobra hoje / mês</small><strong id="dOld">R$ 0</strong></div><div class="dbox hl"><small>No app / mês</small><strong id="dNew">R$ 0</strong></div></div>
+        <div class="dbig" id="dTxt"></div>
+        <p class="note" style="margin-top:12px">Ilustrativo: considera 4,33 semanas por mês e o mesmo volume de corridas nos dois cenários. A taxa real do app será definida pelo cliente.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- SIMULADOR -->
 <section class="sec simsec dark" id="simulador">
   <div class="wrap">
@@ -629,6 +664,21 @@ function gate() {
   if (G && !RM) ScrollTrigger.create({ trigger: '.gate', start: 'top 80%', once: true, onEnter: () => apply('Completo', true) }); else apply('Completo', false);
 }
 
+
+/* ============ Motoristas ============ */
+function drivers() {
+  const S = [0, 1, 2, 3].map(i => $('#d' + i)); if (!S[0]) return;
+  const f = () => {
+    S.forEach(s => s.style.setProperty('--p', ((s.value - s.min) / (s.max - s.min) * 100) + '%'));
+    const [n, v, t0, t1] = S.map(s => +s.value);
+    $('#dv0').textContent = n; $('#dv1').textContent = brl(v); $('#dv2').textContent = t0 + '%'; $('#dv3').textContent = t1 + '%';
+    const g = n * 4.33 * v, now = g * (1 - t0 / 100), nw = g * (1 - t1 / 100), diff = nw - now;
+    $('#dOld').textContent = brl(now); $('#dNew').textContent = brl(nw);
+    $('#dTxt').innerHTML = diff > 0 ? `Esse motorista ficaria com <b>${brl(diff)} a mais por mês</b> (${brl(diff * 12)} em um ano), fazendo o mesmo número de corridas.` : `Com essa taxa o motorista não ganha mais do que ganha hoje. A proposta de valor precisaria de outro diferencial.`;
+  };
+  S.forEach(s => s.addEventListener('input', f)); f();
+}
+
 /* ============ Simulador ============ */
 function sim() {
   const S = [0, 1, 2, 3].map(i => $('#s' + i)), O = [0, 1, 2, 3].map(i => $('#o' + i));
@@ -689,7 +739,7 @@ function sim() {
   svg.addEventListener('pointermove', mv); svg.addEventListener('pointerleave', () => { tip.style.opacity = 0; const c = $('#cx'); if (c) c.setAttribute('opacity', 0); });
 }
 
-function init() { gate(); sim(); }
+function init() { gate(); sim(); drivers(); }
 })();
 </script>
 </body>
