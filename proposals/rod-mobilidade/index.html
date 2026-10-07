@@ -587,8 +587,8 @@ const chrome = () => {
 if (!G) { $$('.score i').forEach(i => { i.style.transform = `scaleX(${i.dataset.v / 5})`; }); init(); return; }
 
 /* ---------- revelações ---------- */
-$$('.t').forEach(t => gsap.from($$('.ln>span', t), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1, duration: RM ? .4 : 1.1, ease: 'power4.out', stagger: .09, scrollTrigger: { trigger: t, start: 'top 88%', once: true } }));
-gsap.from($$('.hero h1 .ln>span'), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1, duration: 1.2, ease: 'power4.out', stagger: .1, delay: .15 });
+$$('.t').forEach(t => gsap.fromTo($$('.ln>span', t), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1 }, { yPercent: 0, opacity: 1, duration: RM ? .4 : 1.1, ease: 'power4.out', stagger: .09, scrollTrigger: { trigger: t, start: 'top 88%', once: true } }));
+gsap.fromTo($$('.hero h1 .ln>span'), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1 }, { yPercent: 0, opacity: 1, duration: 1.2, ease: 'power4.out', stagger: .1, delay: .15 });
 $$('[data-rv]').forEach(el => gsap.from(el, { y: RM ? 0 : 30, opacity: 0, duration: RM ? .4 : .9, ease: 'power3.out', delay: +el.dataset.d || 0, scrollTrigger: { trigger: el, start: 'top 90%', once: true } }));
 $$('[data-count]').forEach(el => {
   const to = +el.dataset.count; if (RM) return;

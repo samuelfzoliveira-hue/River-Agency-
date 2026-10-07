@@ -1208,7 +1208,7 @@ function heroIntro() {
 function reveals() {
   const Y = RM ? 0 : 30;
   $$('.t').forEach(t => {
-    gsap.from($$('.ln>span', t), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1, duration: RM ? .4 : 1.1, ease: 'power4.out', stagger: .09, scrollTrigger: { trigger: t, start: 'top 88%', once: true } });
+    gsap.fromTo($$('.ln>span', t), { yPercent: RM ? 0 : 115, opacity: RM ? 0 : 1 }, { yPercent: 0, opacity: 1, duration: RM ? .4 : 1.1, ease: 'power4.out', stagger: .09, scrollTrigger: { trigger: t, start: 'top 88%', once: true } });
   });
   $$('[data-rv]').forEach(el => {
     gsap.from(el, { y: Y, opacity: 0, duration: RM ? .4 : .9, ease: 'power3.out', delay: +el.dataset.d || 0, scrollTrigger: { trigger: el, start: 'top 90%', once: true } });
