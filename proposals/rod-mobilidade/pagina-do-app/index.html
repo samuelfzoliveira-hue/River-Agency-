@@ -38,7 +38,7 @@ h2{font-size:clamp(32px,4.6vw,60px);margin:16px 0 14px}
 .noanim .rv{opacity:1;transform:none}
 
 /* topo */
-header{position:fixed;top:0;left:0;right:0;z-index:50;padding:14px 0;background:linear-gradient(var(--bg),rgba(7,19,31,0))}
+header{position:fixed;top:0;left:0;right:0;z-index:50;padding:12px 0;background:rgba(7,19,31,.82);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06)}
 header .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .logo{font-weight:800;font-size:24px;letter-spacing:-.04em;text-decoration:none}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:99px;background:var(--card);border:1px solid var(--line);font-weight:700;font-size:12.5px}
@@ -79,6 +79,45 @@ h1{font-size:clamp(40px,6.4vw,88px);margin:18px 0 20px}
 .card-d h3{font-size:28px;margin-bottom:12px}
 .ph{padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.05);border:1px dashed var(--line);color:var(--mut);font-size:14.5px;margin-top:10px}
 
+
+/* ganhos do motorista */
+.calc{display:grid;grid-template-columns:.9fr 1.1fr;gap:18px;margin-top:36px;align-items:start}
+.panel{border-radius:28px;padding:clamp(20px,2.6vw,32px);background:var(--card);border:1px solid var(--line)}
+.panel h3{font:800 11.5px/1 "Manrope";letter-spacing:.18em;text-transform:uppercase;color:var(--g);margin-bottom:20px}
+.ctl{margin-bottom:22px}.ctl label{display:flex;justify-content:space-between;gap:10px;font-weight:700;font-size:14.5px;margin-bottom:10px}.ctl label b{color:var(--g);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ctl small{display:block;margin-top:7px;font-size:12px;color:var(--mut);line-height:1.45}
+input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:7px;border-radius:5px;background:linear-gradient(90deg,var(--b) var(--p,50%),rgba(255,255,255,.16) var(--p,50%));outline-offset:7px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:#fff;border:5px solid var(--g);box-shadow:0 4px 14px rgba(0,0,0,.5);cursor:grab}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:5px solid var(--g);cursor:grab}
+.fixed{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 16px;border-radius:16px;background:rgba(126,211,33,.1);border:1px dashed rgba(126,211,33,.5);font-weight:700;font-size:14.5px}
+.fixed em{font-style:normal;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#04111C;background:var(--g);padding:4px 8px;border-radius:99px;margin-left:8px;font-weight:800}
+.fixed b{font-size:22px;letter-spacing:-.03em}
+.big{border-radius:28px;padding:clamp(22px,3vw,34px);background:linear-gradient(150deg,rgba(126,211,33,.22),rgba(30,144,255,.28)),var(--bg2);border:1px solid rgba(126,211,33,.45);box-shadow:0 40px 80px -50px rgba(126,211,33,.6)}
+.big small{display:block;font:800 11.5px/1.2 "Manrope";letter-spacing:.16em;text-transform:uppercase;color:var(--mut)}
+.big strong{display:block;font-size:clamp(40px,6vw,74px);font-weight:800;letter-spacing:-.04em;line-height:1.02;margin:8px 0 4px;font-variant-numeric:tabular-nums}
+.big p{color:var(--mut);font-size:15px}.big p b{color:var(--ink)}
+.kp2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.kp2 div{border-radius:22px;padding:18px;background:var(--card);border:1px solid var(--line)}
+.kp2 small{display:block;font:800 10.5px/1.25 "Manrope";letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
+.kp2 strong{display:block;font-size:clamp(26px,3vw,36px);font-weight:800;letter-spacing:-.03em;margin-top:6px;font-variant-numeric:tabular-nums}
+.kp2 .hl strong{color:var(--g)}
+.cmpbars{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:end;height:190px;margin-top:6px}
+.cb{display:flex;flex-direction:column;justify-content:flex-end;height:100%;font-weight:700;font-size:13px;text-align:center}
+.cb .v{font-weight:800;font-size:19px;margin-bottom:6px;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.cb .col{border-radius:14px 14px 4px 4px;transform-origin:50% 100%;height:calc(100% - 56px);margin-top:auto;background:var(--c)}
+.cb span{margin-top:8px;color:var(--mut)}
+.chart{margin-top:6px}.chart svg{width:100%;height:auto;overflow:visible}.chart text{font:600 11px "Manrope";fill:#7f95ab}
+.eq{margin-top:12px;display:flex;gap:14px;align-items:center;padding:16px 18px;border-radius:20px;background:rgba(30,144,255,.12);border:1px solid rgba(30,144,255,.4);font-size:14.5px;color:var(--mut);line-height:1.5}.eq b{color:var(--ink)}.eq svg{flex:none;width:30px;height:30px;color:var(--b)}
+.disc{margin-top:16px;font-size:12.5px;color:#8fa4ba;line-height:1.55;max-width:80ch}
+.why-h{margin-top:clamp(56px,7vw,96px)}
+.dif{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:30px}
+.df{border-radius:26px;padding:24px;background:linear-gradient(160deg,rgba(255,255,255,.09),rgba(255,255,255,.03));border:1px solid var(--line);position:relative}
+.df .ic{width:50px;height:50px;border-radius:16px;display:grid;place-items:center;background:var(--grad);color:#04111C;margin-bottom:16px}.df .ic svg{width:25px;height:25px}
+.df h3{font-size:21px;letter-spacing:-.02em;margin-bottom:8px}.df p{font-size:15px;color:var(--mut)}
+.tg{display:inline-block;margin-top:12px;font:800 10px/1 "Manrope";letter-spacing:.12em;text-transform:uppercase;padding:6px 9px;border-radius:99px;border:1px dashed rgba(255,190,80,.7);color:#ffc86b}
+@media (max-width:900px){.calc{grid-template-columns:1fr}.dif{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.dif,.kp2{grid-template-columns:1fr}.big strong{font-size:44px}}
+
 /* formulário */
 .form{border-radius:32px;padding:clamp(22px,3.4vw,44px);background:linear-gradient(160deg,rgba(30,144,255,.22),rgba(126,211,33,.1)),var(--bg2);border:1px solid var(--line);box-shadow:0 50px 90px -50px rgba(30,144,255,.6);max-width:760px;margin:30px auto 0}
 .seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:5px;border-radius:99px;background:rgba(0,0,0,.3);margin-bottom:22px}
@@ -116,6 +155,10 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:18px 34px;justify-content:space-bet
 <symbol id="i-phone" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></g></symbol>
 <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s6.5-5.6 6.5-11a6.5 6.5 0 0 0-13 0c0 5.4 6.5 11 6.5 11z"/><circle cx="12" cy="10" r="2.3"/></g></symbol>
 <symbol id="i-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r=".5" fill="currentColor"/></g></symbol>
+<symbol id="i-coin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M14.7 9.2c-.5-.9-1.5-1.4-2.7-1.4-1.5 0-2.6.8-2.6 2 0 3 5.4 1.3 5.4 4.2 0 1.2-1.1 2-2.8 2-1.3 0-2.4-.6-2.9-1.6M12 6.3v1.5M12 16.2v1.5"/></g></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8 9.5h8M8 12.5h5"/></g></symbol>
+<symbol id="i-wallet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18v3"/><path d="M4 7.5v10A2.5 2.5 0 0 0 6.5 20H19a1 1 0 0 0 1-1V9a1 1 0 0 0-1-1H6.5A2.5 2.5 0 0 1 4 7.5z"/><circle cx="16" cy="14" r="1.2" fill="currentColor"/></g></symbol>
+<symbol id="i-scale" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M7 20h10M5 8h14"/><path d="M5 8l-2.5 6a3 3 0 0 0 5 0zM19 8l-2.5 6a3 3 0 0 0 5 0z"/></g></symbol>
 <symbol id="i-tick" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
 </defs></svg>
 
@@ -167,10 +210,47 @@ footer .wrap{display:flex;flex-wrap:wrap;gap:18px 34px;justify-content:space-bet
     <h2 class="rv">Dirija com a <span class="gt">sua cidade.</span></h2>
     <p class="lead rv">Faça o pré-cadastro agora e entre antes do lançamento. Seja um dos primeiros motoristas verificados do app.</p>
     <ul class="list rv"><li>Pré-cadastro gratuito na lista de espera</li><li>Avisamos você assim que o cadastro abrir</li><li>Motoristas verificados, para uma cidade mais segura</li></ul>
-    <a class="btn btn-p rv" href="#lista" data-pick="motorista">Fazer meu pré-cadastro</a>
+    <div class="cta rv"><a class="btn btn-p" href="#lista" data-pick="motorista">Fazer meu pré-cadastro</a><a class="btn btn-s" href="#ganhos">Simular meus ganhos</a></div>
   </div>
   <div class="card-d rv" style="--d:.1s"><h3>Condições para motoristas</h3><p style="color:var(--mut)">Os detalhes serão divulgados antes do lançamento.</p>
     <div class="ph">[Requisitos do veículo e documentos]</div><div class="ph">[Modelo de ganhos e repasses]</div><div class="ph">[Como será a verificação]</div></div>
+</div></section>
+
+
+<section class="sec" id="ganhos"><div class="wrap">
+  <p class="eyebrow rv">Quem dirige ganha mais</p>
+  <h2 class="rv">Quanto ficaria <span class="gt">no seu bolso?</span></h2>
+  <p class="lead rv">Coloque os seus números. Mostramos a diferença entre o que sobra hoje e o que sobraria no <b data-nome>Rod+</b>.</p>
+  <div class="calc">
+    <div class="panel rv">
+      <h3>Seus números de hoje</h3>
+      <div class="ctl"><label for="c0">Corridas por semana <b id="v0"></b></label><input id="c0" type="range" min="10" max="200" step="5" value="60"></div>
+      <div class="ctl"><label for="c1">Valor médio por corrida <b id="v1"></b></label><input id="c1" type="range" min="6" max="40" step="0.5" value="15"><small>Valor bruto que o passageiro paga, antes da taxa.</small></div>
+      <div class="ctl"><label for="c2">Taxa que você paga hoje <b id="v2"></b></label><input id="c2" type="range" min="5" max="50" step="1" value="25"><small>Informe a taxa da plataforma em que você roda atualmente.</small></div>
+      <div class="ctl"><label for="c3"><span>Corridas no <span data-nome>Rod+</span></span> <b id="v3"></b></label><input id="c3" type="range" min="40" max="130" step="5" value="100"><small>Em relação a hoje. No começo o volume pode ser diferente: veja o ponto de equilíbrio ao lado.</small></div>
+      <div class="fixed"><span>Taxa do <span data-nome>Rod+</span><em id="exTag" hidden>exemplo</em></span><b id="vApp"></b></div>
+    </div>
+    <div class="rv" style="--d:.1s">
+      <div class="big"><small>A mais no seu bolso, por mês</small><strong id="oDiff" class="gt">R$ 0</strong><p>Isso dá <b id="oYear">R$ 0</b> em 12 meses, <b id="oPct">0%</b> a mais no seu bolso.</p></div>
+      <div class="kp2"><div><small>Sobra hoje, por mês</small><strong id="oNow">R$ 0</strong></div><div class="hl"><small>Sobraria no app, por mês</small><strong id="oNew">R$ 0</strong></div></div>
+      <div class="panel" style="margin-top:12px"><h3>Quanto sobra por mês</h3><div class="cmpbars"><div class="cb"><div class="v" id="bv0">0</div><div class="col" id="bc0" style="--c:#6f8398"></div><span>Hoje</span></div><div class="cb"><div class="v" id="bv1">0</div><div class="col" id="bc1" style="--c:var(--g)"></div><span data-nome>Rod+</span></div></div></div>
+      <div class="panel" style="margin-top:12px"><h3>Ganho extra acumulado em 12 meses</h3><div class="chart"><svg id="cc" viewBox="0 0 560 220" role="img" aria-label="Ganho extra acumulado ao longo de 12 meses"></svg></div></div>
+      <div class="eq"><svg aria-hidden="true"><use href="#i-scale"/></svg><div id="eqTxt"></div></div>
+    </div>
+  </div>
+  <p class="disc rv">Simulação ilustrativa, feita com os números que você informou. Não é garantia de ganho: o volume de corridas, as tarifas e a taxa final serão divulgados no lançamento. Considera 4,33 semanas por mês e mesmo valor médio por corrida nos dois cenários.</p>
+
+  <div class="why-h"><p class="eyebrow rv">Por que dirigir aqui vale mais</p>
+  <h2 class="rv">Feito para quem <span class="gt">roda na cidade.</span></h2></div>
+  <div class="dif">
+    <div class="df rv"><span class="ic"><svg><use href="#i-coin"/></svg></span><h3>Taxa que cabe no bolso</h3><p><b id="difTaxa"></b> por corrida, sempre visível para você antes de aceitar.</p><span class="tg" id="tgTaxa" hidden>valor de exemplo</span></div>
+    <div class="df rv" style="--d:.06s"><span class="ic"><svg><use href="#i-pin"/></svg></span><h3>Foco total na cidade</h3><p>O app nasce para <span data-cidade>Vitória da Conquista</span>: demanda local e atenção para quem dirige aqui.</p></div>
+    <div class="df rv" style="--d:.12s"><span class="ic"><svg><use href="#i-shield"/></svg></span><h3>Mais segurança</h3><p>Motoristas verificados e segurança em todas as corridas, para a cidade toda ficar mais tranquila.</p></div>
+    <div class="df rv" style="--d:.18s"><span class="ic"><svg><use href="#i-wallet"/></svg></span><h3>Repasse previsível</h3><p>Seu ganho na conta em <b>[prazo a definir]</b>, com extrato claro de cada corrida.</p><span class="tg">a confirmar</span></div>
+    <div class="df rv" style="--d:.24s"><span class="ic"><svg><use href="#i-chat"/></svg></span><h3>Você é ouvido</h3><p>Canal direto com a equipe e grupo de motoristas, com suporte de gente da cidade.</p><span class="tg">a confirmar</span></div>
+    <div class="df rv" style="--d:.3s"><span class="ic"><svg><use href="#i-phone"/></svg></span><h3>Tudo pelo app</h3><p>Do chamado ao pagamento, sem planilha e sem complicação, do início ao fim da corrida.</p></div>
+  </div>
+  <div style="text-align:center;margin-top:36px" class="rv"><a class="btn btn-p" href="#lista" data-pick="motorista">Quero ser um dos primeiros motoristas</a></div>
 </div></section>
 
 <section class="sec" id="lista"><div class="wrap">
@@ -218,7 +298,8 @@ const CONFIG = {
   cidade: 'Vitória da Conquista',
   instagram: 'rod.mais.app',        // sem @
   whatsapp: null,                   // ex.: '5577999999999' (recebe a inscrição se o formulário do Netlify falhar)
-  lancamento: null                  // ex.: '15 de novembro'
+  lancamento: null,                 // ex.: '15 de novembro'
+  taxaApp: null                     // % que o app cobra do motorista. null = usa 12% como EXEMPLO (defina o valor real antes de publicar)
 };
 (() => {
   const $ = (s, c = document) => c.querySelector(s), $$ = (s, c = document) => [...c.querySelectorAll(s)];
@@ -259,6 +340,41 @@ const CONFIG = {
     }
   });
   function show(m) { err.textContent = m; err.hidden = false; }
+
+  /* ===== Calculadora de ganhos do motorista ===== */
+  (() => {
+    const WEEKS = 4.33, taxaApp = CONFIG.taxaApp == null ? 12 : CONFIG.taxaApp, exemplo = CONFIG.taxaApp == null;
+    const brl = n => n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+    const S = [0, 1, 2, 3].map(i => $('#c' + i));
+    $('#vApp').textContent = taxaApp.toLocaleString('pt-BR') + '%'; $('#difTaxa').textContent = taxaApp.toLocaleString('pt-BR') + '%';
+    if (exemplo) { $('#exTag').hidden = false; $('#tgTaxa').hidden = false; }
+    const tween = (el, to, fmt) => { const from = +el.dataset.v || 0; el.dataset.v = to; if (matchMedia('(prefers-reduced-motion: reduce)').matches) { el.textContent = fmt(to); return; } const t0 = performance.now(); const step = t => { const k = Math.min(1, (t - t0) / 450), e = 1 - Math.pow(1 - k, 3); el.textContent = fmt(from + (to - from) * e); if (k < 1 && +el.dataset.v === to) requestAnimationFrame(step); }; requestAnimationFrame(step); };
+    function calc() {
+      S.forEach(s => s.style.setProperty('--p', ((s.value - s.min) / (s.max - s.min) * 100) + '%'));
+      const corr = +S[0].value, val = +S[1].value, t0 = +S[2].value, vol = +S[3].value;
+      $('#v0').textContent = corr; $('#v1').textContent = val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2 }); $('#v2').textContent = t0 + '%'; $('#v3').textContent = vol + '%';
+      const gross = corr * WEEKS * val, now = gross * (1 - t0 / 100), nw = gross * (vol / 100) * (1 - taxaApp / 100), diff = nw - now, pct = now > 0 ? diff / now * 100 : 0;
+      tween($('#oDiff'), Math.max(diff, 0), v => brl(v)); tween($('#oYear'), Math.max(diff, 0) * 12, v => brl(v));
+      $('#oPct').textContent = (pct > 0 ? pct : 0).toLocaleString('pt-BR', { maximumFractionDigits: 0 }) + '%';
+      tween($('#oNow'), now, v => brl(v)); tween($('#oNew'), nw, v => brl(v));
+      const max = Math.max(now, nw, 1);
+      [[now, 0], [nw, 1]].forEach(([v, i]) => { $('#bc' + i).style.transform = `scaleY(${Math.max(.03, v / max)})`; tween($('#bv' + i), v, x => brl(x)); });
+      const be = (1 - t0 / 100) / (1 - taxaApp / 100) * 100;
+      $('#eqTxt').innerHTML = diff >= 0
+        ? (be < 100 ? `<b>Ponto de equilíbrio:</b> mesmo com <b>${Math.round(100 - be)}% menos corridas</b> do que você faz hoje, você ficaria com o mesmo valor no bolso.` : `Com a taxa informada, o ganho depende de manter o volume de corridas.`)
+        : `Com esse volume, o ganho seria menor que o atual. Você precisaria de pelo menos <b>${Math.round(be)}%</b> das corridas de hoje para empatar.`;
+      /* gráfico acumulado */
+      const W = 560, H = 220, pl = 52, pr = 12, pt = 14, pb = 30, m = Math.max(diff, 0), tot = m * 12 || 1, nice = (v => { const p = Math.pow(10, Math.floor(Math.log10(v))); const k = v / p; return (k <= 1 ? 1 : k <= 2 ? 2 : k <= 5 ? 5 : 10) * p; })(tot);
+      const X = i => pl + (W - pl - pr) * i / 12, Y = v => pt + (H - pt - pb) * (1 - v / nice);
+      let g = '<defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7ED321" stop-opacity=".4"/><stop offset="1" stop-color="#7ED321" stop-opacity="0"/></linearGradient></defs>';
+      for (let k = 0; k <= 4; k++) { const v = nice * k / 4, y = Y(v); g += `<line x1="${pl}" x2="${W - pr}" y1="${y}" y2="${y}" stroke="rgba(255,255,255,.1)"/><text x="${pl - 8}" y="${y + 4}" text-anchor="end">${v >= 1000 ? (v / 1000).toLocaleString('pt-BR', { maximumFractionDigits: 1 }) + ' mil' : Math.round(v)}</text>`; }
+      [0, 3, 6, 9, 12].forEach(i => { g += `<text x="${X(i)}" y="${H - 8}" text-anchor="middle">${i ? 'Mês ' + i : 'Hoje'}</text>`; });
+      const pts = Array.from({ length: 13 }, (_, i) => [X(i), Y(m * i)]);
+      g += `<path d="M${pts.map(p => p.join(' ')).join('L')}L${X(12)} ${H - pb}L${X(0)} ${H - pb}Z" fill="url(#ga)"/><path d="M${pts.map(p => p.join(' ')).join('L')}" fill="none" stroke="#7ED321" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${pts[12][0]}" cy="${pts[12][1]}" r="6" fill="#7ED321" stroke="#07131F" stroke-width="3"/><text x="${pts[12][0] - 8}" y="${pts[12][1] - 12}" text-anchor="end" style="fill:#EAF4FF;font-weight:800;font-size:13px">${brl(m * 12)}</text>`;
+      $('#cc').innerHTML = g;
+    }
+    S.forEach(s => s.addEventListener('input', calc)); calc();
+  })();
 })();
 </script>
 </body>
