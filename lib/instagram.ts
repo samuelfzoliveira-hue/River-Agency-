@@ -164,14 +164,17 @@ async function fetchViaApify(username: string): Promise<InstagramProfileData | n
     const res = await fetch(
       `https://api.apify.com/v2/acts/${APIFY_ACTOR_ID}/run-sync-get-dataset-items?token=${encodeURIComponent(
         token
-      )}&timeout=90`,
+      )}&timeout=55`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           usernames: [username],
           directUrls: [`https://www.instagram.com/${username}/`],
-          resultsLimit: 12,
+          // Kept small: this actor run has to finish inside this request's
+          // own time budget (separate from, and before, the AI generation
+          // step), and fewer posts to scrape means a faster run.
+          resultsLimit: 6,
         }),
         cache: "no-store",
       }

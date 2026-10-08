@@ -8,18 +8,26 @@ import { PdfExportButton } from "@/components/PdfExportButton";
 import { DiagnosticReport, InstagramProfileData } from "@/lib/types";
 
 type Phase = "input" | "manual" | "result";
+type LoadingStage = "idle" | "profile" | "generating";
+
+const DEMO_MARKER = "\u0001DEMO\u0001";
+const REAL_MARKER = "\u0001REAL\u0001";
+const ERROR_MARKER = "\u0001ERROR\u0001";
 
 export default function Home() {
   const [url, setUrl] = useState("");
   const [phase, setPhase] = useState<Phase>("input");
-  const [loading, setLoading] = useState(false);
+  const [stage, setStage] = useState<LoadingStage>("idle");
+  const [progress, setProgress] = useState(0);
   const [username, setUsername] = useState("");
   const [prefill, setPrefill] = useState<Partial<InstagramProfileData> | undefined>(undefined);
   const [error, setError] = useState("");
   const [report, setReport] = useState<DiagnosticReport | null>(null);
 
-  async function runAnalysis(manualData?: Partial<InstagramProfileData>) {
-    setLoading(true);
+  const loading = stage !== "idle";
+
+  async function resolveProfile(manualData?: Partial<InstagramProfileData>) {
+    setStage("profile");
     setError("");
     try {
       const res = await fetch("/api/analyze", {
@@ -30,8 +38,8 @@ export default function Home() {
       const data = await res.json();
 
       if (!res.ok) {
-        setError(data.error || "Falha ao gerar diagnóstico.");
-        setLoading(false);
+        setError(data.error || "Falha ao buscar o perfil.");
+        setStage("idle");
         return;
       }
 
@@ -39,23 +47,96 @@ export default function Home() {
         setUsername(data.username);
         setPrefill(data.prefill);
         setPhase("manual");
-        setLoading(false);
+        setStage("idle");
         return;
       }
 
-      setReport(data as DiagnosticReport);
-      setPhase("result");
-      setLoading(false);
+      await generateDiagnostic(data.profile as InstagramProfileData);
     } catch {
-      setError("Erro de conexão. Tente novamente.");
-      setLoading(false);
+      setError("Erro de conexão ao buscar o perfil. Tente novamente.");
+      setStage("idle");
+    }
+  }
+
+  async function generateDiagnostic(profile: InstagramProfileData) {
+    setStage("generating");
+    setProgress(0);
+    setError("");
+    try {
+      const res = await fetch("/api/generate-diagnostic", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ profile }),
+      });
+
+      if (!res.ok || !res.body) {
+        setError("Falha ao gerar o diagnóstico. Tente novamente.");
+        setStage("idle");
+        return;
+      }
+
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let text = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        text += decoder.decode(value, { stream: true });
+        setProgress(text.length);
+      }
+
+      if (text.includes(ERROR_MARKER)) {
+        const message = text.split(ERROR_MARKER)[1] || "Falha ao gerar o diagnóstico.";
+        setError(message);
+        setStage("idle");
+        return;
+      }
+
+      const isDemo = text.startsWith(DEMO_MARKER);
+      const body = isDemo
+        ? text.slice(DEMO_MARKER.length)
+        : text.startsWith(REAL_MARKER)
+        ? text.slice(REAL_MARKER.length)
+        : text;
+
+      const jsonMatch = body.match(/\{[\s\S]*\}/);
+      if (!jsonMatch) {
+        setError("Não foi possível interpretar a resposta da IA. Tente novamente.");
+        setStage("idle");
+        return;
+      }
+
+      const diagnostic = JSON.parse(jsonMatch[0]);
+      const followers = profile.followers || 1;
+      const engagementRate =
+        profile.avgLikes && profile.avgComments
+          ? Number((((profile.avgLikes + profile.avgComments) / followers) * 100).toFixed(2))
+          : diagnostic.engagement?.rate ?? 0;
+
+      setReport({
+        ...diagnostic,
+        profile: {
+          username: profile.username,
+          fullName: profile.fullName,
+          profilePicUrl: profile.profilePicUrl,
+          followers: profile.followers,
+          engagementRate,
+        },
+        generatedAt: new Date().toISOString(),
+        dataSource: isDemo ? "demo" : profile.source,
+      });
+      setPhase("result");
+      setStage("idle");
+    } catch {
+      setError("Erro de conexão ao gerar o diagnóstico. Tente novamente.");
+      setStage("idle");
     }
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!url.trim()) return;
-    runAnalysis();
+    resolveProfile();
   }
 
   function reset() {
@@ -63,9 +144,17 @@ export default function Home() {
     setReport(null);
     setUrl("");
     setError("");
-    setLoading(false);
+    setStage("idle");
+    setProgress(0);
     setPrefill(undefined);
   }
+
+  const loadingLabel =
+    stage === "profile"
+      ? "Buscando dados do perfil..."
+      : stage === "generating"
+      ? `Gerando diagnóstico${progress > 400 ? ` (${Math.min(99, Math.round((progress / 6000) * 100))}%)` : "..."}`
+      : "";
 
   return (
     <main className="min-h-screen px-5 sm:px-6">
@@ -116,11 +205,7 @@ export default function Home() {
               </button>
             </form>
 
-            {loading && (
-              <div className="mt-6 text-[13.5px] text-river-ink3">
-                Coletando dados públicos e gerando o diagnóstico completo...
-              </div>
-            )}
+            {loading && <div className="mt-6 text-[13.5px] text-river-ink3">{loadingLabel}</div>}
 
             {error && <div className="mt-6 text-[13.5px] text-river-danger">{error}</div>}
           </div>
@@ -128,7 +213,10 @@ export default function Home() {
 
         {phase === "manual" && (
           <div>
-            <ManualDataForm username={username} prefill={prefill} loading={loading} onSubmit={(data) => runAnalysis(data)} />
+            <ManualDataForm username={username} prefill={prefill} loading={loading} onSubmit={(data) => resolveProfile(data)} />
+            {loading && (
+              <div className="max-w-report mx-auto mt-4 text-[13.5px] text-river-ink3">{loadingLabel}</div>
+            )}
             {error && <div className="max-w-report mx-auto mt-4 text-[13.5px] text-river-danger">{error}</div>}
           </div>
         )}

@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { extractUsername, fetchInstagramProfile } from "@/lib/instagram";
-import { generateDiagnostic } from "@/lib/claude";
 import { AnalyzeRequestBody, InstagramProfileData } from "@/lib/types";
-import { DEMO_REPORT } from "@/lib/demoData";
 
 export const runtime = "nodejs";
 export const maxDuration = 60;
 
+/**
+ * Stage 1 of 2: resolve a profile's data only (no AI call here). Kept as
+ * its own request so this step's time budget isn't shared with the
+ * diagnosis generation — see /api/generate-diagnostic for stage 2.
+ */
 export async function POST(req: NextRequest) {
   let body: AnalyzeRequestBody;
   try {
@@ -66,42 +69,5 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  if (!process.env.ANTHROPIC_API_KEY) {
-    return NextResponse.json({
-      ...DEMO_REPORT,
-      profile: {
-        username: profile.username,
-        fullName: profile.fullName,
-        profilePicUrl: profile.profilePicUrl,
-        followers: profile.followers,
-        engagementRate: DEMO_REPORT.profile.engagementRate,
-      },
-      dataSource: "demo",
-      generatedAt: new Date().toISOString(),
-    });
-  }
-
-  try {
-    const diagnostic = await generateDiagnostic(profile);
-    const followers = profile.followers || 1;
-    const engagementRate =
-      profile.avgLikes && profile.avgComments
-        ? Number((((profile.avgLikes + profile.avgComments) / followers) * 100).toFixed(2))
-        : diagnostic.engagement?.rate ?? 0;
-
-    return NextResponse.json({
-      ...diagnostic,
-      profile: {
-        username: profile.username,
-        fullName: profile.fullName,
-        profilePicUrl: profile.profilePicUrl,
-        followers: profile.followers,
-        engagementRate,
-      },
-      generatedAt: new Date().toISOString(),
-      dataSource: profile.source,
-    });
-  } catch (err: any) {
-    return NextResponse.json({ error: err?.message || "Falha ao gerar o diagnóstico." }, { status: 500 });
-  }
+  return NextResponse.json({ profile });
 }

@@ -69,12 +69,18 @@ ${
 Gere o diagnóstico completo em JSON, seguindo rigorosamente o schema do system prompt.`;
 }
 
-export async function generateDiagnostic(
-  profile: InstagramProfileData
-): Promise<Omit<
-  DiagnosticReport,
-  "profile" | "generatedAt" | "dataSource"
->> {
+/**
+ * Streams the diagnostic generation as raw text chunks (the model's JSON
+ * output, as it's written). Streaming matters here for more than UX: a
+ * plain blocking request that takes 60-90+ seconds to generate ~6-8k
+ * tokens looks exactly like a dead connection to most reverse proxies and
+ * serverless platforms, which kill or report it as a connection error well
+ * before the model is done. A continuously-flowing stream avoids that.
+ *
+ * Callers accumulate the chunks and parse the final JSON once the stream
+ * ends — see `extractDiagnosticJson`.
+ */
+export async function* streamDiagnosticText(profile: InstagramProfileData): AsyncGenerator<string> {
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
     throw new Error(
@@ -84,22 +90,26 @@ export async function generateDiagnostic(
 
   const client = new Anthropic({ apiKey });
 
-  const message = await client.messages.create({
+  const stream = client.messages.stream({
     model: "claude-sonnet-5",
-    max_tokens: 8000,
+    max_tokens: 6000,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildUserPrompt(profile) }],
   });
 
-  const textBlock = message.content.find((b) => b.type === "text");
-  if (!textBlock || textBlock.type !== "text") {
-    throw new Error("Resposta inesperada do modelo.");
+  for await (const event of stream) {
+    if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
+      yield event.delta.text;
+    }
   }
+}
 
-  const jsonMatch = textBlock.text.match(/\{[\s\S]*\}/);
+export function extractDiagnosticJson(
+  fullText: string
+): Omit<DiagnosticReport, "profile" | "generatedAt" | "dataSource"> {
+  const jsonMatch = fullText.match(/\{[\s\S]*\}/);
   if (!jsonMatch) {
     throw new Error("Não foi possível extrair o JSON do diagnóstico.");
   }
-
   return JSON.parse(jsonMatch[0]);
 }
