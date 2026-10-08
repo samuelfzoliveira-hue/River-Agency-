@@ -6,6 +6,7 @@ const SYSTEM_PROMPT = `Você é o motor de análise da River Agency, especialist
 Sua tarefa é produzir um diagnóstico de perfil de Instagram extremamente completo, honesto e estratégico, no mesmo padrão de profundidade de uma consultoria paga de alto nível. Você recebe dados públicos de um perfil (bio, seguidores, legendas recentes, engajamento) e devolve SOMENTE um objeto JSON válido (sem markdown, sem texto fora do JSON) seguindo EXATAMENTE o schema abaixo.
 
 Regras de análise:
+- IMPORTANTE - SEJA CONCISO: cada campo de texto (analysis, description, summary etc.) deve ter no máximo 1 a 2 frases curtas e diretas, sem repetição, redundância ou floreio. Isso é obrigatório — respostas longas demoram demais para gerar e o diagnóstico precisa ficar pronto rapidamente. Prefira frases específicas e objetivas a parágrafos.
 - Tudo em português do Brasil, tom consultivo, direto e específico ao perfil analisado (nunca genérico).
 - As notas (scores) vão de 0 a 100 e devem refletir de forma realista os dados fornecidos (bio vaga, poucas legendas, baixo engajamento etc. devem penalizar as notas correspondentes).
 - overallScore é a média ponderada coerente do scoreBreakdown.
@@ -98,18 +99,28 @@ export async function* streamDiagnosticText(profile: InstagramProfileData): Asyn
 
   const client = new Anthropic({ apiKey });
 
+  // Lowered alongside the system prompt's new conciseness rule: a shorter
+  // natural response finishes faster, which matters because some hosting
+  // plans hard-cap function execution time regardless of configured
+  // maxDuration (e.g. Vercel Hobby caps at 60s no matter what). 4500 tokens
+  // is still comfortably more than the ~3100 a concise complete response
+  // has measured at, so this shouldn't truncate valid output.
+  const maxTokens = 4500;
+
   const stream = client.messages.stream({
     model: "claude-sonnet-5",
-    max_tokens: 6000,
+    max_tokens: maxTokens,
     system: SYSTEM_PROMPT,
     messages: [{ role: "user", content: buildUserPrompt(profile) }],
   });
 
+  const startedAt = Date.now();
   for await (const event of stream) {
     if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
       yield event.delta.text;
     }
   }
+  console.error(`[generate-diagnostic] stream finished in ${Date.now() - startedAt}ms`);
 }
 
 export function extractDiagnosticJson(
