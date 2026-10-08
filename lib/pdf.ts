@@ -44,6 +44,39 @@ function fmtFollowers(n: number) {
 }
 
 /**
+ * jsPDF's standard fonts (helvetica/times/courier) only support WinAnsi —
+ * basically ASCII + Latin-1 (which covers all Portuguese accents). AI text
+ * commonly includes emoji and smart typography (curly quotes, em dashes,
+ * ellipses) that fall outside that range; feeding those straight into
+ * pdf.text()/splitTextToSize corrupts the character spacing of the WHOLE
+ * rest of the string (that's the "text spilling out of the box" bug) — map
+ * the common cases to a plain-ASCII equivalent first, then drop anything
+ * else outside Latin-1.
+ */
+function sanitizePdfText(s: string): string {
+  return s
+    .replace(/[‘’]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/[–—]/g, "-")
+    .replace(/…/g, "...")
+    .replace(/[^\u0000-ÿ]/g, "")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
+}
+function sanitizePdfData<T>(v: T): T {
+  if (typeof v === "string") return sanitizePdfText(v) as unknown as T;
+  if (Array.isArray(v)) return v.map((item) => sanitizePdfData(item)) as unknown as T;
+  if (v && typeof v === "object") {
+    const out: Record<string, unknown> = {};
+    for (const k of Object.keys(v as Record<string, unknown>)) {
+      out[k] = sanitizePdfData((v as Record<string, unknown>)[k]);
+    }
+    return out as unknown as T;
+  }
+  return v;
+}
+
+/**
  * Builds the diagnostic as a native PDF — real vector text and shapes, not
  * a screenshot. A rasterized full-page screenshot sliced across fixed-height
  * pages cuts boxes/paragraphs in half wherever a page boundary happens to
@@ -51,7 +84,8 @@ function fmtFollowers(n: number) {
  * applies its automatic "dark mode" color adaptation to it, which mangles
  * the colors. Real text/shape commands avoid both problems.
  */
-export function buildDiagnosticPdf(r: DiagnosticReport): jsPDF {
+export function buildDiagnosticPdf(rawReport: DiagnosticReport): jsPDF {
+  const r = sanitizePdfData(rawReport);
   const pdf = new jsPDF({ unit: "pt", format: "a4" });
   const pageW = pdf.internal.pageSize.getWidth();
   const pageH = pdf.internal.pageSize.getHeight();
