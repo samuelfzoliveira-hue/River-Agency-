@@ -50,7 +50,20 @@ export async function POST(req: NextRequest) {
           controller.enqueue(encoder.encode(chunk));
         }
       } catch (err: any) {
-        controller.enqueue(encoder.encode(`\u0001ERROR\u0001${err?.message || "Falha ao gerar o diagnóstico."}`));
+        // Log full detail server-side (visible in Vercel's function logs) —
+        // the SDK's own err.message alone (e.g. "Connection error.") doesn't
+        // say WHY the connection failed.
+        console.error("[generate-diagnostic] streaming failed:", {
+          name: err?.name,
+          message: err?.message,
+          status: err?.status,
+          cause: err?.cause,
+          stack: err?.stack,
+        });
+        const detail = [err?.message, err?.cause?.message, err?.cause?.code].filter(Boolean).join(" | ");
+        controller.enqueue(
+          encoder.encode(`\u0001ERROR\u0001${detail || "Falha ao gerar o diagnóstico."}`)
+        );
       } finally {
         controller.close();
       }
