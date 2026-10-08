@@ -81,13 +81,15 @@ Gere o diagnóstico completo em JSON, seguindo rigorosamente o schema do system 
  * ends — see `extractDiagnosticJson`.
  */
 export async function* streamDiagnosticText(profile: InstagramProfileData): AsyncGenerator<string> {
-  // Strips whitespace/control/zero-width characters from ANYWHERE in the
-  // value, not just the ends — a stray newline or invisible character
-  // pasted into a host's dashboard env-var field is easy to introduce and
-  // Node's fetch rejects it outright with "is not a legal HTTP header
-  // value" before ever reaching Anthropic, which otherwise looks exactly
-  // like a generic connection failure.
-  const apiKey = process.env.ANTHROPIC_API_KEY?.replace(/[\s\u0000-\u001F\u007F-\u009F​-‍﻿]/g, "");
+  // Keep ONLY the characters a real API key can contain (letters, digits,
+  // underscore, hyphen) and drop everything else. An allowlist here is
+  // deliberate: a denylist of "known bad" characters (whitespace, control
+  // chars, …) can itself be typed wrong, and still misses anything that
+  // isn't on the list — a stray character of any kind pasted into a host's
+  // dashboard env-var field makes Node's fetch reject the value outright
+  // with "is not a legal HTTP header value" before ever reaching Anthropic,
+  // which otherwise looks exactly like a generic connection failure.
+  const apiKey = process.env.ANTHROPIC_API_KEY?.replace(/[^A-Za-z0-9_-]/g, "");
   if (!apiKey) {
     throw new Error(
       "ANTHROPIC_API_KEY não configurada. Configure a variável de ambiente para gerar diagnósticos reais."

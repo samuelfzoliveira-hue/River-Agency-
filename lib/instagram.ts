@@ -157,10 +157,10 @@ function firstDefined<T>(...values: (T | undefined | null)[]): T | undefined {
  * so a minor schema drift degrades gracefully instead of breaking silently.
  */
 async function fetchViaApify(username: string): Promise<InstagramProfileData | null> {
-  // Strips whitespace/control/zero-width characters from anywhere in the
-  // value — see the matching comment in lib/claude.ts for why a plain
-  // .trim() isn't always enough.
-  const token = process.env.APIFY_API_TOKEN?.replace(/[\s\u0000-\u001F\u007F-\u009F​-‍﻿]/g, "");
+  // Keep ONLY the characters a real API token can contain — see the
+  // matching comment in lib/claude.ts for why an allowlist beats trying to
+  // deny-list "known bad" characters.
+  const token = process.env.APIFY_API_TOKEN?.replace(/[^A-Za-z0-9_-]/g, "");
   if (!token) return null;
 
   try {
