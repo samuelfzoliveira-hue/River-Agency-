@@ -3,7 +3,7 @@ import { extractUsername, fetchInstagramProfile } from "@/lib/instagram";
 import { AnalyzeRequestBody, InstagramProfileData } from "@/lib/types";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 90;
 
 /**
  * Stage 1 of 2: resolve a profile's data only (no AI call here). Kept as

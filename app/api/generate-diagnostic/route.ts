@@ -4,7 +4,12 @@ import { InstagramProfileData } from "@/lib/types";
 import { DEMO_REPORT } from "@/lib/demoData";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+// The AI generation step has run close to 60s on its own in testing, with
+// some run-to-run variance in how long the model takes — give it more
+// headroom than the default so a slightly-longer-than-usual run doesn't
+// get cut off right before finishing. (If the hosting plan caps this lower
+// regardless, that's the next thing to check.)
+export const maxDuration = 120;
 
 /**
  * Stage 2 of 2: generate the diagnosis from an already-resolved profile
