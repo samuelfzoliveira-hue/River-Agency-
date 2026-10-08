@@ -157,7 +157,7 @@ function firstDefined<T>(...values: (T | undefined | null)[]): T | undefined {
  * so a minor schema drift degrades gracefully instead of breaking silently.
  */
 async function fetchViaApify(username: string): Promise<InstagramProfileData | null> {
-  const token = process.env.APIFY_API_TOKEN;
+  const token = process.env.APIFY_API_TOKEN?.trim();
   if (!token) return null;
 
   try {
