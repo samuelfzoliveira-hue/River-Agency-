@@ -176,11 +176,20 @@ async function fetchViaApify(username: string): Promise<InstagramProfileData | n
         cache: "no-store",
       }
     );
-    if (!res.ok) return null;
+    if (!res.ok) {
+      console.error("[apify] HTTP", res.status, await res.text().catch(() => ""));
+      return null;
+    }
 
     const items = await res.json();
+    if (process.env.APIFY_DEBUG) {
+      console.error("[apify] raw response:", JSON.stringify(items).slice(0, 4000));
+    }
     const item = Array.isArray(items) ? items[0] : null;
-    if (!item || item.error) return null;
+    if (!item || item.error) {
+      console.error("[apify] no usable item in response", JSON.stringify(items).slice(0, 2000));
+      return null;
+    }
 
     const rawPosts: any[] = firstDefined(item.latestPosts, item.posts, item.topPosts, item.lastPosts) ?? [];
     const posts = rawPosts.slice(0, 12);
@@ -198,7 +207,10 @@ async function fetchViaApify(username: string): Promise<InstagramProfileData | n
     const followers = firstDefined<number>(item.followersCount, item.followers_count, item.followers);
     const resolvedUsername = firstDefined<string>(item.username, item.handle) ?? username;
 
-    if (followers === undefined) return null; // shape didn't match what we expect — don't fabricate data
+    if (followers === undefined) {
+      console.error("[apify] followers count not found in item, keys were:", Object.keys(item));
+      return null; // shape didn't match what we expect — don't fabricate data
+    }
 
     return {
       username: resolvedUsername,
@@ -216,7 +228,8 @@ async function fetchViaApify(username: string): Promise<InstagramProfileData | n
       avgComments: Math.round(totalComments / n),
       source: "scraped",
     };
-  } catch {
+  } catch (err) {
+    console.error("[apify] fetch threw:", err);
     return null;
   }
 }
