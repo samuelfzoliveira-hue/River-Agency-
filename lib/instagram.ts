@@ -134,6 +134,93 @@ async function fetchViaProfilePage(
   }
 }
 
+// Apify's Instagram Profile Scraper actor, addressed by its REST "act id"
+// (username/actor-name with the slash swapped for `~`, per Apify's API).
+const APIFY_ACTOR_ID = "apify~instagram-profile-scraper";
+
+function firstDefined<T>(...values: (T | undefined | null)[]): T | undefined {
+  for (const v of values) if (v !== undefined && v !== null) return v as T;
+  return undefined;
+}
+
+/**
+ * Method 0 (paid, reliable): Apify's hosted Instagram Profile Scraper. Unlike
+ * the two free methods below, Apify runs this from rotating residential
+ * proxies specifically built to get past Instagram's anti-bot blocking, so
+ * it's the only method here that works consistently rather than "when
+ * Instagram happens to allow it." Only used when APIFY_API_TOKEN is set.
+ *
+ * Apify's actor output field names aren't hardcoded to one exact shape here
+ * — different scraper versions and similar actors name things slightly
+ * differently (biography vs bio, followersCount vs followersCount vs
+ * followers) — each field is read defensively from a few known candidates
+ * so a minor schema drift degrades gracefully instead of breaking silently.
+ */
+async function fetchViaApify(username: string): Promise<InstagramProfileData | null> {
+  const token = process.env.APIFY_API_TOKEN;
+  if (!token) return null;
+
+  try {
+    const res = await fetch(
+      `https://api.apify.com/v2/acts/${APIFY_ACTOR_ID}/run-sync-get-dataset-items?token=${encodeURIComponent(
+        token
+      )}&timeout=90`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          usernames: [username],
+          directUrls: [`https://www.instagram.com/${username}/`],
+          resultsLimit: 12,
+        }),
+        cache: "no-store",
+      }
+    );
+    if (!res.ok) return null;
+
+    const items = await res.json();
+    const item = Array.isArray(items) ? items[0] : null;
+    if (!item || item.error) return null;
+
+    const rawPosts: any[] = firstDefined(item.latestPosts, item.posts, item.topPosts, item.lastPosts) ?? [];
+    const posts = rawPosts.slice(0, 12);
+    const recentCaptions: string[] = posts
+      .map((p) => firstDefined<string>(p?.caption, p?.text, p?.description) ?? "")
+      .filter(Boolean);
+
+    const totalLikes = posts.reduce((sum, p) => sum + (firstDefined<number>(p?.likesCount, p?.likes) ?? 0), 0);
+    const totalComments = posts.reduce(
+      (sum, p) => sum + (firstDefined<number>(p?.commentsCount, p?.comments) ?? 0),
+      0
+    );
+    const n = posts.length || 1;
+
+    const followers = firstDefined<number>(item.followersCount, item.followers_count, item.followers);
+    const resolvedUsername = firstDefined<string>(item.username, item.handle) ?? username;
+
+    if (followers === undefined) return null; // shape didn't match what we expect — don't fabricate data
+
+    return {
+      username: resolvedUsername,
+      fullName: firstDefined<string>(item.fullName, item.full_name, item.name) ?? resolvedUsername,
+      bio: firstDefined<string>(item.biography, item.bio) ?? "",
+      profilePicUrl: firstDefined<string>(item.profilePicUrlHD, item.profilePicUrl, item.profile_pic_url),
+      followers,
+      following: firstDefined<number>(item.followsCount, item.following_count, item.following) ?? 0,
+      posts: firstDefined<number>(item.postsCount, item.posts_count) ?? posts.length,
+      isVerified: firstDefined<boolean>(item.verified, item.isVerified),
+      isPrivate: firstDefined<boolean>(item.private, item.isPrivate),
+      externalUrl: firstDefined<string>(item.externalUrl, item.external_url) ?? undefined,
+      recentCaptions,
+      avgLikes: Math.round(totalLikes / n),
+      avgComments: Math.round(totalComments / n),
+      source: "scraped",
+    };
+  } catch {
+    return null;
+  }
+}
+
 export type ProfileFetchResult =
   | { status: "full"; profile: InstagramProfileData }
   | {
@@ -143,11 +230,15 @@ export type ProfileFetchResult =
   | { status: "none" };
 
 /**
- * Tries the full API first; if that's blocked, tries the lighter profile-page
- * scrape for at least name/handle/counts. Both are best-effort — Instagram
- * can block either at any time, especially from cloud/data-center IPs.
+ * Tries Apify first when configured (paid, reliable — bypasses Instagram's
+ * blocking via proxies). Without it, falls back to the free full API, then
+ * the lighter partial profile-page scrape. The free methods are best-effort:
+ * Instagram can block either at any time, especially from cloud IPs.
  */
 export async function fetchInstagramProfile(username: string): Promise<ProfileFetchResult> {
+  const viaApify = await fetchViaApify(username);
+  if (viaApify) return { status: "full", profile: viaApify };
+
   const full = await fetchViaWebProfileInfo(username);
   if (full) return { status: "full", profile: full };
 
