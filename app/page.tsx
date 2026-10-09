@@ -13,6 +13,12 @@ type LoadingStage = "idle" | "profile" | "generating";
 const DEMO_MARKER = "\u0001DEMO\u0001";
 const REAL_MARKER = "\u0001REAL\u0001";
 const ERROR_MARKER = "\u0001ERROR\u0001";
+// Must match SCORES_TAG / BIO_TAG / GAPS_SWOT_TAG / POSITIONING_TAG /
+// TACTICS_TAG in lib/claude.ts — the report is generated as five parallel
+// AI calls (to stay under Vercel's 60s function limit without losing
+// depth) and their chunks arrive interleaved, tagged with these control
+// characters so they can be split back into five bodies.
+const PART_TAGS = ["\u0002", "\u0003", "\u0004", "\u0005", "\u0006"];
 
 export default function Home() {
   const [url, setUrl] = useState("");
@@ -99,20 +105,34 @@ export default function Home() {
         ? text.slice(REAL_MARKER.length)
         : text;
 
-      const jsonMatch = body.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) {
-        setError("Não foi possível interpretar a resposta da IA. Tente novamente.");
-        setStage("idle");
-        return;
-      }
-
       // Parsed separately from the fetch/stream-reading above: a malformed
       // or truncated JSON here is a bad AI response, not a dropped
       // connection, and deserves its own clearer message instead of being
       // caught by the generic network-error handler below.
       let diagnostic: any;
       try {
-        diagnostic = JSON.parse(jsonMatch[0]);
+        if (isDemo) {
+          const jsonMatch = body.match(/\{[\s\S]*\}/);
+          if (!jsonMatch) throw new Error("no json");
+          diagnostic = JSON.parse(jsonMatch[0]);
+        } else {
+          // Real reports arrive as four interleaved, tagged parts (see
+          // streamDiagnosticParts in lib/claude.ts) — split back into four
+          // bodies by which tag last preceded each character, then parse
+          // and merge them (their top-level keys are disjoint by design).
+          // Each part's text is already a complete, validated, correctly-
+          // shaped JSON object by the time it's sent (lib/claude.ts
+          // normalizes and retries malformed tool-use output server-side),
+          // so no repair or regex extraction is needed here.
+          const texts: Record<string, string> = Object.fromEntries(PART_TAGS.map((t) => [t, ""]));
+          let current = "";
+          for (const ch of body) {
+            if (PART_TAGS.includes(ch)) current = ch;
+            else if (current) texts[current] += ch;
+          }
+          const parsed = Object.values(texts).map((t) => JSON.parse(t));
+          diagnostic = Object.assign({}, ...parsed);
+        }
       } catch {
         setError("A resposta da IA veio incompleta ou inválida. Tente novamente.");
         setStage("idle");

@@ -1,23 +1,25 @@
 import { NextRequest } from "next/server";
-import { streamDiagnosticText } from "@/lib/claude";
+import { streamDiagnosticParts } from "@/lib/claude";
 import { InstagramProfileData } from "@/lib/types";
 import { DEMO_REPORT } from "@/lib/demoData";
 
 export const runtime = "nodejs";
-// The AI generation step has run close to 60s on its own in testing, with
-// some run-to-run variance in how long the model takes — give it more
-// headroom than the default so a slightly-longer-than-usual run doesn't
-// get cut off right before finishing. (If the hosting plan caps this lower
-// regardless, that's the next thing to check.)
+// Set generously above what this needs (the 5 parallel parts in
+// streamDiagnosticParts typically finish in 25-40s, occasionally more if a
+// part needs its one retry) — Vercel Hobby hard-caps real execution at 60s
+// regardless of this value, so staying under that cap is handled by the
+// parallel-parts architecture itself, not by this setting.
 export const maxDuration = 120;
 
 /**
  * Stage 2 of 2: generate the diagnosis from an already-resolved profile
- * (see /api/analyze for stage 1). Streams the model's raw text back as
- * plain chunks rather than waiting for the full ~6-8k token response —
- * a blocking request that long looks like a dead connection to most
- * proxies/platforms and gets killed before the model finishes. The client
- * accumulates the chunks and parses the final JSON once the stream ends.
+ * (see /api/analyze for stage 1). Runs the report as five parallel AI
+ * calls (see streamDiagnosticParts) and streams each one back as a single
+ * tagged, validated JSON chunk once it completes, rather than waiting for
+ * one ~70-90s blocking call — which is both too slow (reverse proxies/
+ * serverless platforms treat that as a dead connection) and, on its own,
+ * already past Vercel Hobby's 60s hard cap. The client demultiplexes the
+ * five tagged parts and parses each as its own JSON once the stream ends.
  *
  * In demo mode (no ANTHROPIC_API_KEY) this just emits the demo report as
  * a single chunk — no need to stream something that's instant.
@@ -51,7 +53,7 @@ export async function POST(req: NextRequest) {
     async start(controller) {
       controller.enqueue(encoder.encode("\u0001REAL\u0001"));
       try {
-        for await (const chunk of streamDiagnosticText(profile)) {
+        for await (const chunk of streamDiagnosticParts(profile)) {
           controller.enqueue(encoder.encode(chunk));
         }
       } catch (err: any) {
