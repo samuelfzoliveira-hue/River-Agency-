@@ -105,6 +105,9 @@ export interface DiagnosticReport {
     fullName: string;
     profilePicUrl?: string;
     followers: number;
+    following?: number;
+    posts?: number;
+    isVerified?: boolean;
     engagementRate: number;
   };
   overallScore: number;

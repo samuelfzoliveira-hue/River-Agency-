@@ -3,6 +3,9 @@ import { Section } from "./Section";
 import { ScoreRing } from "./ScoreRing";
 import { ProgressBar } from "./ProgressBar";
 import { SwotGrid } from "./SwotGrid";
+import { ProfileAvatar } from "./ProfileAvatar";
+import { PhoneMockup } from "./PhoneMockup";
+import { InstagramProfileMock } from "./InstagramProfileMock";
 
 function formatFollowers(n: number) {
   if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
@@ -66,13 +69,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
           Relatório de Análise
         </div>
         <div className="flex items-center gap-4">
-          {profile.profilePicUrl ? (
-            <img src={profile.profilePicUrl} alt={profile.username} className="w-12 h-12 rounded-full object-cover" />
-          ) : (
-            <div className="w-12 h-12 rounded-full bg-white border border-river-line flex items-center justify-center font-bold text-river-ink2">
-              {profile.username.slice(0, 1).toUpperCase()}
-            </div>
-          )}
+          <ProfileAvatar profilePicUrl={profile.profilePicUrl} username={profile.username} size={48} />
           <div>
             <div className="text-xl font-bold text-river-ink">@{profile.username}</div>
             <div className="text-[13px] text-river-ink2">{profile.fullName}</div>
@@ -130,9 +127,50 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Bio */}
         <Section title="Diagnóstico de Bio e Perfil">
           <ProgressBar label="Score de alinhamento" score={report.bioDiagnosis.alignmentScore} />
-          <div className="border-l-2 border-river-accentSoft pl-4 my-5">
-            <p className="text-[13.5px] italic text-river-ink2">&ldquo;{report.bioDiagnosis.currentBio}&rdquo;</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6 no-print-avoid-break">
+            <div>
+              <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-river-ink3 mb-3 text-center">
+                Antes
+              </div>
+              <PhoneMockup>
+                <InstagramProfileMock
+                  username={profile.username}
+                  fullName={profile.fullName}
+                  profilePicUrl={profile.profilePicUrl}
+                  posts={profile.posts ?? 0}
+                  followers={profile.followers}
+                  following={profile.following ?? 0}
+                  bio={report.bioDiagnosis.currentBio}
+                  isVerified={profile.isVerified}
+                />
+              </PhoneMockup>
+            </div>
+            <div>
+              <div className="text-[11px] font-bold tracking-[0.08em] uppercase text-river-good mb-3 text-center">
+                Depois (sugestão)
+              </div>
+              <PhoneMockup>
+                <InstagramProfileMock
+                  username={profile.username}
+                  fullName={profile.fullName}
+                  profilePicUrl={profile.profilePicUrl}
+                  posts={profile.posts ?? 0}
+                  followers={profile.followers}
+                  following={profile.following ?? 0}
+                  bio={[
+                    report.bioDiagnosis.idealBio.promise,
+                    report.bioDiagnosis.idealBio.authority,
+                    report.bioDiagnosis.idealBio.cta,
+                  ]
+                    .filter(Boolean)
+                    .join("\n")}
+                  isVerified={profile.isVerified}
+                />
+              </PhoneMockup>
+            </div>
           </div>
+
           <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.bioDiagnosis.analysis}</p>
 
           <div className="grid grid-cols-1 gap-4">
