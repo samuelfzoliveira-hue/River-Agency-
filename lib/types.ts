@@ -32,6 +32,7 @@ export interface BioDiagnosis {
   analysis: string;
   problems: string[];
   idealBio: {
+    identity: string;
     promise: string;
     authority: string;
     cta: string;

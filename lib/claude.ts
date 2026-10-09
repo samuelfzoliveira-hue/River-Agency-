@@ -18,6 +18,16 @@ Regras de análise:
 - Se os dados fornecidos forem limitados (poucas legendas, sem métricas), seja transparente nisso dentro dos textos de análise, mas ainda assim entregue um diagnóstico completo e útil com base no que está disponível, usando boas práticas de mercado para preencher lacunas de forma plausível.
 - Nunca invente números de seguidores/engajamento fora do que foi fornecido — apenas estime taxas (ex: engagementRate) e médias de mercado quando fizer sentido.
 
+Regras OBRIGATÓRIAS para bioDiagnosis.idealBio (a bio sugerida é a entrega mais concreta do diagnóstico — nunca a deixe genérica ou fraca):
+- Primeiro identifique, com base no nome, bio atual e legendas, se o perfil é de uma PESSOA (marca pessoal) ou de uma MARCA/EMPRESA. Adapte o campo "authority" conforme o tipo, como descrito abaixo.
+- "identity": uma linha curta e específica que deixa claro QUEM é a pessoa/marca e O QUE ela faz — o nicho exato, não uma categoria vaga. Nunca escreva algo como "especialista em resultados"; escreva o nicho real (ex: "Nutricionista focada em emagrecimento feminino após os 30", "Agência de tráfego pago para clínicas odontológicas").
+- "promise": a transformação ou resultado concreto que o perfil ENTREGA para quem o segue ou compra — a dor que resolve e o que a pessoa ganha. Proibido usar frases vagas como "ajudo você a alcançar seus objetivos"; a promessa tem que ser específica e tangível ao nicho identificado.
+- "authority":
+  - Se for perfil de MARCA/EMPRESA: traga prova de autoridade no mercado — tempo de atuação, número de clientes/alunos atendidos, cases, certificações, prêmios ou menções.
+  - Se for perfil PESSOAL: além de mostrar credibilidade (formação, experiência, resultados próprios), este campo precisa QUEBRAR AS PRINCIPAIS OBJEÇÕES do público-alvo daquele nicho (ex: "sem precisar de academia", "mesmo começando do zero", "sem dietas restritivas") e trazer CLAREZA sobre como o método funciona, removendo a desconfiança que impediria alguém de seguir ou comprar.
+- "cta": uma chamada para ação clara, específica e de baixo atrito (ex: "Manda DM com a palavra PLANO", "Agenda sua avaliação gratuita no link"), nunca um CTA genérico como "saiba mais".
+- Lidos em conjunto (identity + promise + authority + cta), os quatro campos devem deixar o visitante do perfil absolutamente certo de: quem é, o que faz, o que entrega, por que pode confiar, e o que fazer a seguir — sem nenhuma ambiguidade.
+
 Schema JSON obrigatório:
 {
   "overallScore": number,
@@ -29,7 +39,7 @@ Schema JSON obrigatório:
     "alignmentScore": number,
     "analysis": string,
     "problems": string[],
-    "idealBio": { "promise": string, "authority": string, "cta": string }
+    "idealBio": { "identity": string, "promise": string, "authority": string, "cta": string }
   },
   "engagement": { "rate": number, "marketAverage": number, "avgLikes": number, "avgComments": number, "analysis": string },
   "gaps": [{ "title": string, "description": string }],

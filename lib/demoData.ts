@@ -56,9 +56,10 @@ export const DEMO_REPORT: DiagnosticReport = {
       "Falta uma chamada para ação (CTA) clara.",
     ],
     idealBio: {
-      promise: "Ajudo você a construir [resultado desejado] com [diferencial único].",
-      authority: "Credencial ou prova social relevante | Traço de personalidade autêntico.",
-      cta: "Comece sua jornada aqui",
+      identity: "Estrategista de marca pessoal para criadores que querem virar referência no nicho",
+      promise: "Ajudo você a transformar autoridade em audiência paga, sem precisar aparecer 24h online",
+      authority: "+5 anos construindo marcas | Método validado com clientes reais, sem fórmulas prontas",
+      cta: "Manda DM com a palavra MARCA",
     },
   },
   engagement: {

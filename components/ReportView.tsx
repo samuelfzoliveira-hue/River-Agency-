@@ -159,6 +159,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
                   followers={profile.followers}
                   following={profile.following ?? 0}
                   bio={[
+                    report.bioDiagnosis.idealBio.identity,
                     report.bioDiagnosis.idealBio.promise,
                     report.bioDiagnosis.idealBio.authority,
                     report.bioDiagnosis.idealBio.cta,
@@ -179,6 +180,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
             </Box>
             <Box tone="good" label="Estrutura da bio ideal">
               <div className="space-y-2 text-[13.5px]">
+                <p><span className="text-river-ink3">Identidade — </span>{report.bioDiagnosis.idealBio.identity}</p>
                 <p><span className="text-river-ink3">Promessa — </span>{report.bioDiagnosis.idealBio.promise}</p>
                 <p><span className="text-river-ink3">Autoridade — </span>{report.bioDiagnosis.idealBio.authority}</p>
                 <p><span className="text-river-ink3">CTA — </span>{report.bioDiagnosis.idealBio.cta}</p>

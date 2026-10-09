@@ -327,6 +327,7 @@ export function buildDiagnosticPdf(rawReport: DiagnosticReport): jsPDF {
     {
       kind: "kv",
       pairs: [
+        ["Identidade", r.bioDiagnosis.idealBio.identity],
         ["Promessa", r.bioDiagnosis.idealBio.promise],
         ["Autoridade", r.bioDiagnosis.idealBio.authority],
         ["CTA", r.bioDiagnosis.idealBio.cta],
