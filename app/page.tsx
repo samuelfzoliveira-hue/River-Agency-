@@ -106,7 +106,19 @@ export default function Home() {
         return;
       }
 
-      const diagnostic = JSON.parse(jsonMatch[0]);
+      // Parsed separately from the fetch/stream-reading above: a malformed
+      // or truncated JSON here is a bad AI response, not a dropped
+      // connection, and deserves its own clearer message instead of being
+      // caught by the generic network-error handler below.
+      let diagnostic: any;
+      try {
+        diagnostic = JSON.parse(jsonMatch[0]);
+      } catch {
+        setError("A resposta da IA veio incompleta ou inválida. Tente novamente.");
+        setStage("idle");
+        return;
+      }
+
       const followers = profile.followers || 1;
       const engagementRate =
         profile.avgLikes && profile.avgComments

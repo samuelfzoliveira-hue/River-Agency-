@@ -109,13 +109,13 @@ export async function* streamDiagnosticText(profile: InstagramProfileData): Asyn
 
   const client = new Anthropic({ apiKey });
 
-  // Lowered alongside the system prompt's new conciseness rule: a shorter
-  // natural response finishes faster, which matters because some hosting
-  // plans hard-cap function execution time regardless of configured
-  // maxDuration (e.g. Vercel Hobby caps at 60s no matter what). 4500 tokens
-  // is still comfortably more than the ~3100 a concise complete response
-  // has measured at, so this shouldn't truncate valid output.
-  const maxTokens = 4500;
+  // The system prompt's conciseness rule keeps the model's natural response
+  // well under this — raising the cap itself doesn't add latency, it only
+  // matters as headroom against truncation (a response cut off mid-JSON by
+  // hitting max_tokens isn't a stream error, so it silently produces broken
+  // JSON that fails to parse downstream, which previously got misreported
+  // to the user as a generic "connection error").
+  const maxTokens = 6000;
 
   const stream = client.messages.stream({
     model: "claude-sonnet-5",
@@ -131,6 +131,17 @@ export async function* streamDiagnosticText(profile: InstagramProfileData): Asyn
     }
   }
   console.error(`[generate-diagnostic] stream finished in ${Date.now() - startedAt}ms`);
+
+  // A stream that finishes because it hit max_tokens has no error of its
+  // own — it just stops mid-sentence, usually mid-JSON. Catch that here
+  // with a clear message instead of letting the caller's JSON.parse fail
+  // and get misread as a dropped connection.
+  const finalMessage = await stream.finalMessage();
+  if (finalMessage.stop_reason === "max_tokens") {
+    throw new Error(
+      "A resposta da IA foi cortada por atingir o limite de tokens antes de terminar o JSON. Tente novamente."
+    );
+  }
 }
 
 export function extractDiagnosticJson(
