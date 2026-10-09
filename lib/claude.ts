@@ -15,13 +15,16 @@ const SHARED_RULES = `Regras de análise:
 const PART_CONTEXT = (which: string) =>
   `Sua tarefa é produzir APENAS ${which} de um diagnóstico de perfil de Instagram extremamente completo e honesto. As outras partes são geradas por chamadas separadas e rodam em paralelo com esta — não se preocupe com elas, mas mantenha o mesmo padrão de profundidade e tom consultivo em alto nível, como se fosse uma única consultoria.`;
 
-const IDEAL_BIO_RULES = `Regras OBRIGATÓRIAS para idealBioIdentity / idealBioPromise / idealBioAuthority / idealBioCta (a bio sugerida é a entrega mais concreta do diagnóstico — nunca a deixe genérica ou fraca):
-- Primeiro identifique, com base no nome, bio atual e legendas, se o perfil é de uma PESSOA (marca pessoal) ou de uma MARCA/EMPRESA. Adapte o campo idealBioAuthority conforme o tipo, como descrito abaixo.
-- idealBioIdentity: uma linha curta e específica que deixa claro QUEM é a pessoa/marca e O QUE ela faz — o nicho exato, não uma categoria vaga. Nunca escreva algo como "especialista em resultados"; escreva o nicho real (ex: "Nutricionista focada em emagrecimento feminino após os 30", "Agência de tráfego pago para clínicas odontológicas").
-- idealBioPromise: a transformação ou resultado concreto que o perfil ENTREGA para quem o segue ou compra — a dor que resolve e o que a pessoa ganha. Proibido usar frases vagas como "ajudo você a alcançar seus objetivos"; a promessa tem que ser específica e tangível ao nicho identificado.
-- idealBioAuthority: se for MARCA/EMPRESA, traga prova de autoridade no mercado (tempo de atuação, nº de clientes/alunos, cases, certificações, prêmios). Se for perfil PESSOAL, além de credibilidade (formação, experiência, resultados próprios), este campo precisa QUEBRAR AS PRINCIPAIS OBJEÇÕES do público-alvo daquele nicho (ex: "sem precisar de academia", "mesmo começando do zero") e trazer CLAREZA sobre como o método funciona.
-- idealBioCta: uma chamada para ação clara, específica e de baixo atrito (ex: "Manda DM com a palavra PLANO"), nunca um CTA genérico como "saiba mais".
-- Lidos em conjunto, os quatro campos devem deixar o visitante absolutamente certo de: quem é, o que faz, o que entrega, por que pode confiar, e o que fazer a seguir.`;
+const IDEAL_BIO_RULES = `Regras OBRIGATÓRIAS para idealBioIdentity / idealBioPromise / idealBioAuthority / idealBioCta (a bio sugerida é a entrega mais concreta do diagnóstico):
+
+ATENÇÃO — ESTES 4 CAMPOS SÃO EXCEÇÃO TOTAL À REGRA DE PROFUNDIDADE (2 a 4 frases) DO RESTO DO SCHEMA. Eles não são texto analítico — são o TEXTO REAL que vai colado no campo de bio do Instagram do cliente. Escreva como um especialista em branding/copywriting escreveria a bio de verdade: curta, limpa, direta, escaneável em 3 segundos. NUNCA escreva frases longas, explicativas ou com várias ideias encadeadas — cada campo é UMA linha curta (até ~8 palavras), nunca um período composto. Quanto mais limpo, melhor — principalmente para negócios locais (óticas, clínicas, salões, lojas, restaurantes): menos é mais.
+
+- Primeiro identifique, com base no nome, bio atual e legendas, se o perfil é de uma PESSOA (marca pessoal), uma MARCA/EMPRESA online, ou um NEGÓCIO LOCAL FÍSICO (loja, clínica, ótica, salão, restaurante, consultório etc.).
+- idealBioIdentity: quem é + o que faz, em UMA linha curta e direta (nunca duas ideias juntas). Se for NEGÓCIO LOCAL FÍSICO e a localização (cidade, bairro ou região) estiver claramente presente na bio atual ou nas legendas, inclua-a de forma breve, por exemplo: "Ótica em Vitória da Conquista - BA" ou "Clínica odontológica no Recreio, RJ". Se a localização NÃO estiver nos dados fornecidos, NUNCA invente uma nem use placeholder/espaço reservado (proibido escrever algo como "[Cidade - UF]" ou "sua cidade") — nesse caso simplesmente omita a localização e foque só no nicho. Nunca vago ("especialista em resultados"); diga o nicho real, mas em poucas palavras.
+- idealBioPromise: o benefício central que o cliente ganha, em UMA linha curta (ex: "Óculos no seu estilo, com crediário facilitado"). Proibido frases vagas tipo "ajudo você a alcançar seus objetivos" — e proibido virar um parágrafo justificando o porquê.
+- idealBioAuthority: se for MARCA/EMPRESA ou NEGÓCIO LOCAL, uma linha curta de prova de autoridade (tempo de atuação, nº de clientes, marcas/parcerias, certificação) — nunca um parágrafo. Se for perfil PESSOAL, uma linha curta que quebra a principal objeção do público (ex: "Sem precisar de academia").
+- idealBioCta: uma linha de ação clara e curta, de baixo atrito (ex: "Chama no WhatsApp e agende sua avaliação"), nunca genérica como "saiba mais".
+- Teste de qualidade antes de responder: leia as 4 linhas juntas — elas precisam parecer uma bio de Instagram REAL, pronta pra colar, não um resumo de relatório. Se alguma linha tiver mais de ~10 palavras ou mais de uma ideia, reescreva mais curta.`;
 
 function buildUserPrompt(profile: InstagramProfileData): string {
   return `Dados do perfil a analisar:
@@ -69,6 +72,11 @@ function getApiKey(): string {
 const STR = { type: "string" as const };
 const NUM = { type: "number" as const };
 const STR_ARRAY = (n: number) => ({ type: "array" as const, items: STR, minItems: n, maxItems: n });
+// A short, Instagram-bio-ready line (not an analytical sentence) — used for
+// the idealBio fields, where the depth-oriented maxLength of a normal STR
+// field would be wrong. maxLength is a soft hint (tool-use doesn't strictly
+// enforce JSON Schema constraints), reinforcing the prompt instruction.
+const SHORT_STR = { type: "string" as const, maxLength: 60, description: "Uma linha curta de bio real (máx. ~8 palavras), não uma frase analítica." };
 
 // Split into four independent tool-use calls, run in parallel, instead of
 // one single call producing the whole schema: a full-depth response for
@@ -147,10 +155,10 @@ const PARTS_CONFIG = {
             alignmentScore: NUM,
             analysis: STR,
             problems: STR_ARRAY(3),
-            idealBioIdentity: STR,
-            idealBioPromise: STR,
-            idealBioAuthority: STR,
-            idealBioCta: STR,
+            idealBioIdentity: SHORT_STR,
+            idealBioPromise: SHORT_STR,
+            idealBioAuthority: SHORT_STR,
+            idealBioCta: SHORT_STR,
           },
           required: [
             "currentBio",
