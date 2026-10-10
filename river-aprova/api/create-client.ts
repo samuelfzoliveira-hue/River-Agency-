@@ -17,7 +17,9 @@ export default async function handler(req: any, res: any) {
 
   const admin = createClient(url, serviceKey, { auth: { persistSession: false } });
   const { data: userData, error: userError } = await admin.auth.getUser(token);
-  if (userError || !userData.user) return res.status(401).json({ error: "Sessão inválida." });
+  if (userError || !userData.user) {
+    return res.status(401).json({ error: `Sessão inválida ou chave do servidor incorreta (${userError?.message ?? "sem usuário"}).` });
+  }
 
   const { data: profile } = await admin.from("profiles").select("role").eq("id", userData.user.id).maybeSingle();
   if (profile?.role !== "admin") return res.status(403).json({ error: "Apenas administradores." });
@@ -36,7 +38,7 @@ export default async function handler(req: any, res: any) {
   });
   if (error) {
     const exists = /already|registered|exists/i.test(error.message);
-    return res.status(exists ? 409 : 400).json({ error: exists ? "Este e-mail já tem conta." : "Não foi possível criar a conta." });
+    return res.status(exists ? 409 : 400).json({ error: exists ? "Este e-mail já tem conta." : `Não foi possível criar a conta (${error.message}).` });
   }
   return res.status(200).json({ id: data.user?.id, email });
 }
