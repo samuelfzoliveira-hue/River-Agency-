@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-paper font-sans text-navy antialiased;
+  }
+}
+
+@layer components {
+  .field {
+    @apply w-full rounded-xl border border-navy/15 bg-white px-4 py-3 text-base text-navy placeholder:text-navy/40 outline-none transition focus:border-sky focus:ring-4 focus:ring-sky/20;
+  }
+  .btn {
+    @apply inline-flex w-full items-center justify-center rounded-xl bg-navy px-5 py-3 text-base font-semibold text-white transition hover:bg-navy-soft focus:outline-none focus:ring-4 focus:ring-sky/30 disabled:opacity-60;
+  }
+  .link {
+    @apply font-medium text-sky hover:underline;
+  }
+}
