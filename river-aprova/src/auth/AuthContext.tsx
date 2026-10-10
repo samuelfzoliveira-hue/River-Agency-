@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from "react";
 import type { Session } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
@@ -7,7 +7,9 @@ export type Role = "admin" | "cliente";
 interface AuthState {
   session: Session | null;
   role: Role | null;
+  mustChangePassword: boolean;
   loading: boolean;
+  refreshProfile: () => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -20,6 +22,7 @@ export function homeFor(role: Role | null) {
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [role, setRole] = useState<Role | null>(null);
+  const [mustChangePassword, setMust] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,6 +34,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setSession(next);
       if (!next) {
         setRole(null);
+        setMust(false);
         setLoading(false);
       }
     });
@@ -38,31 +42,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const userId = session?.user.id;
+
+  const loadProfile = useCallback(async () => {
+    if (!userId) return;
+    const { data } = await supabase.from("profiles").select("role,must_change_password").eq("id", userId).maybeSingle();
+    setRole((data?.role as Role | undefined) ?? null);
+    setMust(!!data?.must_change_password);
+    setLoading(false);
+  }, [userId]);
+
   useEffect(() => {
     if (!userId) return;
-    let cancelled = false;
     setLoading(true);
-    supabase
-      .from("profiles")
-      .select("role")
-      .eq("id", userId)
-      .maybeSingle()
-      .then(({ data }) => {
-        if (cancelled) return;
-        setRole((data?.role as Role | undefined) ?? null);
-        setLoading(false);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [userId]);
+    loadProfile();
+  }, [userId, loadProfile]);
 
   const signOut = async () => {
     await supabase.auth.signOut();
   };
 
   return (
-    <AuthContext.Provider value={{ session, role, loading, signOut }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ session, role, mustChangePassword, loading, refreshProfile: loadProfile, signOut }}>
+      {children}
+    </AuthContext.Provider>
   );
 }
 

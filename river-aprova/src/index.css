@@ -19,3 +19,8 @@
     @apply font-medium text-sky hover:underline;
   }
 }
+
+@layer utilities {
+  .no-scrollbar { scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+}
