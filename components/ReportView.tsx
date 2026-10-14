@@ -7,9 +7,23 @@ import { ProfileAvatar } from "./ProfileAvatar";
 import { PhoneMockup } from "./PhoneMockup";
 import { InstagramProfileMock } from "./InstagramProfileMock";
 
-function formatFollowers(n: number) {
-  if (n >= 1000) return `${(n / 1000).toFixed(n >= 10000 ? 0 : 1)}k`;
-  return `${n}`;
+// The AI's output is validated server-side, but that validation only
+// checks that top-level fields exist — not that every deeply-nested
+// number/array inside them is well-formed. These helpers make the render
+// tolerant of a missing/malformed field (showing a blank or a zero)
+// instead of crashing the whole report with "Cannot read properties of
+// undefined" on a .map() or .toFixed() call.
+function arr<T>(v: T[] | undefined | null): T[] {
+  return Array.isArray(v) ? v : [];
+}
+function num(v: number | undefined | null, fallback = 0): number {
+  return typeof v === "number" && !Number.isNaN(v) ? v : fallback;
+}
+
+function formatFollowers(n: number | undefined) {
+  const value = num(n);
+  if (value >= 1000) return `${(value / 1000).toFixed(value >= 10000 ? 0 : 1)}k`;
+  return `${value}`;
 }
 
 function Stat({ label, value, accent = false }: { label: string; value: string; accent?: boolean }) {
@@ -77,7 +91,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         </div>
         <div className="flex gap-6 sm:gap-10 mt-7 flex-wrap">
           <Stat label="seguidores" value={formatFollowers(profile.followers)} />
-          <Stat label="engajamento" value={`${profile.engagementRate?.toFixed(2)}%`} accent />
+          <Stat label="engajamento" value={`${num(profile.engagementRate).toFixed(2)}%`} accent />
         </div>
       </div>
 
@@ -93,10 +107,10 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Score — elevated: the headline number */}
         <Section title="Score Geral do Perfil" elevated>
           <div className="flex flex-col sm:flex-row gap-8 items-start">
-            <ScoreRing score={report.overallScore} />
+            <ScoreRing score={num(report.overallScore)} />
             <div className="flex-1 w-full">
-              {report.scoreBreakdown.map((s) => (
-                <ProgressBar key={s.label} label={s.label} score={s.score} compact />
+              {arr(report.scoreBreakdown).map((s) => (
+                <ProgressBar key={s.label} label={s.label} score={num(s.score)} compact />
               ))}
             </div>
           </div>
@@ -105,9 +119,9 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
 
         {/* Evolution */}
         <Section title="Projeção de Evolução do Perfil">
-          <ProgressBar label="Atual" score={report.evolution.current} semantic={false} />
+          <ProgressBar label="Atual" score={num(report.evolution?.current)} semantic={false} />
           <div className="mt-2 space-y-6">
-            {report.evolution.phases.map((phase, i) => (
+            {arr(report.evolution?.phases).map((phase, i) => (
               <div key={phase.name} className="flex gap-4">
                 <span className="text-[12px] font-semibold text-river-accent tabular-nums pt-0.5 w-4 shrink-0">
                   {i + 1}
@@ -115,7 +129,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
                 <div className="flex-1">
                   <div className="flex items-baseline justify-between mb-1">
                     <h3 className="text-[13.5px] font-semibold text-river-ink">{phase.name}</h3>
-                    <span className="text-[12px] text-river-ink3 tabular-nums">{Math.round(phase.score)}</span>
+                    <span className="text-[12px] text-river-ink3 tabular-nums">{Math.round(num(phase.score))}</span>
                   </div>
                   <p className="text-[13.5px] leading-relaxed text-river-ink2">{phase.description}</p>
                 </div>
@@ -126,7 +140,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
 
         {/* Bio */}
         <Section title="Diagnóstico de Bio e Perfil">
-          <ProgressBar label="Score de alinhamento" score={report.bioDiagnosis.alignmentScore} />
+          <ProgressBar label="Score de alinhamento" score={num(report.bioDiagnosis?.alignmentScore)} />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 my-6 no-print-avoid-break">
             <div>
@@ -141,7 +155,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
                   posts={profile.posts ?? 0}
                   followers={profile.followers}
                   following={profile.following ?? 0}
-                  bio={report.bioDiagnosis.currentBio}
+                  bio={report.bioDiagnosis?.currentBio ?? ""}
                   isVerified={profile.isVerified}
                 />
               </PhoneMockup>
@@ -159,10 +173,10 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
                   followers={profile.followers}
                   following={profile.following ?? 0}
                   bio={[
-                    report.bioDiagnosis.idealBio.identity,
-                    report.bioDiagnosis.idealBio.promise,
-                    report.bioDiagnosis.idealBio.authority,
-                    report.bioDiagnosis.idealBio.cta,
+                    report.bioDiagnosis?.idealBio?.identity,
+                    report.bioDiagnosis?.idealBio?.promise,
+                    report.bioDiagnosis?.idealBio?.authority,
+                    report.bioDiagnosis?.idealBio?.cta,
                   ]
                     .filter(Boolean)
                     .join("\n")}
@@ -172,18 +186,18 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
             </div>
           </div>
 
-          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.bioDiagnosis.analysis}</p>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.bioDiagnosis?.analysis}</p>
 
           <div className="grid grid-cols-1 gap-4">
             <Box tone="bad" label="Problemas identificados">
-              <ToneList tone="bad" items={report.bioDiagnosis.problems} />
+              <ToneList tone="bad" items={arr(report.bioDiagnosis?.problems)} />
             </Box>
             <Box tone="good" label="Estrutura da bio ideal">
               <div className="space-y-2 text-[13.5px]">
-                <p><span className="text-river-ink3">Identidade — </span>{report.bioDiagnosis.idealBio.identity}</p>
-                <p><span className="text-river-ink3">Promessa — </span>{report.bioDiagnosis.idealBio.promise}</p>
-                <p><span className="text-river-ink3">Autoridade — </span>{report.bioDiagnosis.idealBio.authority}</p>
-                <p><span className="text-river-ink3">CTA — </span>{report.bioDiagnosis.idealBio.cta}</p>
+                <p><span className="text-river-ink3">Identidade — </span>{report.bioDiagnosis?.idealBio?.identity}</p>
+                <p><span className="text-river-ink3">Promessa — </span>{report.bioDiagnosis?.idealBio?.promise}</p>
+                <p><span className="text-river-ink3">Autoridade — </span>{report.bioDiagnosis?.idealBio?.authority}</p>
+                <p><span className="text-river-ink3">CTA — </span>{report.bioDiagnosis?.idealBio?.cta}</p>
               </div>
             </Box>
           </div>
@@ -192,18 +206,18 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Engagement */}
         <Section title="Análise de Engajamento">
           <div className="flex gap-6 sm:gap-10 mb-6 flex-wrap">
-            <Stat label="sua taxa" value={`${report.engagement.rate.toFixed(2)}%`} accent />
-            <Stat label="média de mercado" value={`${report.engagement.marketAverage.toFixed(1)}%`} />
-            <Stat label="curtidas/post" value={String(report.engagement.avgLikes)} />
-            <Stat label="comentários/post" value={String(report.engagement.avgComments)} />
+            <Stat label="sua taxa" value={`${num(report.engagement?.rate).toFixed(2)}%`} accent />
+            <Stat label="média de mercado" value={`${num(report.engagement?.marketAverage).toFixed(1)}%`} />
+            <Stat label="curtidas/post" value={String(num(report.engagement?.avgLikes))} />
+            <Stat label="comentários/post" value={String(num(report.engagement?.avgComments))} />
           </div>
-          <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.engagement.analysis}</p>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.engagement?.analysis}</p>
         </Section>
 
         {/* Gaps */}
         <Section title="Gaps Identificados">
           <div className="space-y-3">
-            {report.gaps.map((g) => (
+            {arr(report.gaps).map((g) => (
               <div key={g.title} className="border-l-2 border-river-badLine pl-4 py-0.5">
                 <h3 className="text-[13.5px] font-semibold text-river-ink mb-1">{g.title}</h3>
                 <p className="text-[13.5px] leading-relaxed text-river-ink2">{g.description}</p>
@@ -222,13 +236,13 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
 
         {/* Market positioning */}
         <Section title="Posicionamento de Mercado">
-          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.marketPositioning.summary}</p>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.marketPositioning?.summary}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Box tone="good" label="Vantagens únicas">
-              <ToneList tone="good" items={report.marketPositioning.uniqueAdvantages} />
+              <ToneList tone="good" items={arr(report.marketPositioning?.uniqueAdvantages)} />
             </Box>
             <Box tone="bad" label="Gaps a preencher">
-              <ToneList tone="bad" items={report.marketPositioning.gapsToFill} />
+              <ToneList tone="bad" items={arr(report.marketPositioning?.gapsToFill)} />
             </Box>
           </div>
         </Section>
@@ -236,7 +250,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Archetypes */}
         <Section title="Posicionamento / Arquétipo">
           <div className="space-y-6">
-            {report.archetypes.map((a) => (
+            {arr(report.archetypes).map((a) => (
               <div key={a.name} className="border-l-2 border-river-accent pl-4">
                 <p className="text-[14px] font-bold text-river-ink">
                   {a.name} <span className="font-normal text-river-ink3">({a.subtitle})</span>
@@ -258,18 +272,18 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Persona */}
         <Section title="Análise de Persona / Avatar">
           <Label>Avatar ideal</Label>
-          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-6">{report.persona.idealAvatar}</p>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-6">{report.persona?.idealAvatar}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <Box tone="neutral" label="Dor">
-              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.persona.pain}</p>
+              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.persona?.pain}</p>
             </Box>
             <Box tone="accent" label="Desejo">
-              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.persona.desire}</p>
+              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.persona?.desire}</p>
             </Box>
           </div>
-          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.persona.contentAlignment}</p>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2 mb-5">{report.persona?.contentAlignment}</p>
           <Box tone="accent" label="Recomendações">
-            <ToneList tone="accent" items={report.persona.recommendations} />
+            <ToneList tone="accent" items={arr(report.persona?.recommendations)} />
           </Box>
         </Section>
 
@@ -277,7 +291,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         <Section title="Fórmula do Sucesso">
           <Label>Melhores formatos</Label>
           <ul className="space-y-2.5 mb-6">
-            {report.successFormula.bestFormats.map((f, i) => (
+            {arr(report.successFormula?.bestFormats).map((f, i) => (
               <li key={i} className="text-[13.5px] leading-relaxed text-river-ink flex gap-2.5">
                 <span className="mt-[7px] w-1.5 h-1.5 rounded-full shrink-0 bg-river-accent" />
                 {f}
@@ -286,7 +300,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
           </ul>
           <Label>Pilares de conteúdo</Label>
           <div className="space-y-2 text-[13.5px] mb-6">
-            {report.successFormula.contentPillars.map((p) => (
+            {arr(report.successFormula?.contentPillars).map((p) => (
               <p key={p.name}>
                 <span className="font-semibold text-river-ink">{p.name} — </span>
                 <span className="text-river-ink2">{p.description}</span>
@@ -294,7 +308,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
             ))}
           </div>
           <Label>Frequência recomendada</Label>
-          <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.successFormula.postingFrequency}</p>
+          <p className="text-[13.5px] leading-relaxed text-river-ink2">{report.successFormula?.postingFrequency}</p>
         </Section>
 
         {/* Best times */}
@@ -302,12 +316,12 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Box tone="accent" label="Dias úteis">
               <div className="space-y-1.5 text-[13.5px] text-river-ink tabular-nums">
-                {report.bestTimes.weekdays.map((t, i) => <p key={i}>{t}</p>)}
+                {arr(report.bestTimes?.weekdays).map((t, i) => <p key={i}>{t}</p>)}
               </div>
             </Box>
             <Box tone="accent" label="Fins de semana">
               <div className="space-y-1.5 text-[13.5px] text-river-ink tabular-nums">
-                {report.bestTimes.weekends.map((t, i) => <p key={i}>{t}</p>)}
+                {arr(report.bestTimes?.weekends).map((t, i) => <p key={i}>{t}</p>)}
               </div>
             </Box>
           </div>
@@ -316,7 +330,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Trends */}
         <Section title="Tendências de Mercado">
           <ul className="space-y-2.5">
-            {report.marketTrends.map((t, i) => (
+            {arr(report.marketTrends).map((t, i) => (
               <li key={i} className="text-[13.5px] leading-relaxed text-river-ink flex gap-2.5">
                 <span className="mt-[7px] w-1.5 h-1.5 rounded-full shrink-0 bg-river-ink3" />
                 {t}
@@ -328,7 +342,7 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         {/* Final recommendations — elevated: the action items */}
         <Section title="Recomendações Finais" elevated>
           <ol className="space-y-4">
-            {report.finalRecommendations.map((r, i) => (
+            {arr(report.finalRecommendations).map((r, i) => (
               <li key={i} className="flex gap-3 text-[13.5px] leading-relaxed text-river-ink">
                 <span className="font-bold text-river-accent tabular-nums shrink-0">{i + 1}.</span>
                 {r}
@@ -341,14 +355,14 @@ export function ReportView({ report, id }: { report: DiagnosticReport; id?: stri
         <Section title="Resumo de Forças e Fraquezas">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
             <Box tone="good" label="Principal força">
-              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.summary.mainStrength}</p>
+              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.summary?.mainStrength}</p>
             </Box>
             <Box tone="bad" label="Principal fraqueza">
-              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.summary.mainWeakness}</p>
+              <p className="text-[13.5px] leading-relaxed text-river-ink">{report.summary?.mainWeakness}</p>
             </Box>
           </div>
           <Box tone="accent" label="Oportunidades identificadas">
-            <ToneList tone="accent" items={report.summary.opportunities} />
+            <ToneList tone="accent" items={arr(report.summary?.opportunities)} />
           </Box>
         </Section>
       </div>
