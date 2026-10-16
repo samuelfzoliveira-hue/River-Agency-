@@ -1,31 +1,5 @@
-/* ============================================================
-   CONFIGURAÇÃO — preencha com os dados reais da Casa Bar Matriz
-   ============================================================ */
-const CONFIG = {
-  whatsapp: '',   // somente dígitos com DDI+DDD, ex.: '5571999999999'
-  telefone: '',   // texto exibido, ex.: '(71) 99999-9999'
-  endereco: '',   // ex.: 'Rua Exemplo, 123 — Bairro, Cidade/UF'
-  horario: '',    // ex.: 'Ter a dom, das 11h às 23h'
-};
-
 (function () {
   document.documentElement.classList.add('js');
-
-  // Dados de contato
-  document.querySelectorAll('[data-cfg]').forEach(function (el) {
-    var v = CONFIG[el.dataset.cfg];
-    if (v) el.textContent = v;
-  });
-  var waBase = CONFIG.whatsapp ? 'https://wa.me/' + CONFIG.whatsapp : '';
-  function waLink(text) {
-    return waBase ? waBase + (text ? '?text=' + encodeURIComponent(text) : '') : '';
-  }
-  document.querySelectorAll('[data-wa]').forEach(function (a) {
-    var l = waLink('Olá! Gostaria de reservar uma mesa na Casa Bar Matriz.');
-    if (l) { a.href = l; a.target = '_blank'; a.rel = 'noopener'; }
-  });
-  var ano = document.getElementById('ano');
-  if (ano) ano.textContent = new Date().getFullYear();
 
   // Menu mobile
   var burger = document.getElementById('burger');
@@ -51,31 +25,4 @@ const CONFIG = {
   } else {
     items.forEach(function (el) { el.classList.add('in'); });
   }
-
-  // Reserva -> mensagem pronta no WhatsApp
-  var form = document.getElementById('reserva');
-  var msg = document.getElementById('formMsg');
-  var hoje = new Date(); hoje.setMinutes(hoje.getMinutes() - hoje.getTimezoneOffset());
-  form.elements.data.min = hoje.toISOString().slice(0, 10);
-
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var f = form.elements, ok = true;
-    ['nome', 'data', 'hora', 'pessoas'].forEach(function (n) {
-      var bad = !f[n].value || (n === 'pessoas' && +f[n].value < 1);
-      f[n].classList.toggle('bad', bad);
-      if (bad) ok = false;
-    });
-    if (!ok) { msg.textContent = 'Preencha nome, data, horário e número de pessoas.'; return; }
-    var d = f.data.value.split('-').reverse().join('/');
-    var texto = 'Olá! Gostaria de reservar uma mesa na Casa Bar Matriz.\n' +
-      'Nome: ' + f.nome.value.trim() + '\n' +
-      'Data: ' + d + ' às ' + f.hora.value + '\n' +
-      'Pessoas: ' + f.pessoas.value +
-      (f.obs.value.trim() ? '\nObs.: ' + f.obs.value.trim() : '');
-    var link = waLink(texto);
-    if (!link) { msg.textContent = 'Reservas online serão ativadas em breve. Em breve divulgaremos o WhatsApp da casa.'; return; }
-    msg.textContent = '';
-    window.open(link, '_blank', 'noopener');
-  });
 })();
