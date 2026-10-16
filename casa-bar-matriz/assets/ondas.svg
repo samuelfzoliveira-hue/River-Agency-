@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" width="1200" height="120" preserveAspectRatio="none">
+  <!-- Faixa decorativa inspirada nas ondas/folhas da identidade. Repete sem emendas visíveis (formas não cruzam as bordas). -->
+  <path fill="#ff7f00" d="M24 0C70 52 150 78 232 30C256 16 280 6 300 0C250 2 190 40 130 30C86 22 52 10 24 0Z"/>
+  <path fill="#061c2c" d="M330 0C376 4 424 48 468 70C500 86 540 88 566 82C520 70 466 38 430 0Z"/>
+  <path fill="#ff7f00" d="M596 14C646 -8 714 6 760 40C790 62 810 70 830 72C770 90 700 74 650 44C626 30 610 22 596 14Z"/>
+  <path fill="#792608" d="M860 0H1050C1020 56 940 78 880 56C866 50 858 22 860 0Z"/>
+  <path fill="#061c2c" d="M1070 0C1100 26 1130 66 1176 76C1156 44 1130 20 1110 0Z"/>
+</svg>
