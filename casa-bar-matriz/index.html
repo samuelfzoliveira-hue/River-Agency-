@@ -16,6 +16,7 @@
 <body>
   <a class="skip" href="#conteudo">Ir para o conteúdo</a>
 
+  <div class="progress" id="progress" aria-hidden="true"></div>
   <header class="topbar" id="topo">
     <div class="wrap topbar__in">
       <a class="brand" href="#topo" aria-label="Casa Bar Matriz — início">
@@ -60,11 +61,12 @@
       <div class="wrap">
         <h2 class="title reveal">Paleta de cores</h2>
         <ul class="palette">
-          <li class="reveal"><span class="dot dot--navy"><b>Azul escuro</b><small>#061c2c</small></span></li>
-          <li class="reveal"><span class="dot dot--orange"><b>Laranja</b><small>#e8600a</small></span></li>
-          <li class="reveal"><span class="dot dot--brown"><b>Marrom escuro</b><small>#792608</small></span></li>
-          <li class="reveal"><span class="dot dot--cream"><b>Off white</b><small>#fef8eb</small></span></li>
+          <li class="reveal"><button class="dot dot--navy" type="button" data-hex="#061c2c" aria-label="Copiar Azul escuro #061c2c"><b>Azul escuro</b><small>#061c2c</small><em class="dot__hint">Copiar</em></button></li>
+          <li class="reveal"><button class="dot dot--orange" type="button" data-hex="#e8600a" aria-label="Copiar Laranja #e8600a"><b>Laranja</b><small>#e8600a</small><em class="dot__hint">Copiar</em></button></li>
+          <li class="reveal"><button class="dot dot--brown" type="button" data-hex="#792608" aria-label="Copiar Marrom escuro #792608"><b>Marrom escuro</b><small>#792608</small><em class="dot__hint">Copiar</em></button></li>
+          <li class="reveal"><button class="dot dot--cream" type="button" data-hex="#fef8eb" aria-label="Copiar Off white #fef8eb"><b>Off white</b><small>#fef8eb</small><em class="dot__hint">Copiar</em></button></li>
         </ul>
+        <p class="hint reveal">Toque em uma cor para copiar o código.</p>
         <p class="tagline reveal">A casa brasileira onde o sabor vira encontro</p>
         <ul class="pillars pillars--center" aria-label="Pilares da marca">
           <li>Tradição</li><li>Modernidade</li><li>Sabor</li><li>Lar</li>
@@ -87,16 +89,32 @@
           </figure>
         </div>
 
+        <div class="tester reveal" id="tester">
+          <div class="tester__stage" id="testStage" data-bg="#fef8eb"><img id="testImg" src="assets/img/logo.png" alt="Logo sobre o fundo escolhido" width="689" height="579"></div>
+          <div class="tester__ctl">
+            <h3>Teste o logo sobre as cores</h3>
+            <p>Escolha um fundo e veja qual versão do logotipo entra em cena.</p>
+            <div class="swatches" role="group" aria-label="Fundo do teste">
+              <button type="button" class="sw sw--cream is-on" data-bg="#fef8eb" data-logo="assets/img/logo.png" aria-label="Off white" aria-pressed="true"></button>
+              <button type="button" class="sw sw--orange" data-bg="#e8600a" data-logo="assets/img/var-azul.png" aria-label="Laranja" aria-pressed="false"></button>
+              <button type="button" class="sw sw--brown" data-bg="#792608" data-logo="assets/img/logo-claro.png" aria-label="Marrom escuro" aria-pressed="false"></button>
+              <button type="button" class="sw sw--navy" data-bg="#061c2c" data-logo="assets/img/logo-claro.png" aria-label="Azul escuro" aria-pressed="false"></button>
+            </div>
+            <p class="tester__name" id="testName" aria-live="polite">Off white · versão colorida</p>
+          </div>
+        </div>
+
         <h2 class="title title--sub reveal">Variações</h2>
+        <p class="hint reveal">Toque em uma variação para ampliar.</p>
         <div class="vars">
           <div class="stage reveal"><img src="assets/img/var-marrom.png" alt="Logo vertical em marrom" width="602" height="506" loading="lazy"></div>
           <div class="stage reveal"><img src="assets/img/var-azul.png" alt="Logo vertical em azul escuro" width="686" height="578" loading="lazy"></div>
-          <div class="stage stage--navy stage--tile reveal"><img src="assets/img/logo-claro.png" alt="Logo vertical em off white sobre azul escuro" width="593" height="500" loading="lazy"></div>
+          <div class="stage stage--navy reveal"><img src="assets/img/logo-claro.png" alt="Logo vertical em off white sobre azul escuro" width="593" height="500" loading="lazy"></div>
         </div>
         <div class="vars vars--h">
           <div class="stage reveal"><img src="assets/img/h-marrom.png" alt="Logo horizontal em marrom" width="1000" height="323" loading="lazy"></div>
           <div class="stage reveal"><img src="assets/img/h-azul.png" alt="Logo horizontal em azul escuro" width="1000" height="323" loading="lazy"></div>
-          <div class="stage stage--navy stage--pill reveal"><img src="assets/img/logo-horizontal-claro.png" alt="Logo horizontal em off white sobre azul escuro" width="1100" height="355" loading="lazy"></div>
+          <div class="stage stage--navy reveal"><img src="assets/img/logo-horizontal-claro.png" alt="Logo horizontal em off white sobre azul escuro" width="1100" height="355" loading="lazy"></div>
         </div>
       </div>
     </section>
@@ -107,9 +125,14 @@
         <h2 class="title reveal">Monograma</h2>
         <div class="mono">
           <figure class="mono__fig reveal">
-            <span class="note note--top">Telhado estilizado</span>
-            <img src="assets/img/monograma.png" alt="Monograma CB em uma panela de barro com telhado estilizado e vapor" width="900" height="602" loading="lazy">
-            <span class="note note--bottom">Iniciais integradas</span>
+            <span class="note note--top" id="noteTop">Telhado estilizado</span>
+            <div class="mono__img">
+              <img src="assets/img/monograma.png" alt="Monograma CB em uma panela de barro com telhado estilizado e vapor" width="900" height="602" loading="lazy">
+              <button class="hot hot--roof" type="button" data-note="noteTop" aria-label="Telhado estilizado: representa o lar"><span></span></button>
+              <button class="hot hot--cb" type="button" data-note="noteBottom" aria-label="Iniciais integradas: C e B"><span></span></button>
+            </div>
+            <span class="note note--bottom" id="noteBottom">Iniciais integradas</span>
+            <p class="hint">Passe o mouse ou toque nos pontos laranja.</p>
           </figure>
           <div class="mono__txt reveal">
             <p>O monograma foi concebido a partir da união das <strong>iniciais C e B, integradas</strong> a elementos que remetem à culinária tradicional e ao prazer de compartilhar uma boa refeição. <strong>A panela, elemento central da composição, simboliza o preparo cuidadoso dos alimentos, a tradição das receitas e o aconchego da comida com gostinho de casa.</strong></p>
@@ -124,7 +147,7 @@
       <div class="wrap">
         <h2 class="title reveal">Tipografia</h2>
         <div class="type">
-          <p class="type__sample reveal">Sabor que acolhe.</p>
+          <p class="type__sample reveal" id="typeSample" contenteditable="true" spellcheck="false" aria-label="Texto de exemplo editável">Sabor que acolhe.</p>
           <div class="type__specs reveal">
             <div class="spec spec--slab">
               <h3>Roboto Slab</h3>
@@ -136,7 +159,13 @@
             </div>
           </div>
         </div>
-        <ul class="pillars" aria-label="Hierarquia"><li>Título</li><li>Subtítulo</li><li>Corpo</li><li>Legenda</li></ul>
+        <div class="roles" role="tablist" aria-label="Hierarquia tipográfica">
+          <button type="button" role="tab" aria-selected="true" data-role="titulo">Título</button>
+          <button type="button" role="tab" aria-selected="false" data-role="subtitulo">Subtítulo</button>
+          <button type="button" role="tab" aria-selected="false" data-role="corpo">Corpo</button>
+          <button type="button" role="tab" aria-selected="false" data-role="legenda">Legenda</button>
+        </div>
+        <p class="hint">Clique no texto para editar e escolha o estilo acima.</p>
       </div>
     </section>
 
@@ -181,6 +210,8 @@
     </div>
     <div class="ondas ondas--bottom" aria-hidden="true"></div>
   </footer>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <script src="script.js"></script>
 </body>
