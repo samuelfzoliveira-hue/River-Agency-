@@ -509,7 +509,12 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
       <div class="n rv"><h4>À vista</h4><b>R$ 1.200</b><p>Pix ou transferência, sem acréscimo.</p></div>
       <div class="rv d1"><h4>Cartão de crédito · até 3x</h4><b>R$ 1.262</b><p>Valor total em até 3x. O ajuste de R$ 62 cobre a taxa do parcelamento.</p></div>
     </div>
-    <p class="small">A taxa do parcelamento no cartão é de responsabilidade do cliente, por isso há ajuste de valor quando o pagamento da implantação é parcelado em até 3x no crédito.</p>
+    <h3 class="rv" style="font-size:30px;margin-top:34px">Somente identidade visual</h3>
+    <div class="pay">
+      <div class="n rv"><h4>À vista</h4><b>R$ 600</b><p>Pix ou transferência, sem acréscimo.</p></div>
+      <div class="rv d1"><h4>Cartão de crédito · até 3x</h4><b>R$ 631</b><p>Valor total em até 3x. O ajuste de R$ 31 cobre a taxa do parcelamento.</p></div>
+    </div>
+    <p class="small">A taxa do parcelamento no cartão é de responsabilidade do cliente, por isso há ajuste de valor quando o pagamento da implantação é parcelado em até 3x no crédito (nas duas opções de implantação).</p>
   </div>
 </section>
 
@@ -601,15 +606,15 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
       <div class="sel">
         <div class="grp"><h4>1 · Implantação · pagamento único</h4>
           <button class="o on" data-g="impl" data-v="1200"><div><b>Rebranding + Landing page</b><span>Recomendado · a landing sai por R$ 600 a mais</span></div><em>R$ 1.200</em></button>
-          <button class="o" data-g="impl" data-v="600"><div><b>Somente identidade visual</b><span>Segue usando o link atual na bio</span></div><em>R$ 600</em></button>
+          <button class="o" data-g="impl" data-v="600"><div><b>Somente identidade visual</b><span>Segue usando o link atual na bio · R$ 631 no cartão</span></div><em>R$ 600</em></button>
         </div>
         <div class="grp"><h4>2 · Pacote mensal · 6 meses</h4>
           <button class="o on" data-g="mes" data-v="comp"><div><b>Completo · as duas redes</b><span>Recomendado · entrada progressiva, de R$ 2.499</span></div><em>R$ 1.499 → R$ 1.799</em></button>
           <button class="o" data-g="mes" data-v="ess"><div><b>Essencial</b><span>Foco na Vila Animal</span></div><em>R$ 1.250</em></button>
         </div>
         <div class="grp" id="payGrp"><h4>3 · Pagamento da implantação</h4>
-          <button class="o on" data-g="pay" data-v="vista"><div><b>À vista</b><span>Pix ou transferência</span></div><em>R$ 1.200</em></button>
-          <button class="o" data-g="pay" data-v="cartao"><div><b>Cartão de crédito · até 3x</b><span>Taxa do parcelamento por conta do cliente</span></div><em>R$ 1.262</em></button>
+          <button class="o on" data-g="pay" data-v="vista"><div><b>À vista</b><span>Pix ou transferência</span></div><em id="pv">R$ 1.200</em></button>
+          <button class="o" data-g="pay" data-v="cartao"><div><b>Cartão de crédito · até 3x</b><span>Taxa do parcelamento por conta do cliente</span></div><em id="pc">R$ 1.262</em></button>
         </div>
       </div>
       <div class="total">
@@ -790,17 +795,18 @@ nav .wrap{display:flex;align-items:center;justify-content:space-between;height:6
 
   /* calculator */
   var PLANS={comp:{n:'Completo',m:[1499,1599,1699,1799,1799,1799]},ess:{n:'Essencial',m:[1250,1250,1250,1250,1250,1250]}};
+  var CARD={1200:1262,600:631};
   var sel={impl:1200,mes:'comp',pay:'vista'};
   function calc(){
-    var P=PLANS[sel.mes],card=sel.impl===1200&&sel.pay==='cartao';
-    var impl=card?1262:sel.impl;
+    var P=PLANS[sel.mes],card=sel.pay==='cartao';
+    var impl=card?CARD[sel.impl]:sel.impl;
     var sum=P.m.reduce(function(a,b){return a+b},0);
     var first=impl+P.m[0],six=impl+sum;
-    $('#payGrp').classList.toggle('hide',sel.impl!==1200);
+    $('#pv').textContent=fmt(sel.impl);$('#pc').textContent=fmt(CARD[sel.impl]);
     $('#t1').textContent=fmt(first);$('#t2').textContent=fmt(P.m[1]);$('#t3').textContent=fmt(P.m[2]);$('#t4').textContent=fmt(P.m[3]);$('#t6').textContent=fmt(six);
     $('#save').innerHTML=sel.mes==='comp'?'Economia no Completo: <b>R$ 4.800</b> em 6 meses sobre o valor de tabela (R$ 2.499/mês).':'No Completo você leva as duas redes por <b>apenas R$ 249 a mais no 1º mês</b>, R$ 349 no 2º, R$ 449 no 3º e R$ 549 a partir do 4º.';
     var nome=sel.impl===1200?'Rebranding + Landing page':'Somente identidade visual';
-    var pg=sel.impl===1200?(card?' no cartão em até 3x (total '+fmt(impl)+')':' à vista'):'';
+    var pg=card?' no cartão em até 3x':' à vista';
     var plano=sel.mes==='comp'?'Completo (R$ 1.499, R$ 1.599, R$ 1.699 e a partir do 4º mês R$ 1.799)':'Essencial (R$ 1.250/mês)';
     $('#waCalc').href=msg('Olá! Quero seguir com a proposta: '+nome+' ('+fmt(impl)+pg+') + pacote '+plano+'. 1º mês: '+fmt(first)+'.');
   }
