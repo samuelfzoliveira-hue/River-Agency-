@@ -41,8 +41,7 @@ await p.addStyleTag({content:`
  nav,.fab,.progress,.scroll-hint,.rings{display:none!important}
  *{-webkit-print-color-adjust:exact;print-color-adjust:exact;animation:none!important}
  .rv{opacity:1!important;transform:none!important}
- section{padding:56px 0!important;break-before:page}
- #investimento{break-before:page}
+ section{padding:56px 0!important}
  .gain{break-inside:avoid}
  #mensal{break-after:page}
  .foot{break-before:avoid}
@@ -54,5 +53,22 @@ await p.addStyleTag({content:`
  #investimento{padding-top:56px!important;break-inside:avoid}
 `});
 await p.emulateMedia({media:'screen'});
-await p.pdf({path:__dirname+'/Proposta_Vila_Animal.pdf',width:'1200px',height:'1500px',printBackground:true,margin:{top:'0',bottom:'0',left:'0',right:'0'}});
+// uma página por seção, com a altura exata do conteúdo (sem espaço em branco)
+const fs=require('fs'),path=require('path'),{execFileSync}=require('child_process');
+const tmp=fs.mkdtempSync(path.join(require('os').tmpdir(),'proposta-'));
+const n=await p.evaluate(()=>document.querySelectorAll('header.hero, section').length);
+const parts=[];
+for(let k=0;k<n;k++){
+  const h=await p.evaluate(k=>{
+    const els=[...document.querySelectorAll('header.hero, section')];
+    els.forEach((e,i)=>e.style.display=i===k?'':'none');
+    document.querySelectorAll('.progress,nav,.fab').forEach(e=>e.style.display='none');
+    return Math.ceil(els[k].getBoundingClientRect().height);
+  },k);
+  const f=path.join(tmp,String(k).padStart(2,'0')+'.pdf');
+  await p.pdf({path:f,width:'1200px',height:(h+2)+'px',printBackground:true,margin:{top:'0',bottom:'0',left:'0',right:'0'},pageRanges:'1'});
+  parts.push(f);
+}
+execFileSync('pdfunite',[...parts,path.join(__dirname,'Proposta_Vila_Animal.pdf')]);
+fs.rmSync(tmp,{recursive:true});
 await b.close();})()
