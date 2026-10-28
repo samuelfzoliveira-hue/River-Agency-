@@ -5,6 +5,7 @@ import { ActivityList } from "@/components/activity";
 import { ActionForm, ConfirmButton, SubmitButton } from "@/components/form";
 import { CriterionField, PackageFields } from "@/components/contract-fields";
 import { Empty, Field, PageHeader, Progress, Section, pctTone } from "@/components/ui";
+import { inviteClientUserAction } from "@/lib/actions/team";
 import { addMonthTargetAction, deleteClientAction, saveContractAction, saveMonthTargetsAction, updateClientAction } from "@/lib/actions/clients";
 import type { ActivityRow, ClientRow, ContentRow, ContractItemRow, ContractRow, Profile, ShootRow, StatusRow } from "@/lib/db";
 import { computeClientCompetence, STATE_LABEL } from "@/lib/domain/contracts";
@@ -25,7 +26,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
   if (!client) notFound();
   await supabase.rpc("ensure_monthly_targets", { p_month: comp });
 
-  const [types, statuses, members, contracts, targets, contents, shoots, activity, fin] = await Promise.all([
+  const [types, statuses, members, contracts, targets, contents, shoots, activity, fin, portalUsers, pendingInvites] = await Promise.all([
     supabase.from("deliverable_types").select("*").eq("active", true).order("position").then((r) => (r.data ?? []) as DeliverableType[]),
     supabase.from("pipeline_statuses").select("*").then((r) => (r.data ?? []) as StatusRow[]),
     supabase.from("profiles").select("*").eq("active", true).then((r) => (r.data ?? []) as Profile[]),
@@ -35,6 +36,13 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
     supabase.from("shoots").select("*").eq("client_id", id).then((r) => (r.data ?? []) as ShootRow[]),
     supabase.from("activity_log").select("*").eq("client_id", id).order("created_at", { ascending: false }).limit(25).then((r) => (r.data ?? []) as ActivityRow[]),
     manager ? supabase.from("client_financials").select("monthly_value").eq("client_id", id).maybeSingle().then((r) => r.data?.monthly_value as number | undefined) : Promise.resolve(undefined),
+    manager ? supabase.from("client_users").select("user_id").eq("client_id", id).then(async (r) => {
+      const ids = (r.data ?? []).map((x) => x.user_id as string);
+      if (!ids.length) return [] as Pick<Profile, "user_id" | "full_name" | "email">[];
+      const p = await supabase.from("profiles").select("user_id,full_name,email").in("user_id", ids);
+      return (p.data ?? []) as Pick<Profile, "user_id" | "full_name" | "email">[];
+    }) : Promise.resolve([] as Pick<Profile, "user_id" | "full_name" | "email">[]),
+    manager ? supabase.from("invites").select("email").eq("client_id", id).is("accepted_at", null).then((r) => (r.data ?? []) as { email: string }[]) : Promise.resolve([] as { email: string }[]),
   ]);
   const apr = new Map(statuses.map((s) => [s.id, s.approval_state]));
   const stName = new Map(statuses.map((s) => [s.id, s.name]));
@@ -58,11 +66,13 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
         actions={<>
           <Link href={`/conteudos/novo?cliente=${id}&mes=${comp.slice(0, 7)}`} className="btn btn-primary"><Plus size={16} /> Novo conteúdo</Link>
           <Link href={`/captacoes?cliente=${id}`} className="btn">Captações</Link>
+          <Link href={`/midia?cliente=${id}`} className="btn">Mídia</Link>
+          {manager && <Link href={`/fechamento/${id}?mes=${comp.slice(0, 7)}`} className="btn">Fechamento</Link>}
         </>} />
 
       <div className="mb-6 flex items-center gap-2">
         <Link className="btn btn-sm" href={`?mes=${addMonths(comp, -1).slice(0, 7)}`} aria-label="Mês anterior"><ChevronLeft size={14} /></Link>
-        <span className="min-w-40 text-center text-sm font-medium capitalize">{monthLabel(comp)}</span>
+        <span className="min-w-40 text-center text-sm font-medium">{monthLabel(comp)}</span>
         <Link className="btn btn-sm" href={`?mes=${addMonths(comp, 1).slice(0, 7)}`} aria-label="Próximo mês"><ChevronRight size={14} /></Link>
         {comp !== monthStart(today) && <Link className="btn btn-sm" href="?">Mês atual</Link>}
       </div>
@@ -128,7 +138,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
               <tbody>
                 {hist.map(({ m, p }) => (
                   <tr key={m} className="border-t border-line">
-                    <td className="py-2 capitalize"><Link className="link" href={`?mes=${m.slice(0, 7)}`}>{monthLabel(m)}</Link></td>
+                    <td className="py-2"><Link className="link" href={`?mes=${m.slice(0, 7)}`}>{monthLabel(m)}</Link></td>
                     <td className="tabular-nums">{p.delivered}/{p.contracted}</td>
                     <td className="w-48 pr-4">{p.pct != null && <Progress thin value={p.pct} tone={pctTone(p.pct)} label={`Cumprimento ${m}`} />}</td>
                     <td>{STATE_LABEL[p.state]}{p.extras ? ` · ${p.extras} extra(s)` : ""}</td>
@@ -184,6 +194,18 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
         </div>
       )}
 
+      {manager && (
+        <Section title="Portal do cliente" hint="Pessoas do cliente que podem ver e aprovar apenas os conteúdos dele. Também é possível aprovar por link, sem conta." className="mt-6">
+          {portalUsers.length > 0 && <ul className="mb-4 text-sm">{portalUsers.map((u) => <li key={u.user_id}>{u.full_name} <span className="text-muted">· {u.email}</span></li>)}</ul>}
+          {pendingInvites.length > 0 && <ul className="mb-4 text-sm text-muted">{pendingInvites.map((i) => <li key={i.email}>{i.email} · convite pendente</li>)}</ul>}
+          <ActionForm action={inviteClientUserAction} resetOnSuccess className="flex flex-wrap items-end gap-3">
+            <input type="hidden" name="client_id" value={id} />
+            <Field label="E-mail da pessoa do cliente"><input className="input w-72" type="email" name="email" required /></Field>
+            <SubmitButton className="btn">Liberar acesso</SubmitButton>
+          </ActionForm>
+        </Section>
+      )}
+
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <Section title="Cadastro e estratégia">
           {manager ? (
@@ -211,7 +233,7 @@ export default async function ClientPage({ params, searchParams }: { params: Pro
               <div><dt className="label">Observações estratégicas</dt><dd className="whitespace-pre-wrap">{client.strategic_notes || "—"}</dd></div>
             </dl>
           )}
-          <p className="mt-4 text-xs text-muted">Arquivos, documentos e banco de mídia: previstos para a Fase 2.</p>
+          <p className="mt-4 text-xs text-muted">Arquivos e material bruto: veja o <Link href={`/midia?cliente=${id}`} className="link">banco de mídia</Link>.</p>
           {ctx.profile.role === "admin" && (
             <div className="mt-6 border-t border-line pt-4"><ConfirmButton action={deleteClientAction} fields={{ id }} label="Excluir cliente" message={`Excluir ${client.name} apaga contratos, conteúdos, tarefas e histórico. Isto não pode ser desfeito. Continuar?`} /></div>
           )}

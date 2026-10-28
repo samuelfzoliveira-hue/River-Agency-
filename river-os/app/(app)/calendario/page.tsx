@@ -87,7 +87,7 @@ export default async function CalendarPage({ searchParams }: { searchParams: Pro
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Link className="btn btn-sm" href={q({ data: prev })} aria-label="Anterior"><ChevronLeft size={14} /></Link>
-          <span className="min-w-52 text-center text-sm font-medium capitalize">{title}</span>
+          <span className="min-w-52 text-center text-sm font-medium">{title}</span>
           <Link className="btn btn-sm" href={q({ data: next })} aria-label="Próximo"><ChevronRight size={14} /></Link>
           <Link className="btn btn-sm" href={q({ data: "" })}>Hoje</Link>
         </div>

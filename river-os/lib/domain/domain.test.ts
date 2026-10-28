@@ -220,3 +220,38 @@ describe("calendário", () => {
     expect(items.find((i) => i.kind === "captacao")?.time).toBe("14:00");
   });
 });
+
+import { buildClosing, carryOverStatus } from "./closing";
+describe("fechamento mensal", () => {
+  const comp = (reels: number, deliverEach: number) => computeClientCompetence({
+    clientId: "A", competence: "2026-09-01", today: "2026-10-05", shoots: [], types, targets: [{ ...target("reel", 8), competence: "2026-09-01" }],
+    contents: Array.from({ length: reels }, (_, i) => content({ id: `c${i}`, competence: "2026-09-01", delivery_stage: deliverEach })),
+  });
+  it("congela o mês e lista pendências com a competência original", () => {
+    const { snapshot, pending } = buildClosing(comp(6, 4));
+    expect(snapshot).toMatchObject({ contracted: 8, delivered: 6, pending: 2, pct: 75, verdict: "parcial" });
+    expect(pending).toEqual([{ typeId: "reel", typeName: "Reel", quantity: 2, competence: "2026-09-01" }]);
+  });
+  it("mês completo é 'cumprido' e sem pendências", () => {
+    const { snapshot, pending } = buildClosing(comp(8, 4));
+    expect(snapshot.verdict).toBe("cumprido");
+    expect(pending).toEqual([]);
+  });
+  it("acompanha regularização posterior sem alterar o snapshot", () => {
+    const { pending } = buildClosing(comp(6, 4));
+    const later = carryOverStatus(pending, comp(7, 4));
+    expect(later[0]).toMatchObject({ quantity: 2, stillPending: 1, resolved: 1, competence: "2026-09-01" });
+  });
+});
+
+import { buildClosingPdf } from "../pdf/closing";
+describe("PDF de fechamento", () => {
+  it("gera um PDF válido com acentos e pendências", () => {
+    const { snapshot, pending } = buildClosing(computeClientCompetence({ clientId: "A", competence: "2026-09-01", today: "2026-10-05", shoots: [], types,
+      targets: [{ ...target("reel", 8), competence: "2026-09-01" }], contents: [content({ id: "x", competence: "2026-09-01", delivery_stage: 4 })] }));
+    const doc = buildClosingPdf({ agency: "River Agency", client: "Empresa Ação", competenceLabel: "setembro de 2026", snapshot, pending, status: "fechado", notes: "Cliente atrasou aprovações. ".repeat(20) });
+    const bytes = new Uint8Array(doc.output("arraybuffer"));
+    expect(String.fromCharCode(...bytes.slice(0, 5))).toBe("%PDF-");
+    expect(bytes.length).toBeGreaterThan(2000);
+  });
+});

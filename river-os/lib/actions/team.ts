@@ -67,3 +67,18 @@ export async function removeUnavailabilityAction(fd: FormData) {
   await supabase.from("member_unavailability").delete().eq("id", uuid.parse(str(fd, "id")));
   refresh();
 }
+
+/** Libera o portal de aprovação para uma pessoa do cliente: ela cria a conta com este e-mail e só enxerga o próprio cliente. */
+export async function inviteClientUserAction(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase, profile, user } = await actor(["admin", "gestor"]);
+  const email = z.string().trim().toLowerCase().email("E-mail inválido").safeParse(str(fd, "email"));
+  const clientId = uuid.safeParse(str(fd, "client_id"));
+  if (!email.success) return { error: email.error.issues[0].message };
+  if (!clientId.success) return { error: "Cliente inválido." };
+  const { error } = await supabase.from("invites").insert({
+    org_id: profile.org_id, email: email.data, role: "cliente", client_id: clientId.data, full_name: optStr(fd, "full_name"), invited_by: user.id,
+  });
+  if (error) return fail(error);
+  refresh();
+  return { ok: `Acesso liberado. ${email.data} deve criar a conta em /cadastro com este e-mail para acompanhar e aprovar conteúdos.` };
+}

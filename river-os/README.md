@@ -20,6 +20,10 @@ npm run test:db   # migrações + RLS + triggers em um PostgreSQL temporário (p
 npm run typecheck
 ```
 
+## Aprovação pelo cliente
+
+Na ficha do conteúdo: crie uma versão (legenda + links das prévias) → **Enviar para aprovação**. O link `/aprovar/<token>` é exibido uma única vez (só o hash fica no banco), expira (3–60 dias) e é revogado quando um novo link é gerado. Quem abre o link não vê nada além daquele conteúdo e informa o nome ao decidir. Pessoas do cliente também podem ter conta no portal (`/cliente`): Cliente → Portal do cliente → Liberar acesso.
+
 ## Estrutura
 
 - `lib/domain/` — regras de negócio puras (única fonte dos números exibidos).

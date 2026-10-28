@@ -66,9 +66,10 @@ Stack: Next.js 15 + TypeScript, Tailwind 3 (componentes próprios no estilo shad
 | `/equipe` | Capacidade (disponível/atenção/sobrecarregado), redistribuição, indisponibilidades, convites | admin, gestor | 1 | 🟡 |
 | `/notificacoes` | Caixa de notificações | equipe | 1 | ✅ |
 | `/configuracoes` | Etapas do pipeline, tipos de entrega | admin | 1 | 🟡 |
-| `/fechamento` | Fechamento mensal, pendências, reabertura, PDF | admin, gestor | 2 | ⏳ (o cálculo por competência já existe em `lib/domain/contracts.ts`) |
-| `/midia` | Banco de mídia + Google Drive | equipe | 2 | ⏳ |
-| `/aprovar/[token]` | Link seguro de aprovação do cliente | externo | 2 | ⏳ |
+| `/fechamento` | Fechamento mensal, pendências, reabertura com justificativa, PDF | admin, gestor | 2 | ✅ |
+| `/midia` | Banco de mídia por cliente/campanha/tipo/data (links; Drive direto fica para depois) | equipe | 2 | 🟡 |
+| `/aprovar/[token]` | Link seguro de aprovação do cliente (sem login) | externo | 2 | ✅ |
+| `/cliente`, `/cliente/[id]` | Portal do cliente: lista e aprovação dos próprios conteúdos | cliente | 2 | ✅ |
 | `/relatorios` | Relatórios + PDF/CSV | admin, gestor | 3 | ⏳ |
 
 ## 3. Modelo de banco de dados
@@ -152,7 +153,7 @@ origem de cada número é sempre auditável.
 5. Pipeline Kanban, ficha do conteúdo, tarefas, comentários, histórico. ✅
 6. Calendário, Visão geral, **Central de Operações**, alertas básicos, carga de trabalho inicial, captações mínimas. ✅/🟡
 
-**Fase 2 — Produção e colaboração**: aprovação com link seguro e versões, banco de mídia/Storage, captações completas (checklists), menções com notificação por e‑mail, **Fechamento mensal** (`month_closings`), redistribuição visual por arrastar, controle de horas.
+**Fase 2 — Produção e colaboração (entregue, exceto o que está marcado como pendente)**: ✅ aprovação com versões, link seguro (token de 256 bits, só o hash é guardado, expira e é revogado a cada novo envio) e portal; ✅ fechamento mensal com PDF; ✅ banco de mídia por links; ✅ checklists de captação; ⏳ upload direto de arquivos (Storage), e-mail para menções, controle de horas com cronômetro, redistribuição por arrastar. Planejado originalmente: aprovação com link seguro e versões, banco de mídia/Storage, captações completas (checklists), menções com notificação por e‑mail, **Fechamento mensal** (`month_closings`), redistribuição visual por arrastar, controle de horas.
 
 **Fase 3 — Inteligência operacional**: relatórios com PDF/CSV, alertas preventivos com histórico de duração das etapas, análise histórica de produtividade, integração Google Drive e e‑mail.
 

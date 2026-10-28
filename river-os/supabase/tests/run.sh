@@ -10,8 +10,10 @@ $RUN "$BIN/initdb -D $DIR/data -A trust >/dev/null"
 $RUN "$BIN/pg_ctl -D $DIR/data -o '-p $PORT -k $DIR -c listen_addresses=' -l $DIR/log -w start >/dev/null"
 trap '$RUN "$BIN/pg_ctl -D $DIR/data -m immediate stop >/dev/null" || true; rm -rf "$DIR"' EXIT
 P="$BIN/psql -h $DIR -p $PORT -U postgres -d postgres -X -q -v ON_ERROR_STOP=1"
-for f in tests/stubs.sql migrations/*.sql tests/db_test.sql; do
+FAILED=0
+for f in tests/stubs.sql migrations/*.sql tests/db_test.sql tests/db_test_2.sql; do
   $RUN "$P -t -A -f $(pwd)/$f" > "$DIR/out.txt" 2>&1 || { echo "ERRO em $f"; grep -E "ERROR|DETAIL|LINE" "$DIR/out.txt"; exit 1; }
   grep -E "^(FAIL|PASS)" "$DIR/out.txt" || true
+  ! grep -q "^FAIL" "$DIR/out.txt" || FAILED=1
 done
-! grep -q "^FAIL" "$DIR/out.txt"
+[ "$FAILED" = 0 ]

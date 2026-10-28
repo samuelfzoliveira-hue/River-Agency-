@@ -132,3 +132,28 @@ export interface ActivityRow {
 export const PRIORITY_LABEL = { baixa: "Baixa", media: "Média", alta: "Alta", urgente: "Urgente" } as const;
 export const TASK_STATUS_LABEL = { todo: "A fazer", doing: "Em andamento", done: "Concluída", cancelled: "Cancelada" } as const;
 export const PERIODICITY_LABEL = { weekly: "Semanal", biweekly: "Quinzenal", monthly: "Mensal" } as const;
+
+export interface ApprovalPayload {
+  content_id: string;
+  title: string;
+  client_name: string;
+  type_name: string;
+  state: "aguardando" | "ajustes" | "aprovado" | "indisponivel";
+  version: number | null;
+  caption: string | null;
+  media: { name: string; url: string; kind: string }[] | null;
+  note: string | null;
+  sent_at: string | null;
+  events: { action: "enviado" | "aprovado" | "ajustes"; comment: string | null; actor_name: string | null; version: number | null; created_at: string }[];
+  expired?: boolean;
+  superseded?: boolean;
+  expires_at?: string;
+}
+export interface VersionRow { id: string; version: number; caption: string; media: { name: string; url: string; kind: string }[]; note: string | null; created_at: string }
+export interface ApprovalEventRow { id: string; action: "enviado" | "aprovado" | "ajustes"; comment: string | null; actor_name: string | null; version: number | null; via: string; created_at: string }
+export interface MediaRow { id: string; client_id: string; name: string; url: string; kind: string; campaign: string | null; captured_on: string | null; created_by: string | null; created_at: string }
+export interface ClosingRow {
+  id: string; client_id: string; competence: string; status: "fechado" | "reaberto"; snapshot: import("./domain/closing").ClosingSnapshot;
+  pending: import("./domain/closing").PendingItem[]; notes: string | null; closed_by: string | null; closed_at: string;
+  reopen_log: { at: string; by: string; reason: string }[];
+}

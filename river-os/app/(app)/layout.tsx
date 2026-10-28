@@ -19,13 +19,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null);
   const manager = isManager(profile.role);
   const nav: NavItem[] = [
-    ...(manager ? ([{ href: "/", label: "Visão geral", icon: "dashboard" }, { href: "/operacoes", label: "Central de Operações", icon: "radar" }] as NavItem[]) : []),
+    ...(manager ? ([{ href: "/", label: "Visão geral", icon: "dashboard" }, { href: "/operacoes", label: "Central de Operações", icon: "radar" }, { href: "/fechamento", label: "Fechamento mensal", icon: "closing" }] as NavItem[]) : []),
     { href: "/meu-painel", label: "Meu painel", icon: "user" },
     { href: "/clientes", label: "Clientes", icon: "clients" },
     { href: "/pipeline", label: "Pipeline", icon: "pipeline" },
     { href: "/tarefas", label: "Tarefas", icon: "tasks" },
     { href: "/calendario", label: "Calendário", icon: "calendar" },
     { href: "/captacoes", label: "Captações", icon: "shoots" },
+    { href: "/midia", label: "Banco de mídia", icon: "media" },
     { href: "/equipe", label: "Equipe", icon: "team" },
     { href: "/notificacoes", label: "Notificações", icon: "bell", badge: count ?? 0 },
     ...(profile.role === "admin" ? ([{ href: "/configuracoes", label: "Configurações", icon: "settings" }] as NavItem[]) : []),

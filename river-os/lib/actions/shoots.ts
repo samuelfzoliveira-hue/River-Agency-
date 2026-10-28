@@ -72,3 +72,10 @@ export async function unlinkShootContentAction(fd: FormData) {
   await supabase.from("shoot_contents").delete().eq("shoot_id", uuid.parse(str(fd, "shoot_id"))).eq("content_id", uuid.parse(str(fd, "content_id")));
   refresh();
 }
+
+export async function saveShootChecklistAction(shootId: string, which: "equipment" | "scene", items: { id: string; text: string; done: boolean }[]): Promise<{ error?: string }> {
+  const { supabase } = await actor();
+  const clean = items.filter((i) => i.text.trim()).slice(0, 100).map((i) => ({ id: String(i.id).slice(0, 40), text: i.text.trim().slice(0, 300), done: !!i.done }));
+  const { error } = await supabase.from("shoots").update({ [which === "equipment" ? "equipment_checklist" : "scene_checklist"]: clean }).eq("id", uuid.parse(shootId));
+  return error ? { error: fail(error).error } : {};
+}

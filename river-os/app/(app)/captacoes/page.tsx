@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ActionForm, ConfirmButton, FilterForm, SubmitButton } from "@/components/form";
+import { ChecklistEditor } from "@/components/checklist-editor";
 import { Empty, Field, PageHeader, Section } from "@/components/ui";
-import { createShootAction, linkShootContentAction, rescheduleShootAction, setShootStatusAction, toggleRecordedAction, unlinkShootContentAction } from "@/lib/actions/shoots";
+import { createShootAction, saveShootChecklistAction, linkShootContentAction, rescheduleShootAction, setShootStatusAction, toggleRecordedAction, unlinkShootContentAction } from "@/lib/actions/shoots";
 import type { ClientRow, ContentRow, Profile, ShootRow } from "@/lib/db";
 import { brDate, brTime, formatBR, todayBR } from "@/lib/domain/dates";
 import { requireCtx } from "@/lib/session";
@@ -83,6 +84,13 @@ export default async function ShootsPage({ searchParams }: { searchParams: Promi
           {s.status === "cancelada" && <form action={setShootStatusAction}><input type="hidden" name="id" value={s.id} /><input type="hidden" name="status" value="agendada" /><SubmitButton className="btn btn-sm" pendingText="…">Reativar</SubmitButton></form>}
           {s.raw_material_url && <a href={s.raw_material_url} target="_blank" rel="noopener noreferrer" className="link text-sm">Material bruto</a>}
         </div>
+        <details className="mt-3">
+          <summary className="cursor-pointer text-sm text-muted hover:text-fg">Checklists de equipamentos e cenas</summary>
+          <div className="mt-3 grid gap-6 md:grid-cols-2">
+            <div><p className="eyebrow mb-2">Equipamentos</p><ChecklistEditor initial={s.equipment_checklist ?? []} save={saveShootChecklistAction.bind(null, s.id, "equipment")} /></div>
+            <div><p className="eyebrow mb-2">Cenas</p><ChecklistEditor initial={s.scene_checklist ?? []} save={saveShootChecklistAction.bind(null, s.id, "scene")} /></div>
+          </div>
+        </details>
         <details className="mt-3">
           <summary className="cursor-pointer text-sm text-muted hover:text-fg">Reagendar / local / material bruto / observações</summary>
           <ActionForm action={rescheduleShootAction} className="mt-3 grid gap-3 sm:grid-cols-2">

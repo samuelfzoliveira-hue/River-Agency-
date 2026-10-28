@@ -46,7 +46,7 @@ export async function loadSnapshot(ctx: Ctx, competenceArg?: string): Promise<Sn
   await supabase.rpc("ensure_monthly_targets", { p_month: competence });
   if (competence !== monthStart(today)) await supabase.rpc("ensure_monthly_targets", { p_month: monthStart(today) });
 
-  const prev = addMonths(competence, -1);
+  const prev = addMonths(competence, -1) < addMonths(monthStart(today), -1) ? addMonths(competence, -1) : addMonths(monthStart(today), -1);
   const [types, statuses, members, clients, contracts, items, targets, contents, shoots, tasks, events, unavailability, settings] = await Promise.all([
     rows<DeliverableType & { active: boolean }>(supabase.from("deliverable_types").select("*").eq("active", true).order("position")),
     rows<StatusRow>(supabase.from("pipeline_statuses").select("*").eq("active", true).order("position")),
@@ -87,3 +87,17 @@ export const nameOf = (members: Pick<Profile, "user_id" | "full_name">[], id: st
   members.find((m) => m.user_id === id)?.full_name ?? "—";
 export const firstName = (n: string) => n.split(" ")[0];
 export const initials = (n: string) => n.split(" ").filter(Boolean).slice(0, 2).map((p) => p[0]!.toUpperCase()).join("");
+
+/** Cálculo ao vivo de um cliente em uma competência (mesmo motor das demais telas). */
+export async function loadClientMonth(supabase: Ctx["supabase"], clientId: string, competence: string) {
+  const comp = monthStart(competence);
+  await supabase.rpc("ensure_monthly_targets", { p_month: comp });
+  const [types, targets, contents, shoots] = await Promise.all([
+    rows<DeliverableType>(supabase.from("deliverable_types").select("*").eq("active", true).order("position")),
+    rows<Target>(supabase.from("monthly_targets").select("*").eq("client_id", clientId).eq("competence", comp)),
+    rows<ContentRow>(supabase.from("contents").select("*").eq("client_id", clientId).eq("competence", comp).is("cancelled_at", null)),
+    rows<ShootRow>(supabase.from("shoots").select("*").eq("client_id", clientId).eq("competence", comp)),
+  ]);
+  const calc = computeClientCompetence({ clientId, competence: comp, targets, contents: contents.map((c) => ({ ...c, approval_state: null })), shoots, types, today: todayBR() });
+  return { calc, types, targets };
+}

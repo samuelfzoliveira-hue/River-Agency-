@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ActivityList } from "@/components/activity";
+import { ApprovalPanel } from "@/components/approval-panel";
 import { ChecklistEditor } from "@/components/checklist-editor";
 import { Comments } from "@/components/comments";
 import { ContentFields } from "@/components/content-fields";
@@ -8,7 +9,7 @@ import { ActionForm, ConfirmButton, SubmitButton } from "@/components/form";
 import { Empty, Field, PageHeader, Section } from "@/components/ui";
 import { addAttachmentAction, cancelContentAction, deleteContentAction, removeAttachmentAction, restoreContentAction, saveChecklistAction, updateContentAction } from "@/lib/actions/contents";
 import { createTaskAction } from "@/lib/actions/tasks";
-import type { ActivityRow, ClientRow, CommentRow, ContentRow, Profile, StatusRow, TaskRow } from "@/lib/db";
+import type { ActivityRow, ApprovalEventRow, ClientRow, CommentRow, ContentRow, Profile, StatusRow, TaskRow, VersionRow } from "@/lib/db";
 import { TASK_STATUS_LABEL } from "@/lib/db";
 import { formatBR } from "@/lib/domain/dates";
 import type { DeliverableType } from "@/lib/domain/types";
@@ -21,7 +22,7 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
   const { data: content } = await supabase.from("contents").select("*").eq("id", id).maybeSingle<Omit<ContentRow, "approval_state">>();
   if (!content) notFound();
 
-  const [client, type, statuses, members, tasks, comments, activity, supporters] = await Promise.all([
+  const [client, type, statuses, members, tasks, comments, activity, supporters, versions, apEvents] = await Promise.all([
     supabase.from("clients").select("id,name").eq("id", content.client_id).single().then((r) => r.data as Pick<ClientRow, "id" | "name"> | null),
     supabase.from("deliverable_types").select("*").eq("id", content.deliverable_type_id).single().then((r) => r.data as DeliverableType | null),
     supabase.from("pipeline_statuses").select("*").eq("active", true).order("position").then((r) => ((r.data ?? []) as StatusRow[]).filter((s) => s.deliverable_type_id === null || s.deliverable_type_id === content.deliverable_type_id)),
@@ -30,6 +31,8 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
     supabase.from("comments").select("*").eq("entity_type", "content").eq("entity_id", id).order("created_at").then((r) => (r.data ?? []) as CommentRow[]),
     supabase.from("activity_log").select("*").eq("entity_type", "content").eq("entity_id", id).order("created_at", { ascending: false }).limit(30).then((r) => (r.data ?? []) as ActivityRow[]),
     supabase.from("content_supporters").select("user_id").eq("content_id", id).then((r) => (r.data ?? []).map((x) => x.user_id as string)),
+    supabase.from("content_versions").select("*").eq("content_id", id).order("version", { ascending: false }).then((r) => (r.data ?? []) as VersionRow[]),
+    supabase.from("approval_events").select("*").eq("content_id", id).order("created_at", { ascending: false }).then((r) => (r.data ?? []) as ApprovalEventRow[]),
   ]);
   const status = statuses.find((s) => s.id === content.status_id);
   const manager = isManager(ctx.profile.role);
@@ -51,12 +54,14 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
       <div className="grid gap-6 xl:grid-cols-3">
         <div className="space-y-6 xl:col-span-2">
           <Section title="Ficha do conteúdo">
-            <ActionForm action={updateContentAction} className="space-y-4">
+            <ActionForm key={content.status_id} action={updateContentAction} className="space-y-4">
               <input type="hidden" name="id" value={id} />
               <ContentFields members={members} statuses={statuses} showStatus supporters={supporters} defaults={content} />
               <SubmitButton>Salvar alterações</SubmitButton>
             </ActionForm>
           </Section>
+
+          <ApprovalPanel contentId={id} versions={versions} events={apEvents} state={status?.approval_state ?? null} />
 
           <Section title="Checklist" hint="Salvo automaticamente a cada alteração">
             <ChecklistEditor initial={content.checklist ?? []} save={saveChecklistAction.bind(null, id)} />

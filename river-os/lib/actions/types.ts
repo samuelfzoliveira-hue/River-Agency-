@@ -1,1 +1,1 @@
-export type ActionState = { error?: string; ok?: string } | undefined;
+export type ActionState = { error?: string; ok?: string; link?: string } | undefined;
