@@ -13,6 +13,7 @@ import type { ActivityRow, ApprovalEventRow, ClientRow, CommentRow, ContentRow, 
 import { TASK_STATUS_LABEL } from "@/lib/db";
 import { formatBR } from "@/lib/domain/dates";
 import type { DeliverableType } from "@/lib/domain/types";
+import { signPaths } from "@/lib/storage";
 import { isManager, requireCtx } from "@/lib/session";
 
 export default async function ContentPage({ params }: { params: Promise<{ id: string }> }) {
@@ -34,6 +35,9 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
     supabase.from("content_versions").select("*").eq("content_id", id).order("version", { ascending: false }).then((r) => (r.data ?? []) as VersionRow[]),
     supabase.from("approval_events").select("*").eq("content_id", id).order("created_at", { ascending: false }).then((r) => (r.data ?? []) as ApprovalEventRow[]),
   ]);
+  // prévias por arquivo: gera URLs assinadas (1 h) só para exibir à equipe
+  const signed = await signPaths(supabase, versions.flatMap((v) => (v.media ?? []).map((m) => (m as { path?: string }).path).filter(Boolean) as string[]), 3600);
+  const versionsView: VersionRow[] = versions.map((v) => ({ ...v, media: (v.media ?? []).map((m) => { const p = (m as { path?: string }).path; return p ? { name: m.name, kind: m.kind, url: signed.get(p) ?? "#" } : m; }) }));
   const status = statuses.find((s) => s.id === content.status_id);
   const manager = isManager(ctx.profile.role);
   const nm = (uid: string | null) => members.find((m) => m.user_id === uid)?.full_name ?? "—";
@@ -61,7 +65,7 @@ export default async function ContentPage({ params }: { params: Promise<{ id: st
             </ActionForm>
           </Section>
 
-          <ApprovalPanel contentId={id} versions={versions} events={apEvents} state={status?.approval_state ?? null} />
+          <ApprovalPanel contentId={id} versions={versionsView} events={apEvents} state={status?.approval_state ?? null} orgId={ctx.profile.org_id} clientId={content.client_id} />
 
           <Section title="Checklist" hint="Salvo automaticamente a cada alteração">
             <ChecklistEditor initial={content.checklist ?? []} save={saveChecklistAction.bind(null, id)} />

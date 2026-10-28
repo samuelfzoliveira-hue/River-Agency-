@@ -2,6 +2,7 @@
 
 import { createHash, randomBytes } from "node:crypto";
 import { headers } from "next/headers";
+import { BUCKET, pathBelongs } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 import type { ActionState } from "./types";
 import { actor, fail, refresh, str, uuid } from "./util";
@@ -14,8 +15,17 @@ export async function createVersionAction(_: ActionState, fd: FormData): Promise
   const { supabase, profile, user } = await actor();
   const contentId = uuid.safeParse(str(fd, "content_id"));
   if (!contentId.success) return { error: "Conteúdo inválido." };
-  const media: { name: string; url: string; kind: string }[] = [];
+  const media: { name: string; url?: string; path?: string; kind: string }[] = [];
+  const { data: ct } = await supabase.from("contents").select("client_id").eq("id", contentId.data).maybeSingle();
+  if (!ct) return { error: "Conteúdo não encontrado." };
   for (let i = 0; i < 5; i++) {
+    const path = str(fd, `media_path_${i}`);
+    if (path) {
+      if (!pathBelongs(path, profile.org_id, ct.client_id)) return { error: `Prévia ${i + 1}: arquivo inválido.` };
+      const kind = str(fd, `media_kind_${i}`);
+      media.push({ name: str(fd, `media_name_${i}`).slice(0, 120) || path.split("/")[2].replace(/^[0-9a-f-]{36}-/, ""), path, kind: KINDS.includes(kind) ? kind : "imagem" });
+      continue;
+    }
     const url = str(fd, `media_url_${i}`);
     if (!url) continue;
     if (!isHttp(url)) return { error: `Prévia ${i + 1}: informe um link http(s) válido.` };
@@ -41,8 +51,19 @@ export async function sendApprovalAction(_: ActionState, fd: FormData): Promise<
   if (!contentId.success) return { error: "Conteúdo inválido." };
   const token = randomBytes(32).toString("base64url");
   const hash = createHash("sha256").update(token).digest("hex");
+  // prévias enviadas por arquivo viram URLs assinadas válidas pelo prazo do link (o cliente não acessa o Storage)
+  const { data: ver } = await supabase.from("content_versions").select("media").eq("content_id", contentId.data).order("version", { ascending: false }).limit(1).maybeSingle();
+  const items = ((ver?.media ?? []) as { name: string; url?: string; path?: string; kind: string }[]);
+  let snapshot: { name: string; url: string; kind: string }[] | null = null;
+  if (items.some((m) => m.path)) {
+    const paths = items.filter((m) => m.path).map((m) => m.path!);
+    const { data: signedList } = await supabase.storage.from(BUCKET).createSignedUrls(paths, days * 86400);
+    const byPath = new Map((signedList ?? []).map((d) => [d.path, d.signedUrl]));
+    snapshot = items.flatMap((m) => { const url = m.path ? byPath.get(m.path) : m.url; return url ? [{ name: m.name, kind: m.kind, url }] : []; });
+    if (snapshot.length < items.length) return { error: "Algum arquivo da versão não está mais disponível. Crie uma nova versão." };
+  }
   const { error } = await supabase.rpc("request_approval", {
-    p_content: contentId.data, p_token_hash: hash, p_expires: new Date(Date.now() + days * 86400e3).toISOString(),
+    p_content: contentId.data, p_token_hash: hash, p_expires: new Date(Date.now() + days * 86400e3).toISOString(), p_media: snapshot,
   });
   if (error) return fail(error);
   const h = await headers();

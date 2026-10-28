@@ -1,5 +1,6 @@
 import { ActionForm, SubmitButton } from "./form";
 import { MediaPreview } from "./approval-view";
+import { PreviewSlots } from "./preview-slots";
 import { Empty, Field, Section } from "./ui";
 import { createVersionAction, sendApprovalAction } from "@/lib/actions/approval";
 import type { ApprovalEventRow, VersionRow } from "@/lib/db";
@@ -8,7 +9,7 @@ const when = (iso: string) => new Date(iso).toLocaleString("pt-BR", { timeZone: 
 const LABEL = { enviado: "Enviado ao cliente", aprovado: "Aprovado", ajustes: "Ajustes solicitados" } as const;
 const VIA = { link: "pelo link", portal: "pelo portal", interno: "interno" } as const;
 
-export function ApprovalPanel({ contentId, versions, events, state }: { contentId: string; versions: VersionRow[]; events: ApprovalEventRow[]; state: string | null }) {
+export function ApprovalPanel({ contentId, versions, events, state, orgId, clientId }: { contentId: string; versions: VersionRow[]; events: ApprovalEventRow[]; state: string | null; orgId: string; clientId: string }) {
   const latest = versions[0];
   return (
     <Section title="Aprovação do cliente" hint="Prévia e legenda ficam versionadas. O cliente aprova por um link seguro, sem acesso ao restante da agência.">
@@ -38,15 +39,9 @@ export function ApprovalPanel({ contentId, versions, events, state }: { contentI
           <ActionForm action={createVersionAction} resetOnSuccess className="space-y-3 border-t border-line p-4">
             <input type="hidden" name="content_id" value={contentId} />
             <Field label="Legenda proposta"><textarea className="input min-h-24" name="caption" defaultValue={latest?.caption ?? ""} /></Field>
-            {[0, 1, 2].map((i) => (
-              <div key={i} className="grid gap-2 sm:grid-cols-[1fr_2fr_8rem]">
-                <input className="input" name={`media_name_${i}`} placeholder={`Prévia ${i + 1} — nome`} aria-label={`Nome da prévia ${i + 1}`} />
-                <input className="input" type="url" name={`media_url_${i}`} placeholder="https://… (link direto da imagem ou vídeo)" aria-label={`Link da prévia ${i + 1}`} />
-                <select className="input" name={`media_kind_${i}`} aria-label={`Tipo da prévia ${i + 1}`}><option value="imagem">Imagem</option><option value="video">Vídeo</option><option value="documento">Documento</option></select>
-              </div>
-            ))}
+            <PreviewSlots orgId={orgId} clientId={clientId} />
             <Field label="Observação para o cliente (opcional)"><input className="input" name="note" /></Field>
-            <p className="text-xs text-muted">Para pré-visualizar no link, use endereços diretos de arquivos. Links de pastas do Drive abrem em nova aba. Upload direto: próxima etapa.</p>
+            <p className="text-xs text-muted">Envie o arquivo (JPG, PNG, vídeo ou PDF até 50 MB) ou cole um link. Links diretos de imagem/vídeo e arquivos do Drive compartilhados por link têm pré-visualização.</p>
             <SubmitButton>Salvar versão</SubmitButton>
           </ActionForm>
         </details>

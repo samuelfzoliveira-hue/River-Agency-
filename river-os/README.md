@@ -35,6 +35,10 @@ Na ficha do conteúdo: crie uma versão (legenda + links das prévias) → **Env
 
 Em Tarefas, ▶ inicia o cronômetro (um por pessoa; iniciar outro encerra o anterior; teto de 12 h por lançamento) e o relógio aparece no menu lateral em qualquer tela. Também é possível lançar horas manualmente (`90`, `1:30` ou `1,5h`). `tarefas.logged_hours` é sempre a soma dos lançamentos. Em Equipe, gestores arrastam tarefas entre pessoas e a ocupação é recalculada na hora.
 
+## Upload de arquivos
+
+A migração `20261105000000_storage.sql` cria o bucket privado `media` (JPG/PNG/WebP/GIF, MP4/MOV/WebM e PDF, até 50 MB) e as políticas: a equipe só lê/envia dentro de `<org>/<cliente>/…` da própria agência; apaga quem enviou ou um gestor. Os arquivos são exibidos por URLs assinadas (1 h para a equipe; do tamanho da validade do link para o cliente). Prévias de aprovação aceitam link **ou** arquivo. Ao apagar um conteúdo/versão os arquivos permanecem no banco de mídia/Storage (remova pelo Banco de mídia).
+
 ## Estrutura
 
 - `lib/domain/` — regras de negócio puras (única fonte dos números exibidos).
