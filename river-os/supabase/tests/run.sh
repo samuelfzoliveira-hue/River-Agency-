@@ -16,4 +16,9 @@ for f in tests/stubs.sql migrations/*.sql tests/db_test.sql tests/db_test_2.sql 
   grep -E "^(FAIL|PASS)" "$DIR/out.txt" || true
   ! grep -q "^FAIL" "$DIR/out.txt" || FAILED=1
 done
+# o pacote único (apply-all.sql) e o checklist pós-aplicação precisam funcionar em um banco limpo
+$RUN "$P -c 'drop schema public cascade; create schema public; grant usage on schema public to anon, authenticated, service_role; drop schema storage cascade; drop schema auth cascade;'" >/dev/null 2>&1
+for f in tests/stubs.sql apply-all.sql; do $RUN "$P -f $(pwd)/$f" > "$DIR/out.txt" 2>&1 || { echo "ERRO em $f (bundle)"; grep -E "ERROR" "$DIR/out.txt"; exit 1; }; done
+BAD=$($RUN "$P -t -A -F'|' -f $(pwd)/post-apply-check.sql" | grep -c "|f$" || true)
+[ "$BAD" = 0 ] && echo "PASS: apply-all.sql + post-apply-check (todas as verificações ok)" || { echo "FAIL: post-apply-check com $BAD falha(s)"; $RUN "$P -t -A -F'|' -f $(pwd)/post-apply-check.sql" | grep "|f$"; FAILED=1; }
 [ "$FAILED" = 0 ]

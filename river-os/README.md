@@ -3,6 +3,8 @@
 Sistema operacional interno da River Agency (Next.js 15 + TypeScript + Tailwind + Supabase).
 Arquitetura, mapa de telas, modelo de dados e plano de fases: [`docs/ARQUITETURA.md`](docs/ARQUITETURA.md).
 
+> **Implantação em produção:** siga [`docs/IMPLANTACAO.md`](docs/IMPLANTACAO.md) (inclui `supabase/apply-all.sql` e o checklist `supabase/post-apply-check.sql`).
+
 ## Rodar
 
 1. Crie um projeto no Supabase e aplique, em ordem, `supabase/migrations/*.sql` (SQL Editor ou `supabase db push`).
