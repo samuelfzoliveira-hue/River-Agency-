@@ -255,3 +255,83 @@ describe("PDF de fechamento", () => {
     expect(bytes.length).toBeGreaterThan(2000);
   });
 });
+
+import { buildDwellStats, deliveryReport, dwellReport, monthsBetween, productionSummary, productivityReport, productivityTrend, revisionReport, toCsv, type ContentFull, type HistoryRow, type StatusLite } from "./reports";
+import { parseDriveLink, driveThumbnail } from "../integrations/drive";
+
+describe("relatórios", () => {
+  const full = (o: Partial<ContentFull> & { id: string }): ContentFull => ({ ...content(o), created_at: "2026-10-01T12:00:00Z", approved_at: null, published_at: null, ...o });
+  it("meses do período", () => { expect(monthsBetween("2026-08-15", "2026-10-02")).toEqual(["2026-08-01", "2026-09-01", "2026-10-01"]); });
+  it("previstas × realizadas por cliente e mês, com totais", () => {
+    const r = deliveryReport({ clients: [{ id: "A", name: "Empresa A" }], from: "2026-09-01", to: "2026-10-31", types, shoots: [], today: "2026-10-28",
+      targets: [{ ...target("reel", 4), competence: "2026-09-01" }, target("reel", 4)],
+      contents: [content({ id: "s1", competence: "2026-09-01", delivery_stage: 4 }), content({ id: "s2", competence: "2026-09-01", delivery_stage: 4 }), content({ id: "o1", delivery_stage: 4 })] });
+    expect(r.rows.map((x) => [x.competence, x.delivered, x.contracted])).toEqual([["2026-09-01", 2, 4], ["2026-10-01", 1, 4]]);
+    expect(r.byClient[0]).toMatchObject({ contracted: 8, delivered: 3, pct: 38 });
+  });
+  it("produtividade: pontualidade, horas e entregas do responsável", () => {
+    const t = (id: string, due: string | null, done: string, est: number, logged: number): TaskLite => ({ id, title: id, client_id: null, content_id: null, assignee_id: "j", status: "done", priority: "media", due_date: due, estimated_hours: est, logged_hours: logged, completed_at: done });
+    const tasks = [t("a", "2026-10-10", "2026-10-09T15:00:00Z", 2, 3), t("b", "2026-10-10", "2026-10-12T15:00:00Z", 4, 4), t("c", null, "2026-09-02T15:00:00Z", 1, 1)];
+    const r = productivityReport({ people: [{ user_id: "j", full_name: "João" }], tasks, from: "2026-10-01", to: "2026-10-31", today: "2026-10-28",
+      contents: [full({ id: "x", assignee_id: "j", approved_at: "2026-10-05T12:00:00Z", published_at: "2026-10-06T12:00:00Z" })] })[0];
+    expect(r).toMatchObject({ done: 2, onTime: 1, onTimePct: 50, estimatedHours: 6, loggedHours: 7, contentsApproved: 1, contentsPublished: 1 });
+    expect(productivityTrend({ people: [{ user_id: "j", full_name: "João" }], tasks, from: "2026-09-01", to: "2026-10-31" }).rows[0].perMonth).toEqual([1, 2]);
+  });
+  it("tempo médio de produção e publicações fora do prazo", () => {
+    const s = productionSummary({ from: "2026-10-01", to: "2026-10-31", shoots: [shoot({ id: "s", status: "realizada", starts_at: "2026-10-10T15:00:00Z" })],
+      contents: [full({ id: "a", created_at: "2026-10-01T00:00:00Z", approved_at: "2026-10-04T00:00:00Z", published_at: "2026-10-06T00:00:00Z", published_late: true }), full({ id: "b", created_at: "2026-10-01T00:00:00Z", approved_at: "2026-10-03T00:00:00Z", published_at: "2026-10-04T00:00:00Z" })] });
+    expect(s).toMatchObject({ approved: 2, published: 2, publishedLate: 1, avgDaysToApproval: 2.5, avgDaysToPublish: 4, shootsDone: 1 });
+  });
+  const statuses: StatusLite[] = [
+    { id: "ed", name: "Edição", position: 6, stage: 0, deliverable_type_id: null }, { id: "ap", name: "Aguardando aprovação", position: 8, stage: 1, deliverable_type_id: null },
+    { id: "ro", name: "Roteiro", position: 3, stage: 0, deliverable_type_id: null }, { id: "pb", name: "Publicado", position: 12, stage: 4, deliverable_type_id: null },
+  ];
+  const h = (cid: string, sid: string, stage: number, ap: string | null, from: string, days: number | null, backfilled = false): HistoryRow => ({
+    content_id: cid, status_id: sid, stage, approval_state: ap, entered_at: from, left_at: days == null ? null : new Date(new Date(from).getTime() + days * 86400000).toISOString(), backfilled });
+  const cs = ["1", "2", "3", "4"].map((id) => content({ id, deliverable_type_id: "reel" }));
+  const hist = [...cs.flatMap((c) => [h(c.id, "ro", 0, null, "2026-10-01T00:00:00Z", 1), h(c.id, "ed", 0, null, "2026-10-02T00:00:00Z", 5), h(c.id, "ap", 1, "aguardando", "2026-10-07T00:00:00Z", 1.5)]), h("1", "ed", 0, null, "2026-09-01T00:00:00Z", 99, true)];
+  it("permanência por etapa, ignora linhas retroalimentadas e aponta gargalo", () => {
+    const d = dwellReport({ statuses, history: hist, contents: cs, from: "2026-10-01", to: "2026-10-31" });
+    expect(d.find((r) => r.statusId === "ed")).toMatchObject({ n: 4, avgDays: 5, bottleneck: true });
+    expect(d.find((r) => r.statusId === "ro")?.bottleneck).toBe(false);
+    expect(d.find((r) => r.statusId === "pb")?.n).toBe(0);
+  });
+  it("revisões por cliente (entradas em 'ajustes')", () => {
+    const hh = [h("1", "aj", 1, "ajustes", "2026-10-10T00:00:00Z", 1), h("1", "aj", 1, "ajustes", "2026-10-15T00:00:00Z", 1), h("2", "aj", 1, "ajustes", "2026-10-16T00:00:00Z", null)];
+    const r = revisionReport({ clients: [{ id: "A", name: "Empresa A" }], contents: cs, history: hh, from: "2026-10-01", to: "2026-10-31" });
+    expect(r.rows[0]).toMatchObject({ revisions: 3, contentsWithRevision: 2, avgPerContent: 1.5 });
+  });
+  it("estatísticas de permanência alimentam a previsão de prazo", () => {
+    const stats = buildDwellStats(hist, cs);
+    expect(stats.get("reel:ed")).toMatchObject({ n: 4, avgDays: 5 });
+    const open = content({ id: "z", deliverable_type_id: "reel", status_id: "ed", delivery_stage: 0, publish_date: "2026-10-30", title: "Reel Z" });
+    const a = buildAlerts({ today: "2026-10-28", clients: [{ id: "A", name: "Empresa A", status: "ativo" }], progress: [], contents: [open], tasks: [], shoots: [], capacities: [], members: [], contracts: [], settings: [], dwell: stats, statuses });
+    expect(a).toHaveLength(1);
+    expect(a[0]).toMatchObject({ kind: "risco", estimated: true, level: "critico" });
+    expect(a[0].message).toContain("Base: histórico");
+  });
+  it("sem histórico suficiente a previsão usa regras e avisa", () => {
+    const open = content({ id: "z", deliverable_type_id: "reel", status_id: "ed", delivery_stage: 0, publish_date: "2026-10-29" });
+    const a = buildAlerts({ today: "2026-10-28", clients: [{ id: "A", name: "A", status: "ativo" }], progress: [], contents: [open], tasks: [], shoots: [], capacities: [], members: [], contracts: [], settings: [], dwell: new Map(), statuses });
+    expect(a[0].message).toContain("regras operacionais");
+    expect(buildAlerts({ today: "2026-10-28", clients: [{ id: "A", name: "A", status: "ativo" }], progress: [], contents: [{ ...open, publish_date: "2026-11-20" }], tasks: [], shoots: [], capacities: [], members: [], contracts: [], settings: [], dwell: new Map(), statuses })).toEqual([]);
+  });
+  it("CSV com separador ;, BOM, aspas e proteção contra fórmulas", () => {
+    const csv = toCsv(["Cliente", "Nota"], [["Empresa; A", 'diz "oi"'], ["=HYPERLINK(1)", -5]]);
+    expect(csv.startsWith("﻿Cliente;Nota\r\n")).toBe(true);
+    expect(csv).toContain('"Empresa; A";"diz ""oi"""');
+    expect(csv).toContain("'=HYPERLINK(1);-5");
+  });
+});
+
+describe("Google Drive", () => {
+  it("reconhece arquivos, pastas e docs e ignora outros links", () => {
+    expect(parseDriveLink("https://drive.google.com/file/d/1AbCdEfGhIjK_lmn/view?usp=sharing")).toEqual({ kind: "file", id: "1AbCdEfGhIjK_lmn" });
+    expect(parseDriveLink("https://drive.google.com/drive/folders/1AbCdEfGhIjK_lmn")).toEqual({ kind: "folder", id: "1AbCdEfGhIjK_lmn" });
+    expect(parseDriveLink("https://docs.google.com/document/d/1AbCdEfGhIjK_lmn/edit")).toEqual({ kind: "doc", id: "1AbCdEfGhIjK_lmn" });
+    expect(parseDriveLink("https://evil.com/file/d/1AbCdEfGhIjK_lmn")).toBeNull();
+    expect(parseDriveLink("javascript:alert(1)")).toBeNull();
+    expect(driveThumbnail("https://drive.google.com/open?id=1AbCdEfGhIjK_lmn")).toBe("https://drive.google.com/thumbnail?id=1AbCdEfGhIjK_lmn&sz=w1200");
+    expect(driveThumbnail("https://drive.google.com/drive/folders/1AbCdEfGhIjK_lmn")).toBeNull();
+  });
+});

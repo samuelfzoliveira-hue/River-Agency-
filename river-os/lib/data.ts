@@ -1,6 +1,7 @@
 import type { Ctx } from "./session";
 import type { ClientRow, ContentRow, ContractItemRow, ContractRow, EventRow, Profile, ShootRow, StatusRow, TaskRow } from "./db";
 import { buildAlerts, type OpsAlert } from "./domain/alerts";
+import { buildDwellStats, type HistoryRow } from "./domain/reports";
 import { computeCapacity, type MemberCapacity } from "./domain/capacity";
 import { computeClientCompetence, type ClientCompetence } from "./domain/contracts";
 import { addMonths, monthStart, todayBR } from "./domain/dates";
@@ -44,6 +45,7 @@ export async function loadSnapshot(ctx: Ctx, competenceArg?: string): Promise<Sn
   const competence = monthStart(competenceArg ?? today);
   // gera metas do mês a partir do pacote de cada contrato (idempotente; não sobrescreve metas existentes)
   await supabase.rpc("ensure_monthly_targets", { p_month: competence });
+  await supabase.rpc("run_automations"); // notificações por regra; idempotente e limitada a 1x/30 min
   if (competence !== monthStart(today)) await supabase.rpc("ensure_monthly_targets", { p_month: monthStart(today) });
 
   const prev = addMonths(competence, -1) < addMonths(monthStart(today), -1) ? addMonths(competence, -1) : addMonths(monthStart(today), -1);
@@ -64,6 +66,11 @@ export async function loadSnapshot(ctx: Ctx, competenceArg?: string): Promise<Sn
   ]);
 
   const approval = new Map(statuses.map((s) => [s.id, s.approval_state]));
+  // previsão de prazo: permanência média por etapa nos últimos 180 dias (só passagens reais, não retroalimentadas)
+  const hist = await rows<HistoryRow & { contents: { deliverable_type_id: string } | { deliverable_type_id: string }[] | null }>(
+    supabase.from("content_status_history").select("content_id,status_id,stage,approval_state,entered_at,left_at,backfilled,contents(deliverable_type_id)")
+      .eq("backfilled", false).not("left_at", "is", null).gte("entered_at", `${addMonths(monthStart(today), -6)}T00:00:00Z`).limit(20000));
+  const dwell = buildDwellStats(hist, hist.flatMap((h) => { const c = Array.isArray(h.contents) ? h.contents[0] : h.contents; return c ? [{ id: h.content_id, deliverable_type_id: c.deliverable_type_id }] : []; }));
   const fullContents: ContentRow[] = contents.map((c) => ({ ...c, approval_state: approval.get(c.status_id) ?? null }));
 
   // clientes ativos entram no cálculo; metas de clientes pausados/encerrados são ignoradas
@@ -77,7 +84,7 @@ export async function loadSnapshot(ctx: Ctx, competenceArg?: string): Promise<Sn
     computeClientCompetence({ clientId: c.id, competence: monthStart(today), targets, contents: fullContents, shoots, types, today }));
   const alerts = buildAlerts({
     today, clients, progress: currentProgress, contents: fullContents, tasks, shoots, capacities: weekCapacity,
-    members: staff, contracts, settings,
+    members: staff, contracts, settings, dwell, statuses,
   });
 
   return { today, competence, types, statuses, members, clients, contracts, items, targets, contents: fullContents, shoots, tasks, events, unavailability, settings, progress, weekCapacity, alerts };

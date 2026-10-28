@@ -1,11 +1,11 @@
 "use client";
 
-import { Bell, Building2, CalendarCheck, CalendarDays, Camera, Columns3, FolderOpen, LayoutDashboard, ListChecks, Menu, Radar, Settings, User, Users, X } from "lucide-react";
+import { BarChart3, Bell, Building2, CalendarCheck, CalendarDays, Camera, Columns3, FolderOpen, LayoutDashboard, ListChecks, Menu, Radar, Settings, User, Users, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 
-const ICONS = { dashboard: LayoutDashboard, radar: Radar, user: User, clients: Building2, pipeline: Columns3, tasks: ListChecks, calendar: CalendarDays, shoots: Camera, team: Users, bell: Bell, settings: Settings, closing: CalendarCheck, media: FolderOpen };
+const ICONS = { dashboard: LayoutDashboard, radar: Radar, user: User, clients: Building2, pipeline: Columns3, tasks: ListChecks, calendar: CalendarDays, shoots: Camera, team: Users, bell: Bell, settings: Settings, closing: CalendarCheck, reports: BarChart3, media: FolderOpen };
 export type NavItem = { href: string; label: string; icon: keyof typeof ICONS; badge?: number };
 
 export function Shell({ nav, footer, children }: { nav: NavItem[]; footer: ReactNode; children: ReactNode }) {

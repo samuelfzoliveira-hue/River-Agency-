@@ -1,6 +1,7 @@
 import { addDays, brDate, businessDaysBetween, diffDays, formatBR, monthEnd, todayBR } from "./dates";
 import type { ClientCompetence } from "./contracts";
 import type { MemberCapacity } from "./capacity";
+import type { DwellStats, StatusLite } from "./reports";
 import { DEFAULT_ALERT_SETTINGS, type AlertSettings, type ContentLite, type ShootLite, type TaskLite } from "./types";
 
 export type AlertLevel = "informativo" | "atencao" | "critico";
@@ -40,6 +41,9 @@ export interface AlertInput {
   members: { user_id: string; full_name: string }[];
   contracts: { client_id: string; end_date: string | null; status: string }[];
   settings: AlertSettings[];
+  /** histórico de permanência por etapa (opcional): habilita a previsão de prazo por conteúdo */
+  dwell?: DwellStats;
+  statuses?: StatusLite[];
 }
 
 export function buildAlerts(i: AlertInput): OpsAlert[] {
@@ -199,5 +203,49 @@ export function buildAlerts(i: AlertInput): OpsAlert[] {
     });
   }
 
+  // 9) Previsão por conteúdo: etapas que faltam até “agendado” × dias até a publicação
+  if (i.dwell && i.statuses) out.push(...leadTimeAlerts(i, today, cname));
+
   return out.sort((a, b) => LEVEL_RANK[b.level] - LEVEL_RANK[a.level] || a.title.localeCompare(b.title));
+}
+
+const MIN_SAMPLES = 3;
+const FALLBACK_DAYS_PER_STAGE = 1;
+
+/**
+ * Estima quantos dias faltam para o conteúdo chegar a “agendado” somando a permanência média histórica das etapas restantes
+ * (por tipo de conteúdo). Etapas sem amostra suficiente usam uma regra fixa e o alerta informa que a base é operacional.
+ */
+export function leadTimeAlerts(i: AlertInput, today: string, cname: (id: string | null | undefined) => string): OpsAlert[] {
+  const out: OpsAlert[] = [];
+  const active = new Set(i.clients.filter((c) => c.status === "ativo").map((c) => c.id));
+  const path = (typeId: string) => {
+    const own = i.statuses!.filter((s) => s.deliverable_type_id === typeId);
+    return (own.length ? own : i.statuses!.filter((s) => s.deliverable_type_id === null)).sort((a, b) => a.position - b.position);
+  };
+  for (const c of i.contents) {
+    if (c.cancelled_at || c.delivery_stage >= 3 || !c.publish_date || c.publish_date < today || !active.has(c.client_id)) continue;
+    const steps = path(c.deliverable_type_id);
+    const idx = steps.findIndex((s) => s.id === c.status_id);
+    if (idx < 0) continue;
+    const remaining = steps.slice(idx).filter((s) => s.stage < 3); // etapa atual + as seguintes até aprovação
+    let days = 0, withData = 0, samples = 0;
+    for (const s of remaining) {
+      const st = i.dwell!.get(`${c.deliverable_type_id}:${s.id}`);
+      if (st && st.n >= MIN_SAMPLES) { days += st.avgDays; withData++; samples += st.n; } else days += FALLBACK_DAYS_PER_STAGE;
+    }
+    const left = diffDays(c.publish_date, today);
+    if (days <= left) continue;
+    const ratio = left > 0 ? days / left : Infinity;
+    const basis = withData === remaining.length && remaining.length > 0
+      ? `Base: histórico de ${Math.round(samples / withData)} conteúdos por etapa.`
+      : withData > 0 ? "Base: histórico parcial + regras operacionais (poucos dados em algumas etapas)." : "Base: regras operacionais (ainda não há histórico suficiente).";
+    out.push({
+      id: `prazo-previsto:${c.id}`, level: ratio >= 1.5 ? "critico" : "atencao", kind: "risco", clientId: c.client_id, estimated: true,
+      title: `Risco de atraso: “${c.title}” (${cname(c.client_id)}) pode não ficar pronto para ${formatBR(c.publish_date)}`,
+      message: `Estimativa de ~${Math.round(days * 10) / 10} dia(s) até ficar pronto; faltam ${left} dia(s) para a publicação. ${basis}`,
+      action: { label: "Antecipar etapas ou revisar o cronograma", href: `/conteudos/${c.id}` },
+    });
+  }
+  return out;
 }

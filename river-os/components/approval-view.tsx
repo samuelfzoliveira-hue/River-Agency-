@@ -2,9 +2,23 @@ import type { ReactNode } from "react";
 import { ActionForm, SubmitButton } from "./form";
 import type { ActionState } from "@/lib/actions/types";
 import type { ApprovalPayload } from "@/lib/db";
+import { driveThumbnail, parseDriveLink } from "@/lib/integrations/drive";
 
 const when = (iso: string) => new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", dateStyle: "short", timeStyle: "short" });
 const ACTION_LABEL = { enviado: "Enviado para aprovação", aprovado: "Aprovado", ajustes: "Ajustes solicitados" } as const;
+
+function MediaBody({ m }: { m: { name: string; url: string; kind: string } }) {
+  const drive = parseDriveLink(m.url);
+  if (m.kind === "imagem") {
+    const src = driveThumbnail(m.url) ?? m.url;
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={src} alt={m.name} className="max-h-[28rem] w-full object-contain" referrerPolicy="no-referrer" loading="lazy" />;
+  }
+  // vídeos e documentos do Drive: player embutido do próprio Drive (o arquivo precisa estar compartilhado por link)
+  if (drive && drive.kind === "file") return <iframe src={`https://drive.google.com/file/d/${drive.id}/preview`} title={m.name} className="h-80 w-full" allow="autoplay" referrerPolicy="no-referrer" />;
+  if (m.kind === "video") return <video src={m.url} controls preload="metadata" className="max-h-[28rem] w-full" />;
+  return <a href={m.url} target="_blank" rel="noopener noreferrer" className="block p-6 text-center text-sm underline">Abrir {m.name}</a>;
+}
 
 export function MediaPreview({ media }: { media: NonNullable<ApprovalPayload["media"]> }) {
   if (!media.length) return null;
@@ -12,9 +26,7 @@ export function MediaPreview({ media }: { media: NonNullable<ApprovalPayload["me
     <div className="grid gap-3 sm:grid-cols-2">
       {media.map((m, i) => (
         <figure key={i} className="overflow-hidden rounded-xl border border-line bg-sunken">
-          {m.kind === "imagem" && /* eslint-disable-next-line @next/next/no-img-element */ <img src={m.url} alt={m.name} className="max-h-[28rem] w-full object-contain" referrerPolicy="no-referrer" loading="lazy" />}
-          {m.kind === "video" && <video src={m.url} controls preload="metadata" className="max-h-[28rem] w-full" />}
-          {(m.kind === "documento" || (m.kind !== "imagem" && m.kind !== "video")) && <a href={m.url} target="_blank" rel="noopener noreferrer" className="block p-6 text-center text-sm underline">Abrir {m.name}</a>}
+          <MediaBody m={m} />
           <figcaption className="flex items-center justify-between gap-2 px-3 py-2 text-xs text-muted"><span className="truncate">{m.name}</span><a href={m.url} target="_blank" rel="noopener noreferrer" className="underline">abrir</a></figcaption>
         </figure>
       ))}

@@ -19,7 +19,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null);
   const manager = isManager(profile.role);
   const nav: NavItem[] = [
-    ...(manager ? ([{ href: "/", label: "Visão geral", icon: "dashboard" }, { href: "/operacoes", label: "Central de Operações", icon: "radar" }, { href: "/fechamento", label: "Fechamento mensal", icon: "closing" }] as NavItem[]) : []),
+    ...(manager ? ([{ href: "/", label: "Visão geral", icon: "dashboard" }, { href: "/operacoes", label: "Central de Operações", icon: "radar" }, { href: "/fechamento", label: "Fechamento mensal", icon: "closing" }, { href: "/relatorios", label: "Relatórios", icon: "reports" }] as NavItem[]) : []),
     { href: "/meu-painel", label: "Meu painel", icon: "user" },
     { href: "/clientes", label: "Clientes", icon: "clients" },
     { href: "/pipeline", label: "Pipeline", icon: "pipeline" },

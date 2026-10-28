@@ -3,6 +3,7 @@ import { ActionForm, ConfirmButton, FilterForm, SubmitButton } from "@/component
 import { Empty, Field, PageHeader, Section } from "@/components/ui";
 import { addMediaAction, deleteMediaAction } from "@/lib/actions/media";
 import type { ClientRow, MediaRow } from "@/lib/db";
+import { isDrive } from "@/lib/integrations/drive";
 import { formatBR, monthLabel, monthStart } from "@/lib/domain/dates";
 import { requireCtx } from "@/lib/session";
 
@@ -52,7 +53,7 @@ export default async function MediaPage({ searchParams }: { searchParams: Promis
           <ul className="card divide-y divide-line">
             {items.map((m) => (
               <li key={m.id} className="flex items-center gap-3 px-4 py-3 text-sm">
-                <span className="badge">{KIND[m.kind as keyof typeof KIND]}</span>
+                <span className="badge">{KIND[m.kind as keyof typeof KIND]}</span>{isDrive(m.url) && <span className="badge badge-info">Drive</span>}
                 <span className="min-w-0 flex-1"><a href={m.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 font-medium hover:underline">{m.name} <ExternalLink size={12} /></a>
                   <span className="block text-xs text-muted">{cn(m.client_id)}{m.campaign ? ` · ${m.campaign}` : ""}{m.captured_on ? ` · ${formatBR(m.captured_on)}` : ""}</span></span>
                 {m.created_by === user.id && <ConfirmButton action={deleteMediaAction} fields={{ id: m.id }} label="Remover" message="Remover este material do banco de mídia? O arquivo original não é apagado." />}
