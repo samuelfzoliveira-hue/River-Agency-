@@ -153,13 +153,13 @@ origem de cada número é sempre auditável.
 5. Pipeline Kanban, ficha do conteúdo, tarefas, comentários, histórico. ✅
 6. Calendário, Visão geral, **Central de Operações**, alertas básicos, carga de trabalho inicial, captações mínimas. ✅/🟡
 
-**Fase 2 — Produção e colaboração (entregue, exceto o que está marcado como pendente)**: ✅ aprovação com versões, link seguro (token de 256 bits, só o hash é guardado, expira e é revogado a cada novo envio) e portal; ✅ fechamento mensal com PDF; ✅ banco de mídia por links; ✅ checklists de captação; ⏳ upload direto de arquivos (Storage), e-mail para menções, controle de horas com cronômetro, redistribuição por arrastar. Planejado originalmente: aprovação com link seguro e versões, banco de mídia/Storage, captações completas (checklists), menções com notificação por e‑mail, **Fechamento mensal** (`month_closings`), redistribuição visual por arrastar, controle de horas.
+**Fase 2 — Produção e colaboração (entregue, exceto o que está marcado como pendente)**: ✅ aprovação com versões, link seguro (token de 256 bits, só o hash é guardado, expira e é revogado a cada novo envio) e portal; ✅ fechamento mensal com PDF; ✅ banco de mídia por links; ✅ checklists de captação; ✅ controle de horas (cronômetro + lançamento manual) e ✅ redistribuição de tarefas por arrastar (entregues depois); ⏳ upload direto de arquivos (Storage). Planejado originalmente: aprovação com link seguro e versões, banco de mídia/Storage, captações completas (checklists), menções com notificação por e‑mail, **Fechamento mensal** (`month_closings`), redistribuição visual por arrastar, controle de horas.
 
 **Fase 3 — Inteligência operacional (entregue)**: ✅ histórico de etapas por trigger (`content_status_history`) → tempo por etapa, gargalos, revisões e tempo médio de produção; ✅ relatórios com CSV/PDF; ✅ previsão de prazo por conteúdo (permanência média histórica por tipo e etapa, com a base declarada no alerta); ✅ automações com notificações idempotentes e rota de cron para e-mail (Resend); 🟡 Google Drive: reconhecimento de links, miniaturas e player embutido — sem OAuth/listagem de pastas. Planejado originalmente: relatórios com PDF/CSV, alertas preventivos com histórico de duração das etapas, análise histórica de produtividade, integração Google Drive e e‑mail.
 
 ## 7. Limites honestos da Fase 1
 
 * A previsão de risco usa **regras operacionais** (dias úteis restantes × entregas pendentes × capacidade) e é rotulada como estimativa — não há histórico suficiente para modelo estatístico.
-* Horas registradas (cronômetro) ainda não existem; a capacidade usa **horas estimadas** das tarefas.
+* A capacidade usa **horas estimadas** das tarefas; as horas registradas (cronômetro/lançamento) aparecem ao lado e nos relatórios, mas não substituem a estimativa.
 * Notificações são internas; a tabela guarda `email_sent_at` para a futura integração por e‑mail.
 * Feriados não são considerados no cálculo de dias úteis (apenas fins de semana).

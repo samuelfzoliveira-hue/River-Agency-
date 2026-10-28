@@ -335,3 +335,11 @@ describe("Google Drive", () => {
     expect(driveThumbnail("https://drive.google.com/drive/folders/1AbCdEfGhIjK_lmn")).toBeNull();
   });
 });
+
+import { parseDuration } from "../duration";
+describe("duração", () => {
+  it("aceita minutos, h:mm e horas decimais", () => {
+    expect(parseDuration("90")).toBe(90); expect(parseDuration("1:30")).toBe(90); expect(parseDuration("1,5h")).toBe(90); expect(parseDuration("45 min")).toBe(45); expect(parseDuration("2h")).toBe(120);
+    expect(parseDuration("abc")).toBeNull(); expect(parseDuration("1:75")).toBeNull(); expect(parseDuration("")).toBeNull();
+  });
+});

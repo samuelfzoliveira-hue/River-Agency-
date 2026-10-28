@@ -3,6 +3,7 @@ import { LogOut } from "lucide-react";
 import { Shell, type NavItem } from "@/components/shell";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/ui";
+import { RunningTimer } from "@/components/timer";
 import { ROLE_LABEL } from "@/lib/db";
 import { getCtx, isManager } from "@/lib/session";
 import { logout } from "@/lib/actions/auth";
@@ -17,6 +18,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   if (profile.role === "cliente") redirect("/cliente");
 
   const { count } = await supabase.from("notifications").select("id", { count: "exact", head: true }).is("read_at", null);
+  const { data: running } = await supabase.from("time_entries").select("id,started_at,task_id,tasks(title)").eq("user_id", profile.user_id).is("ended_at", null).maybeSingle();
+  const runTask = running ? (Array.isArray(running.tasks) ? running.tasks[0] : running.tasks) as { title: string } | null : null;
   const manager = isManager(profile.role);
   const nav: NavItem[] = [
     ...(manager ? ([{ href: "/", label: "Visão geral", icon: "dashboard" }, { href: "/operacoes", label: "Central de Operações", icon: "radar" }, { href: "/fechamento", label: "Fechamento mensal", icon: "closing" }, { href: "/relatorios", label: "Relatórios", icon: "reports" }] as NavItem[]) : []),
@@ -37,6 +40,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       nav={nav}
       footer={
         <>
+          {running && <RunningTimer title={runTask?.title ?? "Tarefa"} startedAt={running.started_at} taskId={running.task_id} />}
           <div className="flex items-center gap-2.5 px-1">
             <Avatar name={profile.full_name || profile.email || "?"} size={32} />
             <div className="min-w-0 leading-tight">

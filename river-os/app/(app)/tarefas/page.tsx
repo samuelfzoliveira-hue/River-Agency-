@@ -1,7 +1,8 @@
 import { FilterForm, ActionForm, SubmitButton, ConfirmButton } from "@/components/form";
 import { Avatar, Empty, Field, PageHeader, Section } from "@/components/ui";
-import { createTaskAction, deleteTaskAction, setTaskStatusAction, updateTaskAction } from "@/lib/actions/tasks";
+import { addTimeAction, createTaskAction, deleteTaskAction, deleteTimeAction, setTaskStatusAction, startTimerAction, stopTimerAction, updateTaskAction } from "@/lib/actions/tasks";
 import { PRIORITY_LABEL, TASK_STATUS_LABEL, type ClientRow, type Profile, type TaskRow } from "@/lib/db";
+import { Play, Square } from "lucide-react";
 import { addDays, formatBR, todayBR } from "@/lib/domain/dates";
 import { isManager, requireCtx } from "@/lib/session";
 
@@ -13,11 +14,14 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
   const ctx = await requireCtx();
   const { supabase } = ctx;
   const today = todayBR();
-  const [tasks, clients, members] = await Promise.all([
+  const [tasks, clients, members, entries] = await Promise.all([
     supabase.from("tasks").select("*").order("due_date", { nullsFirst: false }).limit(500).then((r) => (r.data ?? []) as TaskRow[]),
     supabase.from("clients").select("id,name").order("name").then((r) => (r.data ?? []) as Pick<ClientRow, "id" | "name">[]),
     supabase.from("profiles").select("*").eq("active", true).order("full_name").then((r) => (r.data ?? []) as Profile[]),
+    supabase.from("time_entries").select("id,task_id,user_id,started_at,ended_at,minutes,note").order("started_at", { ascending: false }).limit(1000)
+      .then((r) => (r.data ?? []) as { id: string; task_id: string; user_id: string; started_at: string; ended_at: string | null; minutes: number | null; note: string | null }[]),
   ]);
+  const myRunning = entries.find((e) => e.user_id === ctx.user.id && !e.ended_at);
   const staff = members.filter((m) => m.role !== "cliente");
   const cn = (id: string | null) => clients.find((c) => c.id === id)?.name;
   const nm = (id: string | null) => members.find((m) => m.user_id === id)?.full_name ?? "Sem responsável";
@@ -84,6 +88,11 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
                       </span>
                       {t.priority !== "media" && <span className={`badge ${t.priority === "urgente" ? "badge-bad" : t.priority === "alta" ? "badge-warn" : ""}`}>{PRIORITY_LABEL[t.priority]}</span>}
                       <span className={`hidden text-xs sm:block ${t.due_date && t.due_date < today && isOpen(t) ? "text-bad" : "text-muted"}`}>{t.due_date ? formatBR(t.due_date).slice(0, 5) : "—"}</span>
+                      {isOpen(t) && (myRunning?.task_id === t.id ? (
+                        <form action={stopTimerAction}><button className="btn btn-sm border-ok/40 text-ok" aria-label="Parar cronômetro"><Square size={12} /></button></form>
+                      ) : (
+                        <form action={startTimerAction}><input type="hidden" name="task_id" value={t.id} /><button className="btn btn-sm" aria-label={`Iniciar cronômetro em ${t.title}`}><Play size={12} /></button></form>
+                      ))}
                       <Avatar name={nm(t.assignee_id)} size={24} />
                     </summary>
                     <div className="border-t border-line bg-sunken/50 px-4 py-4">
@@ -96,11 +105,28 @@ export default async function TasksPage({ searchParams }: { searchParams: Promis
                           <Field label="Prazo"><input className="input" type="date" name="due_date" defaultValue={t.due_date ?? ""} /></Field>
                           <Field label="Prioridade"><select className="input" name="priority" defaultValue={t.priority}>{Object.entries(PRIORITY_LABEL).map(([k, v]) => <option key={k} value={k}>{v}</option>)}</select></Field>
                           <Field label="Horas estimadas"><input className="input" name="estimated_hours" defaultValue={t.estimated_hours ?? ""} inputMode="decimal" /></Field>
-                          <Field label="Horas registradas"><input className="input" name="logged_hours" defaultValue={t.logged_hours} inputMode="decimal" /></Field>
                           <Field label="Descrição" className="md:col-span-4"><textarea className="input min-h-20" name="description" defaultValue={t.description ?? ""} /></Field>
                           <div className="flex gap-2 md:col-span-4"><SubmitButton>Salvar</SubmitButton></div>
                         </ActionForm>
                       ) : <p className="text-sm text-muted">{t.description || "Sem descrição."} Você pode editar apenas tarefas atribuídas ou criadas por você.</p>}
+                      <div className="mt-4 border-t border-line pt-4">
+                        <p className="eyebrow mb-2">Horas registradas · {t.logged_hours}h{t.estimated_hours != null ? ` de ${t.estimated_hours}h estimadas` : ""}</p>
+                        <ul className="mb-3 space-y-1 text-sm">
+                          {entries.filter((e) => e.task_id === t.id).slice(0, 8).map((e) => (
+                            <li key={e.id} className="flex items-center justify-between gap-3">
+                              <span>{nm(e.user_id).split(" ")[0]} · {formatBR(e.started_at.slice(0, 10))} · {e.ended_at ? `${Math.floor((e.minutes ?? 0) / 60)}h${String((e.minutes ?? 0) % 60).padStart(2, "0")}` : "em andamento…"}{e.note ? ` · ${e.note}` : ""}</span>
+                              {(isManager(ctx.profile.role) || e.user_id === ctx.user.id) && e.ended_at && <ConfirmButton action={deleteTimeAction} fields={{ id: e.id }} label="×" message="Apagar este lançamento de horas?" className="text-xs text-muted hover:text-bad" />}
+                            </li>
+                          ))}
+                        </ul>
+                        <ActionForm action={addTimeAction} resetOnSuccess className="flex flex-wrap items-end gap-2">
+                          <input type="hidden" name="task_id" value={t.id} />
+                          <Field label="Tempo"><input className="input w-28" name="duration" placeholder="1:30 ou 90" required /></Field>
+                          <Field label="Dia"><input className="input" type="date" name="day" defaultValue={today} max={today} required /></Field>
+                          <Field label="Nota"><input className="input w-48" name="note" /></Field>
+                          <SubmitButton className="btn btn-sm">Lançar horas</SubmitButton>
+                        </ActionForm>
+                      </div>
                       {t.content_id && <p className="mt-3 text-xs"><a className="link" href={`/conteudos/${t.content_id}`}>Abrir conteúdo vinculado</a></p>}
                       {isManager(ctx.profile.role) && <div className="mt-3"><ConfirmButton action={deleteTaskAction} fields={{ id: t.id }} label="Excluir tarefa" message="Excluir esta tarefa?" /></div>}
                     </div>

@@ -31,6 +31,10 @@ Na ficha do conteúdo: crie uma versão (legenda + links das prévias) → **Env
 - Automações (`run_automations`): prazo próximo, tarefa atrasada, resumo diário para gestores, aprovação lenta do cliente e fim de contrato. Rodam ao abrir telas de gestão (no máx. a cada 30 min) e pela rota `/api/cron`.
 - E-mail: defina `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` e `EMAIL_FROM`; o `vercel.json` agenda `/api/cron` de hora em hora. Sem as chaves de e-mail a rota só faz "ensaio". A chave de serviço é usada exclusivamente por essa rota.
 
+## Horas e redistribuição
+
+Em Tarefas, ▶ inicia o cronômetro (um por pessoa; iniciar outro encerra o anterior; teto de 12 h por lançamento) e o relógio aparece no menu lateral em qualquer tela. Também é possível lançar horas manualmente (`90`, `1:30` ou `1,5h`). `tarefas.logged_hours` é sempre a soma dos lançamentos. Em Equipe, gestores arrastam tarefas entre pessoas e a ocupação é recalculada na hora.
+
 ## Estrutura
 
 - `lib/domain/` — regras de negócio puras (única fonte dos números exibidos).

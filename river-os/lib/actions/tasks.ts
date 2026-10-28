@@ -1,6 +1,7 @@
 "use server";
 
 import { z } from "zod";
+import { parseDuration } from "@/lib/duration";
 import type { ActionState } from "./types";
 import { actor, fail, optDate, optNum, optStr, refresh, str, uuid } from "./util";
 
@@ -37,11 +38,10 @@ export async function updateTaskAction(_: ActionState, fd: FormData): Promise<Ac
   const title = str(fd, "title");
   if (!id.success || !pr.success || !status.success || title.length < 2) return { error: "Dados inválidos." };
   const hours = optNum(fd, "estimated_hours");
-  const logged = optNum(fd, "logged_hours");
-  if ((hours !== null && (Number.isNaN(hours) || hours < 0)) || (logged !== null && (Number.isNaN(logged) || logged < 0))) return { error: "Horas inválidas." };
+  if (hours !== null && (Number.isNaN(hours) || hours < 0)) return { error: "Horas inválidas." };
   const { data, error } = await supabase.from("tasks").update({
     title, description: optStr(fd, "description"), assignee_id: optStr(fd, "assignee_id"), priority: pr.data, status: status.data,
-    due_date: optDate(fd, "due_date"), estimated_hours: hours, logged_hours: logged ?? 0,
+    due_date: optDate(fd, "due_date"), estimated_hours: hours,
   }).eq("id", id.data).select("id");
   if (error) return fail(error);
   if (!data?.length) return { error: "Você só pode editar tarefas atribuídas a você ou criadas por você." };
@@ -68,4 +68,44 @@ export async function deleteTaskAction(fd: FormData) {
   const { supabase } = await actor(["admin", "gestor"]);
   await supabase.from("tasks").delete().eq("id", uuid.parse(str(fd, "id")));
   refresh();
+}
+
+export async function startTimerAction(fd: FormData) {
+  const { supabase } = await actor();
+  await supabase.rpc("start_timer", { p_task: uuid.parse(str(fd, "task_id")) });
+  refresh();
+}
+export async function stopTimerAction() {
+  const { supabase } = await actor();
+  await supabase.rpc("stop_timer");
+  refresh();
+}
+export async function addTimeAction(_: ActionState, fd: FormData): Promise<ActionState> {
+  const { supabase } = await actor();
+  const task = uuid.safeParse(str(fd, "task_id"));
+  const minutes = parseDuration(str(fd, "duration"));
+  const day = optDate(fd, "day");
+  if (!task.success) return { error: "Tarefa inválida." };
+  if (minutes === null || minutes < 1) return { error: "Informe a duração: 90 (minutos), 1:30 ou 1,5h." };
+  if (!day) return { error: "Informe a data." };
+  const { error } = await supabase.rpc("add_time_entry", { p_task: task.data, p_minutes: minutes, p_day: day, p_note: str(fd, "note") });
+  if (error) return fail(error);
+  refresh();
+  return { ok: `${minutes} min registrados.` };
+}
+export async function deleteTimeAction(fd: FormData) {
+  const { supabase } = await actor();
+  await supabase.from("time_entries").delete().eq("id", uuid.parse(str(fd, "id")));
+  refresh();
+}
+
+/** Redistribuição por arrastar (painel de capacidade). Devolve o erro para o cliente desfazer a mudança. */
+export async function reassignTaskDragAction(taskId: string, userId: string): Promise<{ error?: string }> {
+  const { supabase } = await actor(["admin", "gestor"]);
+  if (!uuid.safeParse(taskId).success || !uuid.safeParse(userId).success) return { error: "Dados inválidos." };
+  const { data, error } = await supabase.from("tasks").update({ assignee_id: userId }).eq("id", taskId).select("id");
+  if (error) return fail(error);
+  if (!data?.length) return { error: "Não foi possível mover a tarefa." };
+  refresh();
+  return {};
 }

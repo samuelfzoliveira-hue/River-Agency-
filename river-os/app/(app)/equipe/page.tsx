@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ActionForm, ConfirmButton, SubmitButton } from "@/components/form";
+import { CapacityBoard, type BoardTask } from "@/components/capacity-board";
 import { Avatar, Empty, Field, PageHeader, Progress, Section } from "@/components/ui";
 import { reassignTaskAction } from "@/lib/actions/tasks";
 import { addUnavailabilityAction, inviteMemberAction, removeUnavailabilityAction, revokeInviteAction, updateMemberAction } from "@/lib/actions/team";
@@ -48,6 +49,19 @@ export default async function TeamPage({ searchParams }: { searchParams: Promise
           {(["dia", "semana", "mes"] as const).map((v) => <Link key={v} href={`?vista=${v}&data=${ref}`} className={`px-3 py-1.5 ${g === v ? "bg-brand text-brand-fg" : "bg-surface hover:bg-sunken"}`}>{v === "mes" ? "Mês" : v[0].toUpperCase() + v.slice(1)}</Link>)}
         </div>
       </div>
+
+      {manager && cap.members.length > 1 && (() => {
+        const seen = new Set<string>();
+        const boardTasks: BoardTask[] = cap.members.flatMap((c) => c.open
+          .filter((t) => (t.due_date && t.due_date >= cap.from && t.due_date <= cap.to) || (t.due_date && t.due_date < cap.from && s.today >= cap.from && s.today <= cap.to))
+          .filter((t) => !seen.has(t.id) && !!seen.add(t.id))
+          .map((t) => ({ id: t.id, title: t.title, assignee: c.member.user_id, hours: t.estimated_hours, client: cn(t.client_id) ?? null, due: t.due_date ? formatShortBR(t.due_date) : null, overdue: !!t.due_date && t.due_date < s.today })));
+        return (
+          <Section title="Redistribuição visual" hint="Arraste uma tarefa para outra pessoa. A ocupação é recalculada na hora e a nova pessoa é notificada." className="mb-6">
+            <CapacityBoard members={cap.members.map((c) => ({ id: c.member.user_id, name: c.member.full_name, sub: c.member.job_title ?? ROLE_LABEL[c.member.role as Role], available: c.available }))} tasks={boardTasks} />
+          </Section>
+        );
+      })()}
 
       {cap.members.length === 0 ? <Empty>Sem colaboradores ativos.</Empty> : (
         <div className="grid gap-4 lg:grid-cols-2">
