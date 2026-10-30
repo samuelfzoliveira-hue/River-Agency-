@@ -25,6 +25,14 @@ Variáveis de ambiente (veja `.env.example`):
 
 Projeto Vercel: *Root Directory* = `river-os`. O `vercel.json` agenda `/api/cron` de hora em hora.
 
+### Armadilhas comuns na Vercel
+
+- **A pasta `river-os` não aparece:** a Vercel importa a *branch padrão* do repositório. Garanta que o código do RIVER OS esteja nela.
+- **“Nenhum serviço detectado” / preset “Services”:** troque **Application Preset** para **Next.js** e deixe **Root Directory** = `river-os`.
+- **“Project … already exists”:** cada clique em Deploy cria o projeto antes de compilar; se a compilação falhar, o projeto fica. Abra o projeto existente em vez de criar outro (Settings → ajustar → novo deploy).
+- **Site abre mas o login falha:** confira `NEXT_PUBLIC_SUPABASE_URL` (precisa ser a URL real do projeto, sem espaços ou barra no final) e a chave pública.
+- Depois de mudar variáveis de ambiente, é preciso um **novo deploy** para valerem.
+
 ## 3. Primeiro acesso
 
 1. Abra `/cadastro`, crie a conta do administrador e, no passo seguinte, a agência (cria etapas e tipos padrão).
