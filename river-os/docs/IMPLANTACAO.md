@@ -23,7 +23,7 @@ Variáveis de ambiente (veja `.env.example`):
 | `CRON_SECRET`, `SUPABASE_SERVICE_ROLE_KEY` | para automações por agendador | protege e executa `/api/cron` |
 | `RESEND_API_KEY`, `EMAIL_FROM` | para e-mails | sem elas a rota só faz ensaio |
 
-Projeto Vercel: *Root Directory* = `river-os`. O `vercel.json` agenda `/api/cron` de hora em hora.
+Projeto Vercel: *Root Directory* = `river-os`. O `vercel.json` agenda `/api/cron` uma vez por dia (06:17 em Brasília). O plano Hobby da Vercel **só aceita agendamento diário**: uma expressão que rode mais de uma vez por dia (ex.: de hora em hora) faz o build falhar com "Hobby accounts are limited to daily cron jobs". No plano Pro, troque o `schedule` por `0 * * * *`.
 
 ### Armadilhas comuns na Vercel
 
