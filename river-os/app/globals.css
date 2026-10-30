@@ -1,0 +1,61 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Identidade River: azul-marinho #0A1F33 · preto #111 · off-white #F5F3ED · cinza #8A8E94 */
+:root {
+  --bg: 245 243 237;
+  --surface: 252 251 248;
+  --sunken: 236 233 224;
+  --fg: 17 17 17;
+  --muted: 110 114 120;
+  --line: 224 221 211;
+  --brand: 10 31 51;
+  --brand-fg: 245 243 237;
+  --ok: 38 116 82;
+  --warn: 176 112 12;
+  --bad: 186 48 40;
+  --info: 52 98 150;
+  color-scheme: light;
+}
+.dark {
+  --bg: 8 20 32;
+  --surface: 13 29 45;
+  --sunken: 6 15 25;
+  --fg: 245 243 237;
+  --muted: 138 142 148;
+  --line: 30 50 70;
+  --brand: 245 243 237;
+  --brand-fg: 10 31 51;
+  --ok: 88 190 140;
+  --warn: 232 170 70;
+  --bad: 240 110 100;
+  --info: 120 168 220;
+  color-scheme: dark;
+}
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  body { @apply bg-bg text-fg font-sans antialiased; font-feature-settings: "cv11", "ss01"; }
+  h1, h2, h3 { @apply tracking-tight; }
+  :focus-visible { @apply outline-none ring-2 ring-brand/40 ring-offset-2 ring-offset-bg; }
+  ::selection { background: rgb(var(--brand) / 0.18); }
+}
+
+@layer components {
+  .card { @apply rounded-xl border border-line bg-surface; }
+  .card-pad { @apply p-5; }
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-surface px-3.5 py-2 text-sm font-medium transition hover:bg-sunken disabled:cursor-not-allowed disabled:opacity-50; }
+  .btn-primary { @apply border-transparent bg-brand text-brand-fg hover:opacity-90 hover:bg-brand; }
+  .btn-danger { @apply border-bad/40 text-bad hover:bg-bad/10; }
+  .btn-sm { @apply px-2.5 py-1.5 text-xs; }
+  .input { @apply w-full rounded-lg border border-line bg-surface px-3 py-2 text-sm placeholder:text-muted/70 focus:border-brand/50; }
+  .label { @apply mb-1 block text-xs font-medium text-muted; }
+  .badge { @apply inline-flex items-center gap-1 rounded-full border border-line px-2 py-0.5 text-[11px] font-medium text-muted; }
+  .badge-ok { @apply border-ok/30 bg-ok/10 text-ok; }
+  .badge-warn { @apply border-warn/30 bg-warn/10 text-warn; }
+  .badge-bad { @apply border-bad/30 bg-bad/10 text-bad; }
+  .badge-info { @apply border-info/30 bg-info/10 text-info; }
+  .eyebrow { @apply text-[11px] font-semibold uppercase tracking-[0.12em] text-muted; }
+  .link { @apply underline decoration-line underline-offset-4 hover:decoration-fg; }
+}
